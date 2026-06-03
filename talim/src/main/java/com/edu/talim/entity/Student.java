@@ -71,8 +71,8 @@ public class Student {
 
     // ===== ISH JOYI VA LAVOZIMI =====
 
-    @Enumerated(EnumType.STRING)
-    private HarbiyUnvon harbiyUnvoni;
+    @Column(columnDefinition = "varchar(255)")
+    private String harbiyUnvoni;
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private String guvohnomaNomeri;

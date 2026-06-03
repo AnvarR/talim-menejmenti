@@ -19,7 +19,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         AND (:oquvYili IS NULL OR s.course.oquvYili = :oquvYili)
         AND (:kurs IS NULL OR s.course.kursRaqami = :kurs)
         AND (:guruh IS NULL OR s.group.guruhNomi = :guruh)
-        AND (:fio IS NULL OR s.fio LIKE CONCAT('%', :fio, '%'))
         AND (:jinsi IS NULL OR s.jinsi = :jinsi)
     """)
     Page<Student> findAllWithFilters(
@@ -27,7 +26,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             @Param("oquvYili") String oquvYili,
             @Param("kurs") Integer kurs,
             @Param("guruh") String guruh,
-            @Param("fio") String fio,
             @Param("jinsi") Jins jinsi,
             Pageable pageable
     );

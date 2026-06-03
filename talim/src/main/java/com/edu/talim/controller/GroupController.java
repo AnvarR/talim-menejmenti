@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/groups")
@@ -27,9 +26,10 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<Group> create(@RequestBody Map<String, Object> body) {
-        String guruhNomi = (String) body.get("guruhNomi");
-        Long courseId = Long.valueOf(body.get("courseId").toString());
+    public ResponseEntity<Group> create(
+            @RequestParam String guruhNomi,
+            @RequestParam Long courseId
+    ) {
         return ResponseEntity.ok(groupService.create(guruhNomi, courseId));
     }
 }

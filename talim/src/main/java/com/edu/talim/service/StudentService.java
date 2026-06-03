@@ -15,6 +15,9 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Service
 @RequiredArgsConstructor
 public class StudentService {
@@ -37,12 +40,12 @@ public class StudentService {
     ) {
         StudentType studentType = StudentType.valueOf(type.toUpperCase());
         Jins jinsEnum = (jinsi != null && !jinsi.isEmpty())
-                ? Jins.valueOf(jinsi.toUpperCase()) : null;
+                ? Jins.fromLabel(jinsi) : null;
 
         Pageable pageable = PageRequest.of(page, size);
 
         return studentRepository
-                .findAllWithFilters(studentType, oquvYili, kurs, guruh, fio, jinsEnum, pageable)
+                .findAllWithFilters(studentType, oquvYili, kurs, guruh, jinsEnum, pageable)
                 .map(this::toListDTO);
     }
 
@@ -95,68 +98,142 @@ public class StudentService {
                 .orElseThrow(() -> new RuntimeException("Student topilmadi: " + id));
     }
 
+    // "12.01.2024" yoki "2024-01-12" → LocalDate
+    private LocalDate parseDate(String date) {
+        if (date == null || date.isEmpty()) return null;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+            return LocalDate.parse(date, formatter);
+        } catch (Exception e) {
+            try {
+                return LocalDate.parse(date);
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+    }
+
+    // "3-kurs" → 3
+    private Integer parseKurs(String kursi) {
+        if (kursi == null || kursi.isEmpty()) return null;
+        try {
+            return Integer.parseInt(kursi.replace("-kurs", "").trim());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private Student buildStudent(StudentCreateDTO dto) {
+        // Kurs topish
         Course course = null;
-        if (dto.getCourseId() != null) {
-            course = courseRepository.findById(dto.getCourseId())
+        if (dto.getKursi() != null && !dto.getKursi().isEmpty()) {
+            course = courseRepository
+                    .findByKursRaqami(parseKurs(dto.getKursi()))
                     .orElseThrow(() -> new RuntimeException("Kurs topilmadi"));
         }
+
+        // Guruh topish yoki yaratish
         Group group = null;
-        if (dto.getGroupId() != null) {
-            group = groupRepository.findById(dto.getGroupId())
-                    .orElseThrow(() -> new RuntimeException("Guruh topilmadi"));
+        if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
+            if (course != null) {
+                // Kursant uchun — kurs + guruh nomi
+                Course finalCourse = course;
+                group = groupRepository
+                        .findByGuruhNomiAndCourseId(dto.getGuruhi(), course.getId())
+                        .orElseGet(() -> groupRepository.save(
+                                Group.builder()
+                                        .guruhNomi(dto.getGuruhi())
+                                        .course(finalCourse)
+                                        .build()
+                        ));
+            } else {
+                // Tinglovchi uchun — faqat guruh nomi
+                group = groupRepository
+                        .findByGuruhNomi(dto.getGuruhi())
+                        .orElseGet(() -> groupRepository.save(
+                                Group.builder()
+                                        .guruhNomi(dto.getGuruhi())
+                                        .course(null)
+                                        .build()
+                        ));
+            }
         }
+
         return Student.builder()
                 .jshshir(dto.getJshshir())
                 .fio(dto.getFio())
-                .malumoti(dto.getMalumoti() != null ? Malumot.valueOf(dto.getMalumoti().toUpperCase()) : null)
+                .malumoti(dto.getMalumoti() != null ? Malumot.fromLabel(dto.getMalumoti()) : null)
                 .passportSeria(dto.getPassportSeria())
-                .hujjatBerilganSana(dto.getHujjatBerilganSana())
-                .jinsi(Jins.valueOf(dto.getJinsi().toUpperCase()))
-                .tugilganSana(dto.getTugilganSana())
-                .millati(Millat.valueOf(dto.getMillati().toUpperCase()))
+                .hujjatBerilganSana(parseDate(dto.getHujjatBerilganSana()))
+                .jinsi(Jins.fromLabel(dto.getJinsi()))
+                .tugilganSana(parseDate(dto.getTugilganSana()))
+                .millati(Millat.fromLabel(dto.getMillati()))
                 .hujjatBerganTashkilot(dto.getHujjatBerganTashkilot())
-                .fuqaroligi(Fuqarolik.valueOf(dto.getFuqaroligi().toUpperCase()))
+                .fuqaroligi(Fuqarolik.fromLabel(dto.getFuqaroligi()))
                 .telefon1(dto.getTelefon1())
                 .telefon2(dto.getTelefon2())
                 .email1(dto.getEmail1())
                 .email2(dto.getEmail2())
-                .harbiyUnvoni(dto.getHarbiyUnvoni() != null ? HarbiyUnvon.valueOf(dto.getHarbiyUnvoni().toUpperCase()) : null)
+                .harbiyUnvoni(dto.getHarbiyUnvoni())
                 .guvohnomaNomeri(dto.getGuvohnomaNomeri())
                 .course(course)
                 .group(group)
                 .lavozimi(dto.getLavozimi())
-                .type(StudentType.valueOf(dto.getType().toUpperCase()))
+                .type(StudentType.fromLabel(dto.getType()))
                 .build();
     }
 
     private void updateStudent(Student student, StudentCreateDTO dto) {
         student.setFio(dto.getFio());
         student.setJshshir(dto.getJshshir());
-        student.setMalumoti(dto.getMalumoti() != null ? Malumot.valueOf(dto.getMalumoti().toUpperCase()) : null);
+        student.setMalumoti(dto.getMalumoti() != null ? Malumot.fromLabel(dto.getMalumoti()) : null);
         student.setPassportSeria(dto.getPassportSeria());
-        student.setHujjatBerilganSana(dto.getHujjatBerilganSana());
-        student.setJinsi(Jins.valueOf(dto.getJinsi().toUpperCase()));
-        student.setTugilganSana(dto.getTugilganSana());
-        student.setMillati(Millat.valueOf(dto.getMillati().toUpperCase()));
+        student.setHujjatBerilganSana(parseDate(dto.getHujjatBerilganSana()));
+        student.setJinsi(Jins.fromLabel(dto.getJinsi()));
+        student.setTugilganSana(parseDate(dto.getTugilganSana()));
+        student.setMillati(Millat.fromLabel(dto.getMillati()));
         student.setHujjatBerganTashkilot(dto.getHujjatBerganTashkilot());
-        student.setFuqaroligi(Fuqarolik.valueOf(dto.getFuqaroligi().toUpperCase()));
+        student.setFuqaroligi(Fuqarolik.fromLabel(dto.getFuqaroligi()));
         student.setTelefon1(dto.getTelefon1());
         student.setTelefon2(dto.getTelefon2());
         student.setEmail1(dto.getEmail1());
         student.setEmail2(dto.getEmail2());
-        student.setHarbiyUnvoni(dto.getHarbiyUnvoni() != null ? HarbiyUnvon.valueOf(dto.getHarbiyUnvoni().toUpperCase()) : null);
+        student.setHarbiyUnvoni(dto.getHarbiyUnvoni());
         student.setGuvohnomaNomeri(dto.getGuvohnomaNomeri());
         student.setLavozimi(dto.getLavozimi());
-        if (dto.getCourseId() != null) {
-            Course course = courseRepository.findById(dto.getCourseId())
+
+        if (dto.getKursi() != null && !dto.getKursi().isEmpty()) {
+            Course course = courseRepository
+                    .findByKursRaqami(parseKurs(dto.getKursi()))
                     .orElseThrow(() -> new RuntimeException("Kurs topilmadi"));
             student.setCourse(course);
-        }
-        if (dto.getGroupId() != null) {
-            Group group = groupRepository.findById(dto.getGroupId())
-                    .orElseThrow(() -> new RuntimeException("Guruh topilmadi"));
-            student.setGroup(group);
+
+            if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
+                Course finalCourse = course;
+                Group group = groupRepository
+                        .findByGuruhNomiAndCourseId(dto.getGuruhi(), course.getId())
+                        .orElseGet(() -> groupRepository.save(
+                                Group.builder()
+                                        .guruhNomi(dto.getGuruhi())
+                                        .course(finalCourse)
+                                        .build()
+                        ));
+                student.setGroup(group);
+            }
+        } else {
+            // Tinglovchi uchun
+            student.setCourse(null);
+            if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
+                Group group = groupRepository
+                        .findByGuruhNomi(dto.getGuruhi())
+                        .orElseGet(() -> groupRepository.save(
+                                Group.builder()
+                                        .guruhNomi(dto.getGuruhi())
+                                        .course(null)
+                                        .build()
+                        ));
+                student.setGroup(group);
+            }
         }
     }
 
@@ -167,7 +244,7 @@ public class StudentService {
                 .kursi(s.getCourse() != null ? s.getCourse().getKursRaqami() + "-kurs" : null)
                 .guruhi(s.getGroup() != null ? s.getGroup().getGuruhNomi() : null)
                 .fio(s.getFio())
-                .jinsi(s.getJinsi() != null ? s.getJinsi().name() : null)
+                .jinsi(s.getJinsi() != null ? s.getJinsi().getLabel() : null)
                 .type(s.getType().name())
                 .build();
     }
@@ -178,19 +255,19 @@ public class StudentService {
                 .photoUrl(s.getPhotoUrl())
                 .jshshir(s.getJshshir())
                 .fio(s.getFio())
-                .malumoti(s.getMalumoti() != null ? s.getMalumoti().name() : null)
+                .malumoti(s.getMalumoti() != null ? s.getMalumoti().getLabel() : null)
                 .passportSeria(s.getPassportSeria())
                 .hujjatBerilganSana(s.getHujjatBerilganSana())
-                .jinsi(s.getJinsi() != null ? s.getJinsi().name() : null)
+                .jinsi(s.getJinsi() != null ? s.getJinsi().getLabel() : null)
                 .tugilganSana(s.getTugilganSana())
-                .millati(s.getMillati() != null ? s.getMillati().name() : null)
+                .millati(s.getMillati() != null ? s.getMillati().getLabel() : null)
                 .hujjatBerganTashkilot(s.getHujjatBerganTashkilot())
-                .fuqaroligi(s.getFuqaroligi() != null ? s.getFuqaroligi().name() : null)
+                .fuqaroligi(s.getFuqaroligi() != null ? s.getFuqaroligi().getLabel() : null)
                 .telefon1(s.getTelefon1())
                 .telefon2(s.getTelefon2())
                 .email1(s.getEmail1())
                 .email2(s.getEmail2())
-                .harbiyUnvoni(s.getHarbiyUnvoni() != null ? s.getHarbiyUnvoni().name() : null)
+                .harbiyUnvoni(s.getHarbiyUnvoni())
                 .guvohnomaNomeri(s.getGuvohnomaNomeri())
                 .kursi(s.getCourse() != null ? s.getCourse().getKursRaqami() + "-kurs" : null)
                 .guruhi(s.getGroup() != null ? s.getGroup().getGuruhNomi() : null)
