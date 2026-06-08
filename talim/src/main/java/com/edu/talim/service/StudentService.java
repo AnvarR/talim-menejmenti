@@ -38,7 +38,11 @@ public class StudentService {
             int page,
             int size
     ) {
-        StudentType studentType = StudentType.valueOf(type.toUpperCase());
+        //StudentType studentType = StudentType.valueOf(type.toUpperCase());
+        String normalizedType = type.toUpperCase()
+                .replace("TINGLOVCHILAR", "TINGLOVCHI")
+                .replace("KURSANTLAR", "KURSANT");
+        StudentType studentType = StudentType.valueOf(normalizedType);
         Jins jinsEnum = (jinsi != null && !jinsi.isEmpty())
                 ? Jins.fromLabel(jinsi) : null;
 

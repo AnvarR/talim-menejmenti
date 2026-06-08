@@ -14,6 +14,9 @@ public class FileService {
     @Value("${app.upload.dir}")
     private String uploadDir;
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     public String saveFile(MultipartFile file) {
         try {
             Path uploadPath = Paths.get(uploadDir);
@@ -25,15 +28,16 @@ public class FileService {
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            return uploadDir + fileName;
+            return baseUrl + "/" + uploadDir + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Fayl saqlashda xatolik: " + e.getMessage());
         }
     }
 
-    public void deleteFile(String filePath) {
+    public void deleteFile(String fileUrl) {
         try {
-            if (filePath != null) {
+            if (fileUrl != null) {
+                String filePath = fileUrl.replace(baseUrl + "/", "");
                 Files.deleteIfExists(Paths.get(filePath));
             }
         } catch (IOException e) {

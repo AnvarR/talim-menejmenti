@@ -2,7 +2,7 @@ package com.edu.talim.entity.enums;
 
 public enum Malumot {
     ORTA("O'rta"),
-    ORTA_MAXSUS("O'rta maxsus"),
+    ORTA_MAXSUS("O'rta-maxsus"),  // ← tire bilan
     OLIY("Oliy"),
     TUGALLANMAGAN_OLIY("Tugallanmagan oliy");
 

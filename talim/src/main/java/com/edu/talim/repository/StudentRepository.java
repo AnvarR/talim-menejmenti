@@ -14,13 +14,15 @@ import org.springframework.stereotype.Repository;
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("""
-        SELECT s FROM Student s
-        WHERE s.type = :type
-        AND (:oquvYili IS NULL OR s.course.oquvYili = :oquvYili)
-        AND (:kurs IS NULL OR s.course.kursRaqami = :kurs)
-        AND (:guruh IS NULL OR s.group.guruhNomi = :guruh)
-        AND (:jinsi IS NULL OR s.jinsi = :jinsi)
-    """)
+    SELECT s FROM Student s
+    LEFT JOIN s.course c
+    LEFT JOIN s.group g
+    WHERE s.type = :type
+    AND (:oquvYili IS NULL OR c.oquvYili = :oquvYili)
+    AND (:kurs IS NULL OR c.kursRaqami = :kurs)
+    AND (:guruh IS NULL OR g.guruhNomi = :guruh)
+    AND (:jinsi IS NULL OR s.jinsi = :jinsi)
+""")
     Page<Student> findAllWithFilters(
             @Param("type") StudentType type,
             @Param("oquvYili") String oquvYili,
