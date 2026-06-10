@@ -33,6 +33,8 @@ public class UserDetailDTO {
     private String ilmiyDarajasi;
     private String guvohnomaNomeri;
     private String harbiyUnvoni;
+    private String role;
+    private String username;
 
     private LocalDateTime createdAt;
 }

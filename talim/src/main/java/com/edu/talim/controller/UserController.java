@@ -1,7 +1,6 @@
 package com.edu.talim.controller;
 
-import com.edu.talim.dto.UserCreateDTO;
-import com.edu.talim.dto.UserDetailDTO;
+import com.edu.talim.dto.*;
 import com.edu.talim.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -58,5 +57,24 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Parol o'zgartirish
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<Void> changePassword(
+            @PathVariable Long id,
+            @RequestBody ChangePasswordDTO dto
+    ) {
+        userService.changePassword(id, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    // Telefon va email o'zgartirish
+    @PutMapping("/{id}/update-contacts")
+    public ResponseEntity<UserDetailDTO> updateContacts(
+            @PathVariable Long id,
+            @RequestBody UpdateContactsDTO dto
+    ) {
+        return ResponseEntity.ok(userService.updateContacts(id, dto));
     }
 }

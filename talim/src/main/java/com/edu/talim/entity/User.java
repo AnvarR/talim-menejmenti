@@ -90,6 +90,16 @@ public class User {
 
     // ===== TIZIM =====
 
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(100)")
+    private Role role;
+
+    @Column(columnDefinition = "varchar(255)")
+    private String username;
+
+    @Column(columnDefinition = "varchar(255)")
+    private String password;
+
     private LocalDateTime createdAt;
 
     @PrePersist

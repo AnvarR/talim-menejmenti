@@ -1,7 +1,6 @@
 package com.edu.talim.service;
 
-import com.edu.talim.dto.UserCreateDTO;
-import com.edu.talim.dto.UserDetailDTO;
+import com.edu.talim.dto.*;
 import com.edu.talim.entity.TarkibiyTuzilma;
 import com.edu.talim.entity.User;
 import com.edu.talim.entity.enums.*;
@@ -73,6 +72,30 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    // Parol o'zgartirish
+    public void changePassword(Long id, ChangePasswordDTO dto) {
+        User user = findById(id);
+
+        if (!user.getPassword().equals(dto.getHozirgiParol())) {
+            throw new RuntimeException("Hozirgi parol noto'g'ri!");
+        }
+        if (!dto.getYangiParol().equals(dto.getYangiParolTakror())) {
+            throw new RuntimeException("Yangi parollar mos kelmaydi!");
+        }
+
+        user.setPassword(dto.getYangiParol());
+        userRepository.save(user);
+    }
+
+    // Telefon va email o'zgartirish
+    public UserDetailDTO updateContacts(Long id, UpdateContactsDTO dto) {
+        User user = findById(id);
+        user.setTelefon1(dto.getTelefon1());
+        user.setTelefon2(dto.getTelefon2());
+        user.setPochtaManzili(dto.getEmail1());
+        return toDetailDTO(userRepository.save(user));
+    }
+
     // ===== HELPER METODLAR =====
 
     private User findById(Long id) {
@@ -101,6 +124,9 @@ public class UserService {
                     .orElseThrow(() -> new RuntimeException("Tarkibiy tuzilma topilmadi"));
         }
 
+        String username = dto.getPassportMalumotlari();
+        String password = "12345678";
+
         return User.builder()
                 .jshshir(dto.getJshshir())
                 .passportMalumotlari(dto.getPassportMalumotlari())
@@ -121,6 +147,9 @@ public class UserService {
                 .ilmiyDarajasi(dto.getIlmiyDarajasi())
                 .guvohnomaNomeri(dto.getGuvohnomaNomeri())
                 .harbiyUnvoni(dto.getHarbiyUnvoni())
+                .role(dto.getRole() != null ? Role.valueOf(dto.getRole().toUpperCase()) : Role.RAHBARIYAT)
+                .username(username)
+                .password(password)
                 .build();
     }
 
@@ -143,7 +172,9 @@ public class UserService {
         user.setIlmiyDarajasi(dto.getIlmiyDarajasi());
         user.setGuvohnomaNomeri(dto.getGuvohnomaNomeri());
         user.setHarbiyUnvoni(dto.getHarbiyUnvoni());
-
+        if (dto.getRole() != null) {
+            user.setRole(Role.valueOf(dto.getRole().toUpperCase()));
+        }
         if (dto.getTarkibiyTuzilmaId() != null) {
             TarkibiyTuzilma tarkibiyTuzilma = tarkibiyTuzilmaRepository
                     .findById(dto.getTarkibiyTuzilmaId())
@@ -176,6 +207,8 @@ public class UserService {
                 .ilmiyDarajasi(u.getIlmiyDarajasi())
                 .guvohnomaNomeri(u.getGuvohnomaNomeri())
                 .harbiyUnvoni(u.getHarbiyUnvoni())
+                .role(u.getRole() != null ? u.getRole().name() : null)
+                .username(u.getUsername())
                 .createdAt(u.getCreatedAt())
                 .build();
     }
