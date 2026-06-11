@@ -91,6 +91,16 @@ public class Student {
     // ===== TIZIM =====
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "varchar(100)")
+    private Role role;
+
+    @Column(columnDefinition = "varchar(255)")
+    private String username;
+
+    @Column(columnDefinition = "varchar(255)")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StudentType type;
 

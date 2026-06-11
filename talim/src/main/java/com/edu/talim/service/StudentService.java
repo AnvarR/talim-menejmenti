@@ -38,11 +38,7 @@ public class StudentService {
             int page,
             int size
     ) {
-        //StudentType studentType = StudentType.valueOf(type.toUpperCase());
-        String normalizedType = type.toUpperCase()
-                .replace("TINGLOVCHILAR", "TINGLOVCHI")
-                .replace("KURSANTLAR", "KURSANT");
-        StudentType studentType = StudentType.valueOf(normalizedType);
+        StudentType studentType = StudentType.valueOf(type.toUpperCase());
         Jins jinsEnum = (jinsi != null && !jinsi.isEmpty())
                 ? Jins.fromLabel(jinsi) : null;
 
@@ -140,7 +136,6 @@ public class StudentService {
         Group group = null;
         if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
             if (course != null) {
-                // Kursant uchun — kurs + guruh nomi
                 Course finalCourse = course;
                 group = groupRepository
                         .findByGuruhNomiAndCourseId(dto.getGuruhi(), course.getId())
@@ -151,7 +146,6 @@ public class StudentService {
                                         .build()
                         ));
             } else {
-                // Tinglovchi uchun — faqat guruh nomi
                 group = groupRepository
                         .findByGuruhNomi(dto.getGuruhi())
                         .orElseGet(() -> groupRepository.save(
@@ -162,6 +156,12 @@ public class StudentService {
                         ));
             }
         }
+
+        // Avtomatik username, password, role
+        String username = dto.getPassportSeria();
+        String password = "12345678";
+        Role role = dto.getType().equalsIgnoreCase("KURSANT")
+                ? Role.KURSANT : Role.TINGLOVCHI;
 
         return Student.builder()
                 .jshshir(dto.getJshshir())
@@ -184,6 +184,9 @@ public class StudentService {
                 .group(group)
                 .lavozimi(dto.getLavozimi())
                 .type(StudentType.fromLabel(dto.getType()))
+                .username(username)
+                .password(password)
+                .role(role)
                 .build();
     }
 
@@ -205,6 +208,8 @@ public class StudentService {
         student.setHarbiyUnvoni(dto.getHarbiyUnvoni());
         student.setGuvohnomaNomeri(dto.getGuvohnomaNomeri());
         student.setLavozimi(dto.getLavozimi());
+        // Username ni passportSeria bilan yangilash
+        student.setUsername(dto.getPassportSeria());
 
         if (dto.getKursi() != null && !dto.getKursi().isEmpty()) {
             Course course = courseRepository
@@ -225,7 +230,6 @@ public class StudentService {
                 student.setGroup(group);
             }
         } else {
-            // Tinglovchi uchun
             student.setCourse(null);
             if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
                 Group group = groupRepository

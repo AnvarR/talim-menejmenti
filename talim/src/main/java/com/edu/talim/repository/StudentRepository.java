@@ -10,19 +10,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query("""
-    SELECT s FROM Student s
-    LEFT JOIN s.course c
-    LEFT JOIN s.group g
-    WHERE s.type = :type
-    AND (:oquvYili IS NULL OR c.oquvYili = :oquvYili)
-    AND (:kurs IS NULL OR c.kursRaqami = :kurs)
-    AND (:guruh IS NULL OR g.guruhNomi = :guruh)
-    AND (:jinsi IS NULL OR s.jinsi = :jinsi)
-""")
+        SELECT s FROM Student s
+        LEFT JOIN s.course c
+        LEFT JOIN s.group g
+        WHERE s.type = :type
+        AND (:oquvYili IS NULL OR c.oquvYili = :oquvYili)
+        AND (:kurs IS NULL OR c.kursRaqami = :kurs)
+        AND (:guruh IS NULL OR g.guruhNomi = :guruh)
+        AND (:jinsi IS NULL OR s.jinsi = :jinsi)
+    """)
     Page<Student> findAllWithFilters(
             @Param("type") StudentType type,
             @Param("oquvYili") String oquvYili,
@@ -33,4 +35,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     );
 
     boolean existsByJshshir(String jshshir);
+
+    Optional<Student> findByUsername(String username);
 }
