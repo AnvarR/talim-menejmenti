@@ -37,6 +37,7 @@ public class UserService {
 
     // Qo'shish
     public UserDetailDTO create(UserCreateDTO dto) {
+        System.out.println("Kelgan DTO: " + dto);
         if (userRepository.existsByJshshir(dto.getJshshir())) {
             throw new RuntimeException("Bu JSHSHIR bilan foydalanuvchi allaqachon mavjud!");
         }
@@ -147,7 +148,7 @@ public class UserService {
                 .ilmiyDarajasi(dto.getIlmiyDarajasi())
                 .guvohnomaNomeri(dto.getGuvohnomaNomeri())
                 .harbiyUnvoni(dto.getHarbiyUnvoni())
-                .role(dto.getRole() != null ? Role.valueOf(dto.getRole().toUpperCase()) : Role.RAHBARIYAT)
+                .role(dto.getFoydalanuvchiRoli() != null ? Role.valueOf(dto.getFoydalanuvchiRoli().toUpperCase()) : Role.RAHBARIYAT)
                 .username(username)
                 .password(password)
                 .build();
@@ -172,8 +173,8 @@ public class UserService {
         user.setIlmiyDarajasi(dto.getIlmiyDarajasi());
         user.setGuvohnomaNomeri(dto.getGuvohnomaNomeri());
         user.setHarbiyUnvoni(dto.getHarbiyUnvoni());
-        if (dto.getRole() != null) {
-            user.setRole(Role.valueOf(dto.getRole().toUpperCase()));
+        if (dto.getFoydalanuvchiRoli() != null) {
+            user.setRole(Role.valueOf(dto.getFoydalanuvchiRoli().toUpperCase()));
         }
         if (dto.getTarkibiyTuzilmaId() != null) {
             TarkibiyTuzilma tarkibiyTuzilma = tarkibiyTuzilmaRepository

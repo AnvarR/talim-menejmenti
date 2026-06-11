@@ -27,6 +27,6 @@ public class UserCreateDTO {
     private String ilmiyDarajasi;
     private String guvohnomaNomeri;
     private String harbiyUnvoni;
-    private String role;
+    private String foydalanuvchiRoli;
     private String username;
 }
