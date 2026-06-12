@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 @Repository
 public interface KasalRepository extends JpaRepository<Kasal, Long> {
 
@@ -29,5 +31,16 @@ public interface KasalRepository extends JpaRepository<Kasal, Long> {
             @Param("jinsi") String jinsi,
             @Param("kasalYuborilganJoy") String kasalYuborilganJoy,
             Pageable pageable
+    );
+
+    // Kursant hozir ham kasallar ro'yxatida bormi?
+    @Query("""
+        SELECT COUNT(k) > 0 FROM Kasal k
+        WHERE k.student.id = :studentId
+        AND k.tugashSanasi >= :bugun
+    """)
+    boolean existsActiveKasal(
+            @Param("studentId") Long studentId,
+            @Param("bugun") LocalDate bugun
     );
 }

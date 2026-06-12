@@ -51,6 +51,11 @@ public class KasalService {
         Student student = studentRepository.findById(dto.getStudentId())
                 .orElseThrow(() -> new RuntimeException("Kursant topilmadi!"));
 
+        // Kursant hozir kasallar ro'yxatida bormi?
+        if (kasalRepository.existsActiveKasal(dto.getStudentId(), LocalDate.now())) {
+            throw new RuntimeException("Bu kursant hozir kasallar ro'yxatida mavjud! Avval ro'yxatdan chiqaring.");
+        }
+
         Kasal kasal = Kasal.builder()
                 .student(student)
                 .kasallikSababi(dto.getKasallikSababi())
