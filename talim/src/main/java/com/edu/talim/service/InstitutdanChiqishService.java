@@ -24,7 +24,6 @@ public class InstitutdanChiqishService {
     private final InstitutdanChiqishRepository chiqishRepository;
     private final StudentRepository studentRepository;
 
-    // Ro'yxat
     public Page<InstitutdanChiqishResponseDTO> getAll(
             String oquvYili,
             Integer kurs,
@@ -44,12 +43,10 @@ public class InstitutdanChiqishService {
         ).map(this::toResponseDTO);
     }
 
-    // Bitta
     public InstitutdanChiqishResponseDTO getById(Long id) {
         return toResponseDTO(findById(id));
     }
 
-    // Qo'shish
     public InstitutdanChiqishResponseDTO create(InstitutdanChiqishCreateDTO dto) {
         Student student = studentRepository.findById(dto.getStudentId())
                 .orElseThrow(() -> new RuntimeException("Kursant topilmadi!"));
@@ -59,6 +56,8 @@ public class InstitutdanChiqishService {
                 .chiqishSababi(ChiqishSababi.valueOf(dto.getChiqishSababi()))
                 .izoh(dto.getIzoh())
                 .chiqganSana(parseDate(dto.getChiqganSana()))
+                .chiqganVaqt(parseTime(dto.getChiqganVaqt()))
+                .qaytganSana(parseDate(dto.getQaytganSana()))
                 .qaytganVaqt(parseTime(dto.getQaytganVaqt()))
                 .oquvYili(dto.getOquvYili())
                 .build();
@@ -66,20 +65,20 @@ public class InstitutdanChiqishService {
         return toResponseDTO(chiqishRepository.save(chiqish));
     }
 
-    // Tahrirlash
     public InstitutdanChiqishResponseDTO update(Long id, InstitutdanChiqishCreateDTO dto) {
         InstitutdanChiqish chiqish = findById(id);
 
         chiqish.setChiqishSababi(ChiqishSababi.valueOf(dto.getChiqishSababi()));
         chiqish.setIzoh(dto.getIzoh());
         chiqish.setChiqganSana(parseDate(dto.getChiqganSana()));
+        chiqish.setChiqganVaqt(parseTime(dto.getChiqganVaqt()));
+        chiqish.setQaytganSana(parseDate(dto.getQaytganSana()));
         chiqish.setQaytganVaqt(parseTime(dto.getQaytganVaqt()));
         chiqish.setOquvYili(dto.getOquvYili());
 
         return toResponseDTO(chiqishRepository.save(chiqish));
     }
 
-    // O'chirish
     public void delete(Long id) {
         chiqishRepository.delete(findById(id));
     }
@@ -110,9 +109,13 @@ public class InstitutdanChiqishService {
             return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm:ss"));
         } catch (Exception e) {
             try {
-                return LocalTime.parse(time);
+                return LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
             } catch (Exception ex) {
-                return null;
+                try {
+                    return LocalTime.parse(time);
+                } catch (Exception exc) {
+                    return null;
+                }
             }
         }
     }
@@ -129,6 +132,8 @@ public class InstitutdanChiqishService {
                 .chiqishSababi(c.getChiqishSababi() != null ? c.getChiqishSababi().getLabel() : null)
                 .izoh(c.getIzoh())
                 .chiqganSana(c.getChiqganSana() != null ? c.getChiqganSana().toString() : null)
+                .chiqganVaqt(c.getChiqganVaqt() != null ? c.getChiqganVaqt().toString() : null)
+                .qaytganSana(c.getQaytganSana() != null ? c.getQaytganSana().toString() : null)
                 .qaytganVaqt(c.getQaytganVaqt() != null ? c.getQaytganVaqt().toString() : null)
                 .oquvYili(c.getOquvYili())
                 .createdAt(c.getCreatedAt() != null ? c.getCreatedAt().toString() : null)

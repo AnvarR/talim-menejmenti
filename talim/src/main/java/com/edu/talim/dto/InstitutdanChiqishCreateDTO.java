@@ -8,6 +8,8 @@ public class InstitutdanChiqishCreateDTO {
     private String chiqishSababi;
     private String izoh;
     private String chiqganSana;
+    private String chiqganVaqt;
+    private String qaytganSana;
     private String qaytganVaqt;
     private String oquvYili;
 }

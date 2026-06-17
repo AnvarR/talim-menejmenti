@@ -32,8 +32,14 @@ public class InstitutdanChiqish {
     @Column(columnDefinition = "text")
     private String izoh;
 
+    // Chiqish
     @Column(nullable = false)
     private LocalDate chiqganSana;
+
+    private LocalTime chiqganVaqt;
+
+    // Qaytish
+    private LocalDate qaytganSana;
 
     private LocalTime qaytganVaqt;
 
