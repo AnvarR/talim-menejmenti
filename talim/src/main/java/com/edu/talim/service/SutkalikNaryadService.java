@@ -23,7 +23,6 @@ public class SutkalikNaryadService {
     private final SutkalikNaryadRepository naryadRepository;
     private final StudentRepository studentRepository;
 
-    // Ro'yxat
     public Page<SutkalikNaryadResponseDTO> getAll(
             String oquvYili,
             Integer kurs,
@@ -36,21 +35,25 @@ public class SutkalikNaryadService {
             int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return naryadRepository.findAllWithFilters(
-                oquvYili, kurs, guruh, fio,
-                xizmatOtashJoyi,
-                parseDate(qabulQilishSanasi),
-                parseDate(topshirishSanasi),
-                pageable
-        ).map(this::toResponseDTO);
+
+        // Agar sana berilgan bo'lsa — sana bo'yicha filter
+        if (qabulQilishSanasi != null && !qabulQilishSanasi.isEmpty()) {
+            LocalDate sana = parseDate(qabulQilishSanasi);
+            if (sana != null) {
+                return naryadRepository.findByQabulQilishSanasi(sana, pageable)
+                        .map(this::toResponseDTO);
+            }
+        }
+
+        // Aks holda hammasi
+        return naryadRepository.findAllRecords(pageable)
+                .map(this::toResponseDTO);
     }
 
-    // Bitta
     public SutkalikNaryadResponseDTO getById(Long id) {
         return toResponseDTO(findById(id));
     }
 
-    // Qo'shish
     public SutkalikNaryadResponseDTO create(SutkalikNaryadCreateDTO dto) {
         Student student = studentRepository.findById(dto.getStudentId())
                 .orElseThrow(() -> new RuntimeException("Kursant topilmadi!"));
@@ -66,7 +69,6 @@ public class SutkalikNaryadService {
         return toResponseDTO(naryadRepository.save(naryad));
     }
 
-    // Tahrirlash
     public SutkalikNaryadResponseDTO update(Long id, SutkalikNaryadCreateDTO dto) {
         SutkalikNaryad naryad = findById(id);
 
@@ -78,7 +80,6 @@ public class SutkalikNaryadService {
         return toResponseDTO(naryadRepository.save(naryad));
     }
 
-    // O'chirish
     public void delete(Long id) {
         naryadRepository.delete(findById(id));
     }

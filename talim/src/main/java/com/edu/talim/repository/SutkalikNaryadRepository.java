@@ -8,30 +8,27 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
 @Repository
 public interface SutkalikNaryadRepository extends JpaRepository<SutkalikNaryad, Long> {
 
+    // Qabul qilish sanasi bo'yicha filter
     @Query("""
         SELECT n FROM SutkalikNaryad n
         LEFT JOIN n.student s
         LEFT JOIN s.course c
         LEFT JOIN s.group g
-        WHERE (:oquvYili IS NULL OR n.oquvYili = :oquvYili)
-        AND (:kurs IS NULL OR c.kursRaqami = :kurs)
-        AND (:guruh IS NULL OR g.guruhNomi = :guruh)
-        AND (:fio IS NULL OR s.fio LIKE %:fio%)
-        AND (:xizmatOtashJoyi IS NULL OR CAST(n.xizmatOtashJoyi AS string) = :xizmatOtashJoyi)
-        AND (:qabulQilishSanasi IS NULL OR n.qabulQilishSanasi = :qabulQilishSanasi)
-        AND (:topshirishSanasi IS NULL OR n.topshirishSanasi = :topshirishSanasi)
+        WHERE n.qabulQilishSanasi = :qabulQilishSanasi
     """)
-    Page<SutkalikNaryad> findAllWithFilters(
-            @Param("oquvYili") String oquvYili,
-            @Param("kurs") Integer kurs,
-            @Param("guruh") String guruh,
-            @Param("fio") String fio,
-            @Param("xizmatOtashJoyi") String xizmatOtashJoyi,
-            @Param("qabulQilishSanasi") java.time.LocalDate qabulQilishSanasi,
-            @Param("topshirishSanasi") java.time.LocalDate topshirishSanasi,
+    Page<SutkalikNaryad> findByQabulQilishSanasi(
+            @Param("qabulQilishSanasi") LocalDate qabulQilishSanasi,
             Pageable pageable
     );
+
+    // Barcha ma'lumotlar (filter yo'q)
+    @Query("""
+        SELECT n FROM SutkalikNaryad n
+    """)
+    Page<SutkalikNaryad> findAllRecords(Pageable pageable);
 }

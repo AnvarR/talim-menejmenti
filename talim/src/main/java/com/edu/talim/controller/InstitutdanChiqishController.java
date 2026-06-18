@@ -20,15 +20,15 @@ public class InstitutdanChiqishController {
             @RequestParam(required = false) String oquvYili,
             @RequestParam(required = false) Integer kurs,
             @RequestParam(required = false) String guruh,
-            @RequestParam(required = false) String fio,
-            @RequestParam(required = false) String chiqishSababi,
             @RequestParam(required = false) String chiqganSana,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size
     ) {
+        if (guruh != null && guruh.isBlank()) guruh = null;
+        if (oquvYili != null && oquvYili.isBlank()) oquvYili = null;
+
         return ResponseEntity.ok(chiqishService.getAll(
-                oquvYili, kurs, guruh, fio,
-                chiqishSababi, chiqganSana, page, size
+                oquvYili, kurs, guruh, chiqganSana, page, size
         ));
     }
 

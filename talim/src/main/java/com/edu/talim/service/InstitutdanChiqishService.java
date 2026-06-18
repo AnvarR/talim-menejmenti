@@ -28,19 +28,24 @@ public class InstitutdanChiqishService {
             String oquvYili,
             Integer kurs,
             String guruh,
-            String fio,
-            String chiqishSababi,
             String chiqganSana,
             int page,
             int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return chiqishRepository.findAllWithFilters(
-                oquvYili, kurs, guruh, fio,
-                chiqishSababi,
-                parseDate(chiqganSana),
-                pageable
-        ).map(this::toResponseDTO);
+
+        // Agar sana berilgan bo'lsa — sana bo'yicha filter
+        if (chiqganSana != null && !chiqganSana.isEmpty()) {
+            LocalDate sana = parseDate(chiqganSana);
+            if (sana != null) {
+                return chiqishRepository.findByChiqganSana(sana, pageable)
+                        .map(this::toResponseDTO);
+            }
+        }
+
+        // Aks holda hammasi
+        return chiqishRepository.findAllRecords(pageable)
+                .map(this::toResponseDTO);
     }
 
     public InstitutdanChiqishResponseDTO getById(Long id) {
