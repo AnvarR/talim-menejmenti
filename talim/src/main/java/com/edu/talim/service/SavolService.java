@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class SavolService {
     private final JavobRepository javobRepository;
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
+    private final FileService fileService;
 
     // Barcha savollar — sahifalash bilan
     public Page<SavolResponseDTO> getAll(int page, int size) {
@@ -46,15 +48,39 @@ public class SavolService {
                 .mavzu(dto.getMavzu())
                 .mazmun(dto.getMazmun())
                 .faylUrl(dto.getFaylUrl())
-                .korishlarSoni(0) // yangi savolda ko'rishlar 0 dan boshlanadi
+                .korishlarSoni(0)
                 .build();
 
         return toResponseDTO(savolRepository.save(savol));
     }
 
+    // Savolga fayl yuklash — maksimum 5 MB
+    public SavolResponseDTO uploadFayl(Long id, MultipartFile fayl) {
+        // Fayl hajmini tekshirish: 5 MB = 5 * 1024 * 1024 bayt
+        if (fayl.getSize() > 5 * 1024 * 1024) {
+            throw new RuntimeException("Fayl hajmi 5 MB dan oshmasligi kerak!");
+        }
+
+        Savol savol = findById(id);
+        // Eski fayl bo'lsa o'chiriladi
+        if (savol.getFaylUrl() != null) {
+            fileService.deleteFile(savol.getFaylUrl());
+        }
+
+        // Yangi fayl saqlanadi
+        String faylUrl = fileService.saveFile(fayl);
+        savol.setFaylUrl(faylUrl);
+        return toResponseDTO(savolRepository.save(savol));
+    }
+
     // Savolni o'chirish
     public void delete(Long id) {
-        savolRepository.delete(findById(id));
+        Savol savol = findById(id);
+        // Savol o'chirilganda fayli ham o'chiriladi
+        if (savol.getFaylUrl() != null) {
+            fileService.deleteFile(savol.getFaylUrl());
+        }
+        savolRepository.delete(savol);
     }
 
     // 4 ta karta uchun statistika

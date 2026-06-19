@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/savollar")
@@ -16,13 +17,13 @@ public class SavolController {
 
     private final SavolService savolService;
 
-    // 4 ta karta uchun statistika — sahifa ochilganda chaqiriladi
+    // 4 ta karta uchun statistika
     @GetMapping("/statistika")
     public ResponseEntity<SavolStatistikaDTO> getStatistika() {
         return ResponseEntity.ok(savolService.getStatistika());
     }
 
-    // Barcha savollar ro'yxati — sahifalash bilan
+    // Barcha savollar ro'yxati
     @GetMapping
     public ResponseEntity<Page<SavolResponseDTO>> getAll(
             @RequestParam(defaultValue = "0") int page,
@@ -31,7 +32,7 @@ public class SavolController {
         return ResponseEntity.ok(savolService.getAll(page, size));
     }
 
-    // Bitta savolni ko'rish — korishlarSoni +1 bo'ladi
+    // Bitta savol (korishlarSoni +1)
     @GetMapping("/{id}")
     public ResponseEntity<SavolResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(savolService.getById(id));
@@ -41,6 +42,15 @@ public class SavolController {
     @PostMapping
     public ResponseEntity<SavolResponseDTO> create(@RequestBody SavolCreateDTO dto) {
         return ResponseEntity.ok(savolService.create(dto));
+    }
+
+    // Savolga fayl yuklash — max 5 MB
+    @PostMapping(value = "/{id}/fayl", consumes = "multipart/form-data")
+    public ResponseEntity<SavolResponseDTO> uploadFayl(
+            @PathVariable Long id,
+            @RequestParam("fayl") MultipartFile fayl
+    ) {
+        return ResponseEntity.ok(savolService.uploadFayl(id, fayl));
     }
 
     // Savolni o'chirish

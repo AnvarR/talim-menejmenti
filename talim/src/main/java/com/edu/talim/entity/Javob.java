@@ -24,7 +24,7 @@ public class Javob {
 
     // Qaysi savolga javob
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "savol_id", nullable = false)
+    @JoinColumn(name = "savol_id", nullable = false, foreignKey = @ForeignKey(name = "fk_javob_savol"))
     private Savol savol;
 
     // Javob beruvchi
