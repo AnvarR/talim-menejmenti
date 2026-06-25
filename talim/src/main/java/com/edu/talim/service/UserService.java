@@ -30,6 +30,14 @@ public class UserService {
                 .toList();
     }
 
+    // Kafedradagi barcha o'qituvchilar — fan taqsimlashda o'qituvchi tanlash uchun
+    public List<UserDetailDTO> getOqituvchilar(Long kafedraId) {
+        return userRepository.findAllByTarkibiyTuzilmaIdAndRole(kafedraId, Role.OQITUVCHI)
+                .stream()
+                .map(this::toDetailDTO)
+                .toList();
+    }
+
     // Bitta user
     public UserDetailDTO getById(Long id) {
         return toDetailDTO(findById(id));
@@ -41,6 +49,17 @@ public class UserService {
         if (userRepository.existsByJshshir(dto.getJshshir())) {
             throw new RuntimeException("Bu JSHSHIR bilan foydalanuvchi allaqachon mavjud!");
         }
+
+        // Kafedra boshlig'i tekshiruvi
+        if ("KAFEDRA_BOSHLIGHI".equals(dto.getFoydalanuvchiRoli()) && dto.getTarkibiyTuzilmaId() != null) {
+            boolean boshligBor = userRepository
+                    .findByTarkibiyTuzilmaIdAndRole(dto.getTarkibiyTuzilmaId(), Role.KAFEDRA_BOSHLIGHI)
+                    .isPresent();
+            if (boshligBor) {
+                throw new RuntimeException("Bu kafedrада allaqachon kafedra boshlig'i mavjud!");
+            }
+        }
+
         User user = buildUser(dto);
         return toDetailDTO(userRepository.save(user));
     }
@@ -76,14 +95,12 @@ public class UserService {
     // Parol o'zgartirish
     public void changePassword(Long id, ChangePasswordDTO dto) {
         User user = findById(id);
-
         if (!user.getPassword().equals(dto.getHozirgiParol())) {
             throw new RuntimeException("Hozirgi parol noto'g'ri!");
         }
         if (!dto.getYangiParol().equals(dto.getYangiParolTakror())) {
             throw new RuntimeException("Yangi parollar mos kelmaydi!");
         }
-
         user.setPassword(dto.getYangiParol());
         userRepository.save(user);
     }

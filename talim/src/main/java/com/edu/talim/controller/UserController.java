@@ -16,10 +16,18 @@ public class UserController {
 
     private final UserService userService;
 
-    // Hammasini olish
+    // Barcha xodimlar
     @GetMapping
     public ResponseEntity<List<UserDetailDTO>> getAll() {
         return ResponseEntity.ok(userService.getAll());
+    }
+
+    // Kafedradagi o'qituvchilar ro'yxati — fan taqsimlashda o'qituvchi tanlash uchun
+    @GetMapping("/oqituvchilar")
+    public ResponseEntity<List<UserDetailDTO>> getOqituvchilar(
+            @RequestParam Long kafedraId
+    ) {
+        return ResponseEntity.ok(userService.getOqituvchilar(kafedraId));
     }
 
     // Bitta user
@@ -35,7 +43,7 @@ public class UserController {
     }
 
     // Rasm yuklash
-    @PostMapping("/{id}/photo")
+    @PostMapping(value = "/{id}/photo", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadPhoto(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file

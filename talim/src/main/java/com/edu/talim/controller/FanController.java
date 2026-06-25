@@ -15,28 +15,28 @@ public class FanController {
 
     private final FanService fanService;
 
+    // Barcha fanlar ro'yxati — sahifalash bilan
     @GetMapping
     public ResponseEntity<Page<FanResponseDTO>> getAll(
-            @RequestParam(required = false) Long kafedraId,
-            @RequestParam(required = false) String fanNomi,
-            @RequestParam(required = false) Long kursId,
-            @RequestParam(required = false) Long guruhId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size
     ) {
-        return ResponseEntity.ok(fanService.getAll(kafedraId, fanNomi, kursId, guruhId, page, size));
+        return ResponseEntity.ok(fanService.getAll(page, size));
     }
 
+    // Bitta fan
     @GetMapping("/{id}")
     public ResponseEntity<FanResponseDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(fanService.getById(id));
     }
 
+    // Yangi fan qo'shish
     @PostMapping
     public ResponseEntity<FanResponseDTO> create(@RequestBody FanCreateDTO dto) {
         return ResponseEntity.ok(fanService.create(dto));
     }
 
+    // Fanni tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<FanResponseDTO> update(
             @PathVariable Long id,
@@ -45,6 +45,7 @@ public class FanController {
         return ResponseEntity.ok(fanService.update(id, dto));
     }
 
+    // Fanni o'chirish
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         fanService.delete(id);
