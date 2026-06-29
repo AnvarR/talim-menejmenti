@@ -36,7 +36,13 @@ public class FanService {
     }
 
     // Yangi fan qo'shish
+    // Yangi fan qo'shish
     public FanResponseDTO create(FanCreateDTO dto) {
+        // Dublikat tekshiruvi — bir xil kafedra + fan nomi
+        if (fanRepository.existsByKafedraIdAndFanNomi(dto.getKafedraId(), dto.getFanNomi())) {
+            throw new RuntimeException("Bu fan oldin qo'shilgan!");
+        }
+
         TarkibiyTuzilma kafedra = tarkibiyTuzilmaRepository.findById(dto.getKafedraId())
                 .orElseThrow(() -> new RuntimeException("Kafedra topilmadi!"));
 

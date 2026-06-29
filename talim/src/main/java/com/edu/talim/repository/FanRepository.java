@@ -14,6 +14,9 @@ public interface FanRepository extends JpaRepository<Fan, Long> {
     // Barcha fanlar — sahifalash bilan
     Page<Fan> findAllByOrderByIdDesc(Pageable pageable);
 
-    // Kafedra bo'yicha fanlar (FanTaqsimlash da ishlatiladi)
+    // Kafedra bo'yicha fanlar
     List<Fan> findByKafedraId(Long kafedraId);
+
+    // Dublikat tekshiruvi — bir xil kafedra + fan nomi
+    boolean existsByKafedraIdAndFanNomi(Long kafedraId, String fanNomi);
 }
