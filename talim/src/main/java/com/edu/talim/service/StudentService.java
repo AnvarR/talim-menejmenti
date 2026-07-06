@@ -9,7 +9,9 @@ import com.edu.talim.entity.Student;
 import com.edu.talim.entity.enums.*;
 import com.edu.talim.repository.CourseRepository;
 import com.edu.talim.repository.GroupRepository;
+import com.edu.talim.repository.InstitutdanChiqishRepository;
 import com.edu.talim.repository.StudentRepository;
+import com.edu.talim.repository.SutkalikNaryadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,10 @@ public class StudentService {
     private final CourseRepository courseRepository;
     private final GroupRepository groupRepository;
     private final FileService fileService;
+    private final InstitutdanChiqishRepository institutdanChiqishRepository;
+    private final SutkalikNaryadRepository sutkalikNaryadRepository;
 
-    // Ro'yxat
+    // Ro'yxat (filter bilan)
     public Page<StudentListDTO> getAll(
             String type,
             String oquvYili,
@@ -85,6 +89,19 @@ public class StudentService {
     // O'chirish
     public void delete(Long id) {
         Student student = findById(id);
+
+        // Institutdan chiqish yozuvi bormi tekshirish
+        if (institutdanChiqishRepository.existsByStudentId(id)) {
+            throw new RuntimeException(
+                    "Bu kursantda institutdan chiqish yozuvi mavjud, o'chirib bo'lmaydi!");
+        }
+
+        // Sutkalik naryad yozuvi bormi tekshirish
+        if (sutkalikNaryadRepository.existsByStudentId(id)) {
+            throw new RuntimeException(
+                    "Bu kursantda sutkalik naryad yozuvi mavjud, o'chirib bo'lmaydi!");
+        }
+
         if (student.getPhotoUrl() != null) {
             fileService.deleteFile(student.getPhotoUrl());
         }
@@ -132,9 +149,10 @@ public class StudentService {
                     .orElseThrow(() -> new RuntimeException("Kurs topilmadi"));
         }
 
-        // Guruh topish yoki yaratish
+        // Guruh faqat TINGLOVCHI uchun
         Group group = null;
-        if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
+        boolean tinglovchiMi = "TINGLOVCHI".equalsIgnoreCase(dto.getType());
+        if (tinglovchiMi && dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
             if (course != null) {
                 Course finalCourse = course;
                 group = groupRepository
@@ -160,8 +178,7 @@ public class StudentService {
         // Avtomatik username, password, role
         String username = dto.getPassportSeria();
         String password = "12345678";
-        Role role = dto.getType().equalsIgnoreCase("KURSANT")
-                ? Role.KURSANT : Role.TINGLOVCHI;
+        Role role = tinglovchiMi ? Role.TINGLOVCHI : Role.KURSANT;
 
         return Student.builder()
                 .jshshir(dto.getJshshir())
@@ -191,6 +208,8 @@ public class StudentService {
     }
 
     private void updateStudent(Student student, StudentCreateDTO dto) {
+        boolean tinglovchiMi = "TINGLOVCHI".equalsIgnoreCase(dto.getType());
+
         student.setFio(dto.getFio());
         student.setJshshir(dto.getJshshir());
         student.setMalumoti(dto.getMalumoti() != null ? Malumot.fromLabel(dto.getMalumoti()) : null);
@@ -217,7 +236,8 @@ public class StudentService {
                     .orElseThrow(() -> new RuntimeException("Kurs topilmadi"));
             student.setCourse(course);
 
-            if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
+            // Guruh faqat TINGLOVCHI uchun yangilanadi
+            if (tinglovchiMi && dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
                 Course finalCourse = course;
                 Group group = groupRepository
                         .findByGuruhNomiAndCourseId(dto.getGuruhi(), course.getId())
@@ -231,7 +251,7 @@ public class StudentService {
             }
         } else {
             student.setCourse(null);
-            if (dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
+            if (tinglovchiMi && dto.getGuruhi() != null && !dto.getGuruhi().isEmpty()) {
                 Group group = groupRepository
                         .findByGuruhNomi(dto.getGuruhi())
                         .orElseGet(() -> groupRepository.save(

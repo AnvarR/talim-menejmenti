@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @Repository
 public interface SutkalikNaryadRepository extends JpaRepository<SutkalikNaryad, Long> {
 
+    // Kursantga tegishli naryad yozuvi bormi tekshirish (o'chirishdan oldin)
+    boolean existsByStudentId(Long studentId);
+
     // Qabul qilish sanasi bo'yicha filter
     @Query("""
         SELECT n FROM SutkalikNaryad n

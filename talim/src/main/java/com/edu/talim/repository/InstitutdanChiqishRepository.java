@@ -29,4 +29,5 @@ public interface InstitutdanChiqishRepository extends JpaRepository<InstitutdanC
         SELECT c FROM InstitutdanChiqish c
     """)
     Page<InstitutdanChiqish> findAllRecords(Pageable pageable);
+    boolean existsByStudentId(Long studentId);
 }
