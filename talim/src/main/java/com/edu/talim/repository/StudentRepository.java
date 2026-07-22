@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -37,4 +38,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     boolean existsByJshshir(String jshshir);
 
     Optional<Student> findByUsername(String username);
+
+    // Guruhga tegishli kursantlar ro'yxati
+    List<Student> findByGroupId(Long groupId);
+
+    // Guruhga tegishli kursantlar - fio bo'yicha alifbo tartibida
+    List<Student> findByGroupIdOrderByFioAsc(Long groupId);
 }

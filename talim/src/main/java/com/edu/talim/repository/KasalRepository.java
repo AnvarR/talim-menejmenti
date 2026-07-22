@@ -33,14 +33,16 @@ public interface KasalRepository extends JpaRepository<Kasal, Long> {
             Pageable pageable
     );
 
-    // Kursant hozir ham kasallar ro'yxatida bormi?
+    // Kursant shu sanada kasallar ro'yxatida bormi?
+    // Boshlanish sanasi <= dars sanasi <= tugash sanasi
     @Query("""
         SELECT COUNT(k) > 0 FROM Kasal k
         WHERE k.student.id = :studentId
-        AND k.tugashSanasi >= :bugun
+        AND k.boshlanishSanasi <= :sana
+        AND k.tugashSanasi >= :sana
     """)
     boolean existsActiveKasal(
             @Param("studentId") Long studentId,
-            @Param("bugun") LocalDate bugun
+            @Param("sana") LocalDate sana
     );
 }

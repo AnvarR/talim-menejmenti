@@ -16,6 +16,9 @@ public interface SutkalikNaryadRepository extends JpaRepository<SutkalikNaryad, 
     // Kursantga tegishli naryad yozuvi bormi tekshirish (o'chirishdan oldin)
     boolean existsByStudentId(Long studentId);
 
+    // Kursant shu kunda naryadda bormi tekshirish (davomat uchun)
+    boolean existsByStudentIdAndQabulQilishSanasi(Long studentId, LocalDate qabulQilishSanasi);
+
     // Qabul qilish sanasi bo'yicha filter
     @Query("""
         SELECT n FROM SutkalikNaryad n

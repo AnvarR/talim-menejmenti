@@ -1,0 +1,39 @@
+package com.edu.talim.repository;
+
+import com.edu.talim.entity.DarsJurnali;
+import com.edu.talim.entity.enums.DarsTuri;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface DarsJurnaliRepository extends JpaRepository<DarsJurnali, Long> {
+
+    // O'qituvchi fan taqsimlash, dars turi va o'quv yili bo'yicha darslar
+    List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliId(
+            Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId);
+
+    // Bir xil sana va taqsimlashda dars bormi tekshirish
+    Optional<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
+            Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, LocalDate sana);
+
+    // Blok tekshiruvi uchun: kursantning so'nggi N/K/S/Y davomati
+    @Query("""
+        SELECT d FROM Davomat d
+        WHERE d.student.id = :studentId
+        AND d.holat IN ('N', 'K', 'S', 'Y')
+        AND d.bloklanganMi = false
+        AND d.darsJurnali.sana <= :bugun
+        AND d.darsJurnali.sana >= :yettaKunOldin
+    """)
+    List<com.edu.talim.entity.Davomat> findQaytaTopshirishKeraklar(
+            @Param("studentId") Long studentId,
+            @Param("bugun") LocalDate bugun,
+            @Param("yettaKunOldin") LocalDate yettaKunOldin
+    );
+}

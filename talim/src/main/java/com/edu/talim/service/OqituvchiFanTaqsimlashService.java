@@ -72,6 +72,8 @@ public class OqituvchiFanTaqsimlashService {
             case MARUZA -> fanTaqsimlash.getMarruzaSoati();
             case SEMINAR -> fanTaqsimlash.getSeminarSoati();
             case MUSTAQIL_TALIM -> fanTaqsimlash.getMustaqilTalimSoati();
+            // Amaliyot/Kurs ishi uchun alohida soat maydoni yo'q, null qo'yamiz
+            case AMALIYOT_KURS_ISHI -> null;
         };
 
         OqituvchiFanTaqsimlash taqsimlash = OqituvchiFanTaqsimlash.builder()
@@ -115,6 +117,8 @@ public class OqituvchiFanTaqsimlashService {
             case MARUZA -> fanTaqsimlash.getMarruzaSoati();
             case SEMINAR -> fanTaqsimlash.getSeminarSoati();
             case MUSTAQIL_TALIM -> fanTaqsimlash.getMustaqilTalimSoati();
+            // Amaliyot/Kurs ishi uchun alohida soat maydoni yo'q, null qo'yamiz
+            case AMALIYOT_KURS_ISHI -> null;
         };
 
         taqsimlash.setFanTaqsimlash(fanTaqsimlash);
