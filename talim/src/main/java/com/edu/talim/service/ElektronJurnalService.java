@@ -52,17 +52,16 @@ public class ElektronJurnalService {
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
                 .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
 
-        // Barcha darslar (sana filtersiz — frontend semestr bo'yicha ajratadi)
+        // Shu semestrga tegishli darslar
         List<DarsJurnali> darslar = darsJurnaliRepository
-                .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliId(
-                        oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId)
+                .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
+                        oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId, semestr)
                 .stream()
                 .sorted(Comparator.comparing(DarsJurnali::getSana))
                 .collect(Collectors.toList());
 
-        // O'quv yili davomida barcha sanalar (R(KB) hisoblash uchun)
+        // O'quv yili boshlanish sanasi (R(KB) ning eng birinchi hisoblash nuqtasi)
         LocalDate oquvYiliBoshlanish = LocalDate.of(oquvYili.getBoshlanishYil(), 9, 1);
-        LocalDate oquvYiliTugash = LocalDate.of(oquvYili.getTugashYil(), 6, 30);
 
         // Guruhidagi barcha kursantlar (alifbo tartibida)
         List<Student> kursantlar = new ArrayList<>();
@@ -72,28 +71,31 @@ public class ElektronJurnalService {
             }
         }
 
-        // Oraliq nazorat baholari (shu semestr)
-        List<OraliqNazorat> oraliqlar = oraliqNazoratRepository
-                .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestr(
-                        oqituvchiFanTaqsimlashId, oquvYiliId, semestr);
+        // Shu semestrning 1- va 2-oraliq nazorat baholari
+        List<OraliqNazorat> oraliq1lar = oraliqNazoratRepository
+                .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
+                        oqituvchiFanTaqsimlashId, oquvYiliId, semestr, 1);
+        List<OraliqNazorat> oraliq2lar = oraliqNazoratRepository
+                .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
+                        oqituvchiFanTaqsimlashId, oquvYiliId, semestr, 2);
+
+        // Butun o'quv yili davomidagi barcha oraliqlar (ikkala semestr) —
+        // R(KB) uchun "oldingi kesim sanasi"ni aniqlashda kerak bo'ladi
+        List<OraliqNazorat> yilOraliqlari = oraliqNazoratRepository
+                .findByOqituvchiFanTaqsimlashIdAndOquvYiliId(oqituvchiFanTaqsimlashId, oquvYiliId);
 
         // Yakuniy nazorat baholari
         List<YakuniyNazorat> yakuniylar = yakuniyNazoratRepository
                 .findByOqituvchiFanTaqsimlashIdAndOquvYiliId(
                         oqituvchiFanTaqsimlashId, oquvYiliId);
 
-        // 1-semestr oraliq nazorat baholari (R(ON.SEM) uchun)
-        List<OraliqNazorat> birinchiSemestrOraliqlar = oraliqNazoratRepository
-                .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestr(
-                        oqituvchiFanTaqsimlashId, oquvYiliId, Semestr.BIRINCHI);
-
         // Kursantlar uchun jadval yaratish
         List<ElektronJurnalResponseDTO.KursantJurnalDTO> kursantJurnallar =
                 kursantlar.stream()
                         .map(student -> buildKursantJurnal(
-                                student, darslar, oraliqlar, birinchiSemestrOraliqlar,
-                                yakuniylar, oqituvchiFanTaqsimlashId, oquvYiliId,
-                                semestr, oquvYiliBoshlanish, oquvYiliTugash))
+                                student, darslar, oraliq1lar, oraliq2lar, yilOraliqlari,
+                                yakuniylar, oqituvchiFanTaqsimlashId,
+                                oquvYiliBoshlanish))
                         .collect(Collectors.toList());
 
         // Guruh nomini birlashtirish
@@ -121,7 +123,7 @@ public class ElektronJurnalService {
     // Yangi dars qo'shish (sana tanlanganda)
     @Transactional
     public DarsJurnaliResponseDTO darsQoshish(Long oqituvchiFanTaqsimlashId,
-                                              DarsTuri darsTuri, LocalDate sana) {
+                                              DarsTuri darsTuri, Semestr semestr, LocalDate sana) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
@@ -140,6 +142,7 @@ public class ElektronJurnalService {
                 .oqituvchiFanTaqsimlash(taqsimlash)
                 .oquvYili(faolYil)
                 .darsTuri(darsTuri)
+                .semestr(semestr)
                 .sana(sana)
                 .soat(2)
                 .build();
@@ -155,6 +158,39 @@ public class ElektronJurnalService {
         return toDarsDTO(darsJurnali, taqsimlash, faolYil);
     }
 
+    // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
+    @Transactional
+    public DarsJurnaliResponseDTO darsSanasiniOzgartirish(Long darsJurnaliId, LocalDate yangiSana) {
+        DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
+                .orElseThrow(() -> new RuntimeException("Dars topilmadi: " + darsJurnaliId));
+
+        darsJurnaliRepository.findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
+                        darsJurnali.getOqituvchiFanTaqsimlash().getId(),
+                        darsJurnali.getDarsTuri(), yangiSana)
+                .filter(d -> !d.getId().equals(darsJurnaliId))
+                .ifPresent(d -> {
+                    throw new RuntimeException("Bu sana uchun dars allaqachon mavjud: " + yangiSana);
+                });
+
+        darsJurnali.setSana(yangiSana);
+        darsJurnali = darsJurnaliRepository.save(darsJurnali);
+
+        return toDarsDTO(darsJurnali, darsJurnali.getOqituvchiFanTaqsimlash(), darsJurnali.getOquvYili());
+    }
+
+    // Darsni o'chirish (cheklovsiz — istalgan vaqtda), bog'liq davomatlar bilan birga
+    @Transactional
+    public void darsniOchirish(Long darsJurnaliId) {
+        DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
+                .orElseThrow(() -> new RuntimeException("Dars topilmadi: " + darsJurnaliId));
+
+        List<AmaliyDavomat> davomatlar = amaliyDavomatRepository
+                .findByDarsJurnaliIdOrderByStudentFioAsc(darsJurnaliId);
+        amaliyDavomatRepository.deleteAll(davomatlar);
+
+        darsJurnaliRepository.delete(darsJurnali);
+    }
+
     // Davomat/baho yangilash
     @Transactional
     public AmaliyDavomatResponseDTO davomatYangilash(Long davomatId,
@@ -167,37 +203,58 @@ public class ElektronJurnalService {
             throw new RuntimeException("Kursant bloklangan! Dekanat ruxsati kerak.");
         }
 
-        if (baho != null) {
-            if (baho < 3 || baho > 5) {
-                throw new RuntimeException("Baho 3, 4 yoki 5 bo'lishi kerak!");
+        // Qayta topshirish bosqichimi: kursant avval qatnashmagan (N/K/S/Y)
+        // YOKI darsni o'zlashtirmasdan eng past baho (2) olgan bo'lsa
+        boolean qaytaTopshirishBosqichi = davomat.getHolat() != null
+                || (davomat.getBaho() != null && davomat.getBaho() == 2);
+
+        if (qaytaTopshirishBosqichi) {
+            // Bu bosqichda faqat baho (2/3/4/5) orqali amalga oshiriladi, holat qayta o'rnatilmaydi
+            if (holat != null) {
+                throw new RuntimeException(
+                        "Bu amalni amalga oshirolmaysiz! Qayta topshirish faqat baho (2, 3, 4 yoki 5) qo'yish orqali amalga oshiriladi.");
             }
-            // Agar avval holat bo'lsa (N/K/S/Y) — qayta topshirish bahosi
-            if (davomat.getHolat() != null) {
-                davomat.setQaytaTopshirishBaho(baho);
-            } else {
+            if (baho == null) {
+                throw new RuntimeException("Qayta topshirish uchun baho (2, 3, 4 yoki 5) kiriting!");
+            }
+            if (baho < 2 || baho > 5) {
+                throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
+            }
+            davomat.setQaytaTopshirishBaho(baho);
+        } else {
+            if (holat != null) {
+                davomat.setHolat(holat);
+            }
+            if (baho != null) {
+                if (baho < 2 || baho > 5) {
+                    throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
+                }
                 davomat.setBaho(baho);
             }
-        }
-
-        if (holat != null) {
-            davomat.setHolat(holat);
         }
 
         return toAmaliyDavomatDTO(amaliyDavomatRepository.save(davomat));
     }
 
-    // Oraliq nazorat bahosini kiritish/yangilash
+    // Oraliq nazorat bahosini kiritish/yangilash (oraliqRaqami: 1 yoki 2, kesimSanasi — o'qituvchi belgilaydi)
     @Transactional
     public void oraliqNazoratYangilash(Long oqituvchiFanTaqsimlashId,
                                        Long studentId, Long oquvYiliId,
-                                       Semestr semestr, Integer baho) {
-        if (baho < 3 || baho > 5) {
-            throw new RuntimeException("Baho 3, 4 yoki 5 bo'lishi kerak!");
+                                       Semestr semestr, Integer oraliqRaqami,
+                                       LocalDate kesimSanasi, Integer baho) {
+        if (baho < 2 || baho > 5) {
+            throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
+        }
+        if (oraliqRaqami == null || (oraliqRaqami != 1 && oraliqRaqami != 2)) {
+            throw new RuntimeException("Oraliq raqami 1 yoki 2 bo'lishi kerak!");
+        }
+        if (kesimSanasi == null) {
+            throw new RuntimeException("Kesim sanasi kiritilishi shart!");
         }
 
         OraliqNazorat nazorat = oraliqNazoratRepository
-                .findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliIdAndSemestr(
-                        oqituvchiFanTaqsimlashId, studentId, oquvYiliId, semestr)
+                .findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
+                        oqituvchiFanTaqsimlashId, studentId, oquvYiliId, semestr, oraliqRaqami)
                 .orElse(null);
 
         if (nazorat == null) {
@@ -214,9 +271,12 @@ public class ElektronJurnalService {
                     .student(student)
                     .oquvYili(oquvYili)
                     .semestr(semestr)
+                    .oraliqRaqami(oraliqRaqami)
+                    .kesimSanasi(kesimSanasi)
                     .ronBaho(baho)
                     .build();
         } else {
+            nazorat.setKesimSanasi(kesimSanasi);
             nazorat.setRonBaho(baho);
         }
 
@@ -228,8 +288,8 @@ public class ElektronJurnalService {
     public void yakuniyNazoratYangilash(Long oqituvchiFanTaqsimlashId,
                                         Long studentId, Long oquvYiliId,
                                         Integer baho) {
-        if (baho < 3 || baho > 5) {
-            throw new RuntimeException("Baho 3, 4 yoki 5 bo'lishi kerak!");
+        if (baho < 2 || baho > 5) {
+            throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
         }
 
         YakuniyNazorat nazorat = yakuniyNazoratRepository
@@ -261,17 +321,50 @@ public class ElektronJurnalService {
 
     // ====================== Yordamchi metodlar ======================
 
+    // Maxsus yaxlitlash qoidasi: kasr qismi 0.51 dan katta yoki teng bo'lsa yuqoriga,
+    // aks holda pastga yaxlitlanadi (masalan 4.51->5, 4.50->4; 3.51->4, 3.50->3).
+    private Double yaxlaBaho(Double qiymat) {
+        if (qiymat == null) return null;
+        long butun = (long) Math.floor(qiymat);
+        double kasr = qiymat - butun;
+        return kasr >= 0.51 ? (double) (butun + 1) : (double) butun;
+    }
+
+    // Kursant bo'yicha shu oraliqdan oldingi eng yaqin kesim sanasini topadi
+    // (yo'q bo'lsa — o'quv yili boshlanish sanasi qaytariladi)
+    private LocalDate oldingiKesimSanasi(List<OraliqNazorat> studentBoyichaOraliqlar,
+                                         LocalDate joriyKesim,
+                                         LocalDate oquvYiliBoshlanish) {
+        return studentBoyichaOraliqlar.stream()
+                .map(OraliqNazorat::getKesimSanasi)
+                .filter(sana -> sana != null && sana.isBefore(joriyKesim))
+                .max(LocalDate::compareTo)
+                .orElse(oquvYiliBoshlanish);
+    }
+
+    // R(KB) — berilgan sana oralig'idagi kunlik baholarning yaxlitlangan o'rtachasi
+    private Double hisoblaRkb(Long studentId, Long taqsimlashId,
+                              LocalDate boshlanish, LocalDate tugash) {
+        if (boshlanish == null || tugash == null || boshlanish.isAfter(tugash)) return null;
+        List<AmaliyDavomat> baholangan = amaliyDavomatRepository
+                .findBaholangan(studentId, taqsimlashId, boshlanish, tugash);
+        if (baholangan.isEmpty()) return null;
+        double sum = baholangan.stream()
+                .mapToInt(d -> d.getQaytaTopshirishBaho() != null ? d.getQaytaTopshirishBaho() :
+                        (d.getBaho() != null ? d.getBaho() : 0))
+                .sum();
+        return yaxlaBaho(sum / baholangan.size());
+    }
+
     private ElektronJurnalResponseDTO.KursantJurnalDTO buildKursantJurnal(
             Student student,
             List<DarsJurnali> darslar,
-            List<OraliqNazorat> oraliqlar,
-            List<OraliqNazorat> birinchiSemestrOraliqlar,
+            List<OraliqNazorat> oraliq1lar,
+            List<OraliqNazorat> oraliq2lar,
+            List<OraliqNazorat> yilOraliqlari,
             List<YakuniyNazorat> yakuniylar,
             Long taqsimlashId,
-            Long oquvYiliId,
-            Semestr semestr,
-            LocalDate boshlanish,
-            LocalDate tugash) {
+            LocalDate oquvYiliBoshlanish) {
 
         // Kursantning davomatlari (har bir dars uchun)
         List<AmaliyDavomatResponseDTO> davomatlar = darslar.stream()
@@ -284,52 +377,53 @@ public class ElektronJurnalService {
                                 .build()))
                 .collect(Collectors.toList());
 
-        // R(KB) — kunlik baholar o'rtachasi (butun o'quv yili davomida)
-        List<AmaliyDavomat> baholangan = amaliyDavomatRepository
-                .findBaholangan(student.getId(), taqsimlashId, boshlanish, tugash);
-        Double rkb = null;
-        if (!baholangan.isEmpty()) {
-            double sum = baholangan.stream()
-                    .mapToInt(d -> d.getBaho() != null ? d.getBaho() :
-                            (d.getQaytaTopshirishBaho() != null ?
-                                    d.getQaytaTopshirishBaho() : 0))
-                    .sum();
-            rkb = Math.round((sum / baholangan.size()) * 100.0) / 100.0;
-        }
-
-        // R(ON) — oraliq nazorat bahosi
-        Integer ron = oraliqlar.stream()
+        // Shu kursantga tegishli barcha oraliq nazorat yozuvlari (butun yil bo'yicha)
+        List<OraliqNazorat> mendagiYilOraliqlari = yilOraliqlari.stream()
                 .filter(o -> o.getStudent().getId().equals(student.getId()))
-                .findFirst()
-                .map(OraliqNazorat::getRonBaho)
-                .orElse(null);
+                .collect(Collectors.toList());
 
-        // R(MT) — hozircha null
-        Double rmt = null;
+        // ===== 1-ORALIQ =====
+        OraliqNazorat oraliq1 = oraliq1lar.stream()
+                .filter(o -> o.getStudent().getId().equals(student.getId()))
+                .findFirst().orElse(null);
 
-        // R(1ON) yoki R(2ON) = (R(KB) + R(ON) + R(MT)) / hisobga kiritilganlar soni
+        Double rkb1 = null;
+        Integer ron1 = null;
+        Double rmt1 = null; // hozircha null
         Double r1on = null;
-        if (rkb != null || ron != null) {
-            double sum = 0;
-            int count = 0;
-            if (rkb != null) { sum += rkb; count++; }
-            if (ron != null) { sum += ron; count++; }
-            if (rmt != null) { sum += rmt; count++; }
-            r1on = count > 0 ? Math.round((sum / count) * 100.0) / 100.0 : null;
+        LocalDate kesim1Sanasi = null;
+
+        if (oraliq1 != null) {
+            kesim1Sanasi = oraliq1.getKesimSanasi();
+            ron1 = oraliq1.getRonBaho();
+            LocalDate boshlanish1 = oldingiKesimSanasi(mendagiYilOraliqlari, kesim1Sanasi, oquvYiliBoshlanish);
+            rkb1 = hisoblaRkb(student.getId(), taqsimlashId, boshlanish1, kesim1Sanasi);
+            r1on = hisoblaOraliqNatija(rkb1, ron1, rmt1);
         }
 
-        // R(ON.SEM) — faqat 2-semestr uchun (R(1ON) + R(2ON)) / 2
-        Double ronSem = null;
-        if (semestr == Semestr.IKKINCHI) {
-            Integer ron1 = birinchiSemestrOraliqlar.stream()
-                    .filter(o -> o.getStudent().getId().equals(student.getId()))
-                    .findFirst()
-                    .map(OraliqNazorat::getRonBaho)
-                    .orElse(null);
+        // ===== 2-ORALIQ =====
+        OraliqNazorat oraliq2 = oraliq2lar.stream()
+                .filter(o -> o.getStudent().getId().equals(student.getId()))
+                .findFirst().orElse(null);
 
-            if (r1on != null && ron1 != null) {
-                ronSem = Math.round(((r1on + ron1) / 2) * 100.0) / 100.0;
-            }
+        Double rkb2 = null;
+        Integer ron2 = null;
+        Double rmt2 = null; // hozircha null
+        Double r2on = null;
+        LocalDate kesim2Sanasi = null;
+
+        if (oraliq2 != null) {
+            kesim2Sanasi = oraliq2.getKesimSanasi();
+            ron2 = oraliq2.getRonBaho();
+            LocalDate boshlanish2 = oldingiKesimSanasi(mendagiYilOraliqlari, kesim2Sanasi, oquvYiliBoshlanish);
+            rkb2 = hisoblaRkb(student.getId(), taqsimlashId, boshlanish2, kesim2Sanasi);
+            r2on = hisoblaOraliqNatija(rkb2, ron2, rmt2);
+        }
+
+        // R(ON.SEM) = (R(1ON)+R(2ON))/2
+        Double ronSem = null;
+        if (r1on != null && r2on != null) {
+            ronSem = yaxlaBaho((r1on + r2on) / 2);
         }
 
         // R(YN) — yakuniy nazorat bahosi
@@ -339,24 +433,41 @@ public class ElektronJurnalService {
                 .map(YakuniyNazorat::getYnBaho)
                 .orElse(null);
 
-        // R(SEM) = (R(ON.SEM) + R(YN)) / 2
+        // R(SEM) = (R(ON.SEM)+R(YN))/2
         Double rsem = null;
         if (ronSem != null && ryn != null) {
-            rsem = Math.round(((ronSem + ryn) / 2) * 100.0) / 100.0;
+            rsem = yaxlaBaho((ronSem + ryn) / 2);
         }
 
         return ElektronJurnalResponseDTO.KursantJurnalDTO.builder()
                 .studentId(student.getId())
                 .studentFio(student.getFio())
                 .davomatlar(davomatlar)
-                .rkb(rkb)
-                .ron(ron)
-                .rmt(rmt)
+                .rkb1(rkb1)
+                .ron1(ron1)
+                .rmt1(rmt1)
                 .r1on(r1on)
+                .kesim1Sanasi(kesim1Sanasi)
+                .rkb2(rkb2)
+                .ron2(ron2)
+                .rmt2(rmt2)
+                .r2on(r2on)
+                .kesim2Sanasi(kesim2Sanasi)
                 .ronSem(ronSem)
                 .ryn(ryn)
                 .rsem(rsem)
                 .build();
+    }
+
+    // R(1ON) yoki R(2ON) = mavjud komponentlar (R(KB), R(ON), R(MT)) o'rtachasi, yaxlitlangan
+    private Double hisoblaOraliqNatija(Double rkb, Integer ron, Double rmt) {
+        if (rkb == null && ron == null && rmt == null) return null;
+        double sum = 0;
+        int count = 0;
+        if (rkb != null) { sum += rkb; count++; }
+        if (ron != null) { sum += ron; count++; }
+        if (rmt != null) { sum += rmt; count++; }
+        return count > 0 ? yaxlaBaho(sum / count) : null;
     }
 
     private void yaratAmaliyDavomatlar(DarsJurnali darsJurnali,
@@ -423,6 +534,7 @@ public class ElektronJurnalService {
                 .oquvYiliId(oquvYili.getId())
                 .oquvYiliNomi(oquvYili.getNom())
                 .darsTuri(entity.getDarsTuri())
+                .semestr(entity.getSemestr())
                 .sana(entity.getSana())
                 .soat(entity.getSoat())
                 .mavzuNomi(entity.getMavzuNomi())

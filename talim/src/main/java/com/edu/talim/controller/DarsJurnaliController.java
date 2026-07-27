@@ -2,8 +2,10 @@ package com.edu.talim.controller;
 
 import com.edu.talim.dto.DarsJurnaliResponseDTO;
 import com.edu.talim.dto.DavomatResponseDTO;
+import com.edu.talim.dto.MavzuDTO;
 import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.DavomatHolati;
+import com.edu.talim.entity.enums.Semestr;
 import com.edu.talim.service.DarsJurnaliService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,9 +30,10 @@ public class DarsJurnaliController {
     public ResponseEntity<List<DarsJurnaliResponseDTO>> getAll(
             @RequestParam Long oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
+            @RequestParam Semestr semestr,
             @RequestParam Long oquvYiliId) {
         return ResponseEntity.ok(
-                darsJurnaliService.getAll(oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId));
+                darsJurnaliService.getAll(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId));
     }
 
     // Bitta dars
@@ -39,14 +42,15 @@ public class DarsJurnaliController {
         return ResponseEntity.ok(darsJurnaliService.getById(id));
     }
 
-    // Yangi dars qo'shish (sana tanlanganda)
+    // Yangi dars qo'shish (sana va semestr tanlanganda)
     @PostMapping
     public ResponseEntity<DarsJurnaliResponseDTO> create(
             @RequestParam Long oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
+            @RequestParam Semestr semestr,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana) {
         return ResponseEntity.ok(
-                darsJurnaliService.create(oqituvchiFanTaqsimlashId, darsTuri, sana));
+                darsJurnaliService.create(oqituvchiFanTaqsimlashId, darsTuri, semestr, sana));
     }
 
     // Mavzu nomi va soatni yangilash
@@ -56,6 +60,32 @@ public class DarsJurnaliController {
             @RequestParam(required = false) String mavzuNomi,
             @RequestParam(required = false) Integer soat) {
         return ResponseEntity.ok(darsJurnaliService.update(id, mavzuNomi, soat));
+    }
+
+    // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
+    @PutMapping("/{id}/sana")
+    public ResponseEntity<DarsJurnaliResponseDTO> darsSanasiniOzgartirish(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate yangiSana) {
+        return ResponseEntity.ok(darsJurnaliService.darsSanasiniOzgartirish(id, yangiSana));
+    }
+
+    // Darsni o'chirish (cheklovsiz — istalgan vaqtda)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> darsniOchirish(@PathVariable Long id) {
+        darsJurnaliService.darsniOchirish(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Faqat mashg'ulot mavzulari ro'yxati (boshqa joylarda qayta ishlatish uchun yengil endpoint)
+    @GetMapping("/mavzular")
+    public ResponseEntity<List<MavzuDTO>> getMavzular(
+            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam DarsTuri darsTuri,
+            @RequestParam Semestr semestr,
+            @RequestParam Long oquvYiliId) {
+        return ResponseEntity.ok(
+                darsJurnaliService.getMavzular(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId));
     }
 
     // Topshiriq fayl yuklash

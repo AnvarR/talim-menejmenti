@@ -4,6 +4,8 @@ import com.edu.talim.entity.enums.Semestr;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "oraliq_nazoratlar")
 @Getter @Setter
@@ -34,6 +36,15 @@ public class OraliqNazorat {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(20)")
     private Semestr semestr;
+
+    // Semestr ichidagi oraliq tartib raqami: 1 yoki 2
+    @Column(nullable = false)
+    private Integer oraliqRaqami;
+
+    // O'qituvchi qo'lda belgilaydigan kesim sanasi
+    // (R(KB) shu sanagacha bo'lgan darslar bo'yicha hisoblanadi)
+    @Column(nullable = false)
+    private LocalDate kesimSanasi;
 
     // Oraliq nazorat bahosi (qo'lda kiritiladi): 3, 4, 5
     @Column

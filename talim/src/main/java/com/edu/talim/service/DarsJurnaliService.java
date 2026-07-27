@@ -2,9 +2,11 @@ package com.edu.talim.service;
 
 import com.edu.talim.dto.DarsJurnaliResponseDTO;
 import com.edu.talim.dto.DavomatResponseDTO;
+import com.edu.talim.dto.MavzuDTO;
 import com.edu.talim.entity.*;
 import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.DavomatHolati;
+import com.edu.talim.entity.enums.Semestr;
 import com.edu.talim.repository.*;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +42,12 @@ public class DarsJurnaliService {
     @Value("${app.base-url}")
     private String baseUrl;
 
-    // O'qituvchiga tegishli darslar ro'yxati
+    // O'qituvchiga tegishli darslar ro'yxati (semestr bo'yicha filtrlangan)
     public List<DarsJurnaliResponseDTO> getAll(Long oqituvchiFanTaqsimlashId,
-                                               DarsTuri darsTuri, Long oquvYiliId) {
+                                               DarsTuri darsTuri, Semestr semestr, Long oquvYiliId) {
         return darsJurnaliRepository
-                .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliId(
-                        oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId)
+                .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
+                        oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId, semestr)
                 .stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -56,10 +58,10 @@ public class DarsJurnaliService {
         return toDTO(findById(id));
     }
 
-    // Yangi dars qo'shish (sana tanlanganda)
+    // Yangi dars qo'shish (sana va semestr tanlanganda)
     @Transactional
     public DarsJurnaliResponseDTO create(Long oqituvchiFanTaqsimlashId,
-                                         DarsTuri darsTuri, LocalDate sana) {
+                                         DarsTuri darsTuri, Semestr semestr, LocalDate sana) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
@@ -81,6 +83,7 @@ public class DarsJurnaliService {
                 .oqituvchiFanTaqsimlash(taqsimlash)
                 .oquvYili(faolYil)
                 .darsTuri(darsTuri)
+                .semestr(semestr)
                 .sana(sana)
                 .soat(2)
                 .build();
@@ -106,6 +109,47 @@ public class DarsJurnaliService {
         if (soat != null) darsJurnali.setSoat(soat);
 
         return toDTO(darsJurnaliRepository.save(darsJurnali));
+    }
+
+    // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
+    @Transactional
+    public DarsJurnaliResponseDTO darsSanasiniOzgartirish(Long id, LocalDate yangiSana) {
+        DarsJurnali darsJurnali = findById(id);
+
+        darsJurnaliRepository.findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
+                        darsJurnali.getOqituvchiFanTaqsimlash().getId(),
+                        darsJurnali.getDarsTuri(), yangiSana)
+                .filter(d -> !d.getId().equals(id))
+                .ifPresent(d -> {
+                    throw new RuntimeException("Bu sana uchun dars allaqachon mavjud: " + yangiSana);
+                });
+
+        darsJurnali.setSana(yangiSana);
+        return toDTO(darsJurnaliRepository.save(darsJurnali));
+    }
+
+    // Darsni o'chirish (cheklovsiz — istalgan vaqtda).
+    // Davomatlar avtomatik o'chadi (orphanRemoval=true, cascade=ALL DarsJurnali entity'sida)
+    @Transactional
+    public void darsniOchirish(Long id) {
+        DarsJurnali darsJurnali = findById(id);
+        darsJurnaliRepository.delete(darsJurnali);
+    }
+
+    // Faqat mashg'ulot mavzulari ro'yxati (yengil, boshqa joylarda qayta ishlatish uchun)
+    public List<MavzuDTO> getMavzular(Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri,
+                                      Semestr semestr, Long oquvYiliId) {
+        return darsJurnaliRepository
+                .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
+                        oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId, semestr)
+                .stream()
+                .sorted((a, b) -> a.getSana().compareTo(b.getSana()))
+                .map(d -> MavzuDTO.builder()
+                        .darsJurnaliId(d.getId())
+                        .sana(d.getSana())
+                        .mavzuNomi(d.getMavzuNomi())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // Topshiriq fayl yuklash
@@ -141,6 +185,19 @@ public class DarsJurnaliService {
         // Bloklangan kursantni tekshirish
         if (davomat.getBloklanganMi()) {
             throw new RuntimeException("Kursant bloklangan! Dekanat ruxsati kerak.");
+        }
+
+        DavomatHolati joriyHolat = davomat.getHolat();
+
+        // Agar kursant avval N/K/S/Y bilan belgilangan bo'lsa — endi faqat mos "T"
+        // (qayta topshirish) qiymatini qo'yish mumkin: N->N_T, K->K_T, S->S_T, Y->Y_T
+        if (joriyHolat != null && !joriyHolat.name().endsWith("_T")) {
+            DavomatHolati kutilganQaytaTopshirish = DavomatHolati.valueOf(joriyHolat.name() + "_T");
+            if (holat == null || holat != kutilganQaytaTopshirish) {
+                throw new RuntimeException(
+                        "Bu amalni amalga oshirolmaysiz! Qayta topshirish faqat \""
+                                + kutilganQaytaTopshirish + "\" (T) belgisi orqali amalga oshiriladi.");
+            }
         }
 
         davomat.setHolat(holat);
@@ -235,6 +292,7 @@ public class DarsJurnaliService {
                 .oquvYiliId(entity.getOquvYili().getId())
                 .oquvYiliNomi(entity.getOquvYili().getNom())
                 .darsTuri(entity.getDarsTuri())
+                .semestr(entity.getSemestr())
                 .sana(entity.getSana())
                 .soat(entity.getSoat())
                 .mavzuNomi(entity.getMavzuNomi())

@@ -38,19 +38,31 @@ public class ElektronJurnalResponseDTO {
         // Har bir dars uchun davomat/baho
         private List<AmaliyDavomatResponseDTO> davomatlar;
 
-        // R(KB) — kunlik baholar o'rtachasi (avtomatik)
-        private Double rkb;
-
-        // R(ON) — oraliq nazorat bahosi (qo'lda)
-        private Integer ron;
-
-        // R(MT) — mustaqil ta'lim (hozircha null)
-        private Double rmt;
-
-        // R(1ON) yoki R(2ON) — (R(KB)+R(ON)+R(MT))/3
+        // ===== 1-ORALIQ =====
+        // R(KB) — 1-oraliq kesim sanasigacha bo'lgan kunlik baholar o'rtachasi
+        private Double rkb1;
+        // R(ON) — 1-oraliq nazorat bahosi (qo'lda)
+        private Integer ron1;
+        // R(MT) — 1-oraliq mustaqil ta'lim (hozircha null)
+        private Double rmt1;
+        // R(1ON) = (R(KB1)+R(ON1)+R(MT1))/3
         private Double r1on;
+        // 1-oraliqning kesim sanasi (frontendda ko'rsatish uchun)
+        private LocalDate kesim1Sanasi;
 
-        // R(ON.SEM) — (R(1ON)+R(2ON))/2 (faqat 2-semestr uchun)
+        // ===== 2-ORALIQ =====
+        // R(KB) — 1-oraliq kesim sanasidan 2-oraliq kesim sanasigacha bo'lgan kunlik baholar o'rtachasi
+        private Double rkb2;
+        // R(ON) — 2-oraliq nazorat bahosi (qo'lda)
+        private Integer ron2;
+        // R(MT) — 2-oraliq mustaqil ta'lim (hozircha null)
+        private Double rmt2;
+        // R(2ON) = (R(KB2)+R(ON2)+R(MT2))/3
+        private Double r2on;
+        // 2-oraliqning kesim sanasi (frontendda ko'rsatish uchun)
+        private LocalDate kesim2Sanasi;
+
+        // R(ON.SEM) — (R(1ON)+R(2ON))/2
         private Double ronSem;
 
         // R(YN) — yakuniy nazorat bahosi (qo'lda)

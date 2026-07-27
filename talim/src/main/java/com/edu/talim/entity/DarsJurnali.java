@@ -1,6 +1,7 @@
 package com.edu.talim.entity;
 
 import com.edu.talim.entity.enums.DarsTuri;
+import com.edu.talim.entity.enums.Semestr;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +34,11 @@ public class DarsJurnali {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(30)")
     private DarsTuri darsTuri;
+
+    // 1-semestr yoki 2-semestr (o'qituvchi dars yaratishda tanlaydi)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(20)")
+    private Semestr semestr;
 
     // Dars o'tilgan sana
     @Column(nullable = false)

@@ -20,12 +20,15 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
     Optional<AmaliyDavomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, Long studentId);
 
     // Kursantning bitta fan taqsimlashdagi barcha davomatlari (R(KB) hisoblash uchun)
+    // Diqqat: baho YOKI qaytaTopshirishBaho bo'lgan yozuvlar ham hisobga olinadi,
+    // chunki kursant darsda qatnashmasdan (N/K/S/Y) keyin faqat qayta topshirish
+    // bahosiga ega bo'lishi mumkin (baho maydoni bo'sh qoladi).
     @Query("""
         SELECT d FROM AmaliyDavomat d
         WHERE d.student.id = :studentId
         AND d.darsJurnali.oqituvchiFanTaqsimlash.id = :taqsimlashId
         AND d.darsJurnali.sana BETWEEN :boshlanish AND :tugash
-        AND d.baho IS NOT NULL
+        AND (d.baho IS NOT NULL OR d.qaytaTopshirishBaho IS NOT NULL)
     """)
     List<AmaliyDavomat> findBaholangan(
             @Param("studentId") Long studentId,

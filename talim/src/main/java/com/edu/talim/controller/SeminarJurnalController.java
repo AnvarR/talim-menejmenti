@@ -38,10 +38,27 @@ public class SeminarJurnalController {
     public ResponseEntity<DarsJurnaliResponseDTO> darsQoshish(
             @RequestParam Long oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
+            @RequestParam Semestr semestr,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana) {
         return ResponseEntity.ok(
                 elektronJurnalService.darsQoshish(
-                        oqituvchiFanTaqsimlashId, darsTuri, sana));
+                        oqituvchiFanTaqsimlashId, darsTuri, semestr, sana));
+    }
+
+    // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
+    @PutMapping("/dars/{darsJurnaliId}")
+    public ResponseEntity<DarsJurnaliResponseDTO> darsSanasiniOzgartirish(
+            @PathVariable Long darsJurnaliId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate yangiSana) {
+        return ResponseEntity.ok(
+                elektronJurnalService.darsSanasiniOzgartirish(darsJurnaliId, yangiSana));
+    }
+
+    // Darsni o'chirish (cheklovsiz — istalgan vaqtda)
+    @DeleteMapping("/dars/{darsJurnaliId}")
+    public ResponseEntity<Void> darsniOchirish(@PathVariable Long darsJurnaliId) {
+        elektronJurnalService.darsniOchirish(darsJurnaliId);
+        return ResponseEntity.noContent().build();
     }
 
     // Davomat va baho yangilash
@@ -54,16 +71,19 @@ public class SeminarJurnalController {
                 elektronJurnalService.davomatYangilash(davomatId, holat, baho));
     }
 
-    // Oraliq nazorat bahosini kiritish
+    // Oraliq nazorat bahosini kiritish (oraliqRaqami: 1 yoki 2, kesimSanasi — o'qituvchi belgilaydi)
     @PutMapping("/oraliq-nazorat")
     public ResponseEntity<Void> oraliqNazoratYangilash(
             @RequestParam Long oqituvchiFanTaqsimlashId,
             @RequestParam Long studentId,
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr,
+            @RequestParam Integer oraliqRaqami,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate kesimSanasi,
             @RequestParam Integer baho) {
         elektronJurnalService.oraliqNazoratYangilash(
-                oqituvchiFanTaqsimlashId, studentId, oquvYiliId, semestr, baho);
+                oqituvchiFanTaqsimlashId, studentId, oquvYiliId, semestr,
+                oraliqRaqami, kesimSanasi, baho);
         return ResponseEntity.ok().build();
     }
 

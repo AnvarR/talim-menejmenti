@@ -1,6 +1,7 @@
 package com.edu.talim.dto;
 
 import com.edu.talim.entity.enums.DarsTuri;
+import com.edu.talim.entity.enums.Semestr;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class DarsJurnaliResponseDTO {
     private Long oquvYiliId;
     private String oquvYiliNomi;
     private DarsTuri darsTuri;
+    private Semestr semestr;
     private LocalDate sana;
     private Integer soat;
     private String mavzuNomi;

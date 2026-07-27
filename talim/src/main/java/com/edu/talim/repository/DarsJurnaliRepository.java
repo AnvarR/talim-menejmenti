@@ -2,6 +2,7 @@ package com.edu.talim.repository;
 
 import com.edu.talim.entity.DarsJurnali;
 import com.edu.talim.entity.enums.DarsTuri;
+import com.edu.talim.entity.enums.Semestr;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,10 @@ public interface DarsJurnaliRepository extends JpaRepository<DarsJurnali, Long> 
     // O'qituvchi fan taqsimlash, dars turi va o'quv yili bo'yicha darslar
     List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliId(
             Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId);
+
+    // Semestr bo'yicha ham filtrlangan darslar
+    List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
+            Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId, Semestr semestr);
 
     // Bir xil sana va taqsimlashda dars bormi tekshirish
     Optional<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
