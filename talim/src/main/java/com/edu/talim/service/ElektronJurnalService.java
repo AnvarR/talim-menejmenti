@@ -22,6 +22,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ElektronJurnalService {
 
+    // SQL "date" turi uchun xavfsiz, uzoq kelajakdagi sana (LocalDate.MAX ishlatilmaydi -
+    // u SQL date chegarasidan oshib, "date out of range" xatosiga olib keladi)
+    private static final LocalDate CHEKSIZ_KELAJAK = LocalDate.of(2100, 12, 31);
+
     private final DarsJurnaliRepository darsJurnaliRepository;
     private final AmaliyDavomatRepository amaliyDavomatRepository;
     private final OraliqNazoratRepository oraliqNazoratRepository;
@@ -31,6 +35,8 @@ public class ElektronJurnalService {
     private final StudentRepository studentRepository;
     private final SutkalikNaryadRepository sutkalikNaryadRepository;
     private final KasalRepository kasalRepository;
+    private final MustaqilTalimTopshiriqRepository mustaqilTalimTopshiriqRepository;
+    private final MustaqilTalimJurnalService mustaqilTalimJurnalService;
     private final EntityManager entityManager;
 
     @Value("${app.upload.dir}")
@@ -89,13 +95,39 @@ public class ElektronJurnalService {
                 .findByOqituvchiFanTaqsimlashIdAndOquvYiliId(
                         oqituvchiFanTaqsimlashId, oquvYiliId);
 
+        // R(MT) uchun "birodar" Mustaqil ta'lim taqsimlashini topish (bir xil fan+o'qituvchi+kurs+guruh)
+        Set<Long> mendagiGuruhIdlar = taqsimlash.getGuruhlar() == null ? Set.of() :
+                taqsimlash.getGuruhlar().stream().map(Group::getId).collect(Collectors.toSet());
+        List<OqituvchiFanTaqsimlash> mtNomzodlar = oqituvchiFanTaqsimlashRepository
+                .findByFanTaqsimlashIdAndOqituvchiIdAndKursId(
+                        taqsimlash.getFanTaqsimlash().getId(),
+                        taqsimlash.getOqituvchi().getId(),
+                        taqsimlash.getKurs().getId());
+        System.out.println("[RMT-DEBUG] fanTaqsimlashId=" + taqsimlash.getFanTaqsimlash().getId()
+                + ", oqituvchiId=" + taqsimlash.getOqituvchi().getId()
+                + ", kursId=" + taqsimlash.getKurs().getId()
+                + ", mendagiGuruhIdlar=" + mendagiGuruhIdlar);
+        System.out.println("[RMT-DEBUG] topilgan nomzodlar (" + mtNomzodlar.size() + " ta):");
+        mtNomzodlar.forEach(t -> System.out.println("   id=" + t.getId() + ", darsTuri=" + t.getDarsTuri()
+                + ", guruhlar=" + (t.getGuruhlar() == null ? "null" :
+                t.getGuruhlar().stream().map(g -> g.getId() + ":" + g.getGuruhNomi()).collect(Collectors.toList()))));
+
+        Long mtTaqsimlashId = mtNomzodlar
+                .stream()
+                .filter(t -> t.getDarsTuri() == DarsTuri.MUSTAQIL_TALIM)
+                .filter(t -> t.getGuruhlar() != null && t.getGuruhlar().stream()
+                        .anyMatch(g -> mendagiGuruhIdlar.contains(g.getId())))
+                .map(OqituvchiFanTaqsimlash::getId)
+                .findFirst().orElse(null);
+        System.out.println("[RMT-DEBUG] topilgan mtTaqsimlashId=" + mtTaqsimlashId);
+
         // Kursantlar uchun jadval yaratish
         List<ElektronJurnalResponseDTO.KursantJurnalDTO> kursantJurnallar =
                 kursantlar.stream()
                         .map(student -> buildKursantJurnal(
                                 student, darslar, oraliq1lar, oraliq2lar, yilOraliqlari,
                                 yakuniylar, oqituvchiFanTaqsimlashId,
-                                oquvYiliBoshlanish))
+                                oquvYiliBoshlanish, mtTaqsimlashId, semestr, oquvYiliId))
                         .collect(Collectors.toList());
 
         // Guruh nomini birlashtirish
@@ -183,6 +215,14 @@ public class ElektronJurnalService {
     public void darsniOchirish(Long darsJurnaliId) {
         DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
                 .orElseThrow(() -> new RuntimeException("Dars topilmadi: " + darsJurnaliId));
+
+        long topshiriqlarSoni = mustaqilTalimTopshiriqRepository
+                .findByDarsJurnaliIdOrderByYaratilganVaqtAsc(darsJurnaliId).size();
+        if (topshiriqlarSoni > 0) {
+            throw new RuntimeException(
+                    "Bu mavzuga tegishli " + topshiriqlarSoni + " ta topshiriq mavjud! "
+                            + "Avval o'sha topshiriq(lar)ni o'chiring, keyin mavzuni o'chirishingiz mumkin.");
+        }
 
         List<AmaliyDavomat> davomatlar = amaliyDavomatRepository
                 .findByDarsJurnaliIdOrderByStudentFioAsc(darsJurnaliId);
@@ -364,7 +404,10 @@ public class ElektronJurnalService {
             List<OraliqNazorat> yilOraliqlari,
             List<YakuniyNazorat> yakuniylar,
             Long taqsimlashId,
-            LocalDate oquvYiliBoshlanish) {
+            LocalDate oquvYiliBoshlanish,
+            Long mtTaqsimlashId,
+            Semestr semestr,
+            Long oquvYiliId) {
 
         // Kursantning davomatlari (har bir dars uchun)
         List<AmaliyDavomatResponseDTO> davomatlar = darslar.stream()
@@ -382,41 +425,50 @@ public class ElektronJurnalService {
                 .filter(o -> o.getStudent().getId().equals(student.getId()))
                 .collect(Collectors.toList());
 
-        // ===== 1-ORALIQ =====
+        // ===== 1-ORALIQ va 2-ORALIQ uchun kesim sanalarini avval aniqlaymiz =====
         OraliqNazorat oraliq1 = oraliq1lar.stream()
                 .filter(o -> o.getStudent().getId().equals(student.getId()))
                 .findFirst().orElse(null);
-
-        Double rkb1 = null;
-        Integer ron1 = null;
-        Double rmt1 = null; // hozircha null
-        Double r1on = null;
-        LocalDate kesim1Sanasi = null;
-
-        if (oraliq1 != null) {
-            kesim1Sanasi = oraliq1.getKesimSanasi();
-            ron1 = oraliq1.getRonBaho();
-            LocalDate boshlanish1 = oldingiKesimSanasi(mendagiYilOraliqlari, kesim1Sanasi, oquvYiliBoshlanish);
-            rkb1 = hisoblaRkb(student.getId(), taqsimlashId, boshlanish1, kesim1Sanasi);
-            r1on = hisoblaOraliqNatija(rkb1, ron1, rmt1);
-        }
-
-        // ===== 2-ORALIQ =====
         OraliqNazorat oraliq2 = oraliq2lar.stream()
                 .filter(o -> o.getStudent().getId().equals(student.getId()))
                 .findFirst().orElse(null);
 
-        Double rkb2 = null;
-        Integer ron2 = null;
-        Double rmt2 = null; // hozircha null
-        Double r2on = null;
-        LocalDate kesim2Sanasi = null;
+        LocalDate kesim1Sanasi = oraliq1 != null ? oraliq1.getKesimSanasi() : null;
+        LocalDate kesim2Sanasi = oraliq2 != null ? oraliq2.getKesimSanasi() : null;
+        Integer ron1 = oraliq1 != null ? oraliq1.getRonBaho() : null;
+        Integer ron2 = oraliq2 != null ? oraliq2.getRonBaho() : null;
 
-        if (oraliq2 != null) {
-            kesim2Sanasi = oraliq2.getKesimSanasi();
-            ron2 = oraliq2.getRonBaho();
-            LocalDate boshlanish2 = oldingiKesimSanasi(mendagiYilOraliqlari, kesim2Sanasi, oquvYiliBoshlanish);
-            rkb2 = hisoblaRkb(student.getId(), taqsimlashId, boshlanish2, kesim2Sanasi);
+        // R(MT-1)/R(MT-2) - Mustaqil ta'lim jurnalidan real vaqtda olinadi
+        // (bir xil kesim sanalari qayta ishlatiladi, alohida kesim sanasi kiritilmaydi)
+        Double[] rmtlar = mustaqilTalimJurnalService.hisoblaRmt1Rmt2(
+                mtTaqsimlashId, student.getId(), semestr, oquvYiliId, kesim1Sanasi, kesim2Sanasi);
+        Double rmt1 = rmtlar[0];
+        Double rmt2 = rmtlar[1];
+
+        // ===== 1-ORALIQ =====
+        Double rkb1;
+        Double r1on;
+
+        // Kesim sanasi kiritilgan bo'lsa - o'shanigacha; kiritilmagan bo'lsa - bugungi kungacha
+        // (R(KB) har doim, oraliq nazorat kutilmasdan, avtomatik hisoblanadi)
+        LocalDate effektivKesim1 = kesim1Sanasi != null ? kesim1Sanasi : CHEKSIZ_KELAJAK;
+        LocalDate boshlanish1 = oldingiKesimSanasi(mendagiYilOraliqlari, effektivKesim1, oquvYiliBoshlanish);
+        rkb1 = hisoblaRkb(student.getId(), taqsimlashId, boshlanish1, effektivKesim1);
+        r1on = hisoblaOraliqNatija(rkb1, ron1, rmt1);
+
+        // ===== 2-ORALIQ =====
+        Double rkb2;
+        Double r2on;
+
+        if (kesim1Sanasi == null) {
+            // 1-oraliq hali "qulflanmagan" (kesim sanasi kiritilmagan) - demak
+            // 2-oraliq davri hali boshlanmagan, R(KB2) bo'sh qoladi
+            rkb2 = null;
+            r2on = null;
+        } else {
+            LocalDate effektivKesim2 = kesim2Sanasi != null ? kesim2Sanasi : CHEKSIZ_KELAJAK;
+            // 2-oraliq har doim 1-oraliq tugagan joydan (kesim1Sanasi) boshlanadi
+            rkb2 = hisoblaRkb(student.getId(), taqsimlashId, kesim1Sanasi, effektivKesim2);
             r2on = hisoblaOraliqNatija(rkb2, ron2, rmt2);
         }
 

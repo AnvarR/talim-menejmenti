@@ -21,9 +21,14 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     @Query("SELECT DISTINCT g FROM Group g JOIN Student s ON s.group.id = g.id WHERE s.type = 'KURSANT'")
     List<Group> findKursantGuruhlari();
 
-    // Kursantlar soni (guruh bo'yicha)
+    // Kursantlar soni (guruh bo'yicha, faqat KURSANT turi - ro'yxatda ko'rsatish uchun)
     @Query("SELECT COUNT(s) FROM Student s WHERE s.group.id = :guruhId AND s.type = 'KURSANT'")
     Long countKursantlarByGuruhId(Long guruhId);
+
+    // Guruhga bog'langan BARCHA talabalar soni (KURSANT va TINGLOVCHI birgalikda) -
+    // guruhni o'chirishdan oldin xavfsiz tekshirish uchun ishlatiladi
+    @Query("SELECT COUNT(s) FROM Student s WHERE s.group.id = :guruhId")
+    Long countBarchaTalabalarByGuruhId(Long guruhId);
 
     // Guruhga biriktirilmagan kursantlar (kurs bo'yicha)
     @Query("SELECT s FROM Student s WHERE s.type = 'KURSANT' AND s.course.id = :kursId AND s.group IS NULL")

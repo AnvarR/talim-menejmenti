@@ -34,6 +34,7 @@ public class DarsJurnaliService {
     private final StudentRepository studentRepository;
     private final SutkalikNaryadRepository sutkalikNaryadRepository;
     private final KasalRepository kasalRepository;
+    private final MustaqilTalimTopshiriqRepository mustaqilTalimTopshiriqRepository;
     private final EntityManager entityManager;
 
     @Value("${app.upload.dir}")
@@ -133,6 +134,17 @@ public class DarsJurnaliService {
     @Transactional
     public void darsniOchirish(Long id) {
         DarsJurnali darsJurnali = findById(id);
+
+        // Agar shu mavzuga (dars) tegishli mustaqil ta'lim topshiriqlari bo'lsa,
+        // avval o'shalarni o'chirish kerakligini tushunarli aytib qo'yamiz
+        long topshiriqlarSoni = mustaqilTalimTopshiriqRepository
+                .findByDarsJurnaliIdOrderByYaratilganVaqtAsc(id).size();
+        if (topshiriqlarSoni > 0) {
+            throw new RuntimeException(
+                    "Bu mavzuga tegishli " + topshiriqlarSoni + " ta topshiriq mavjud! "
+                            + "Avval o'sha topshiriq(lar)ni o'chiring, keyin mavzuni o'chirishingiz mumkin.");
+        }
+
         darsJurnaliRepository.delete(darsJurnali);
     }
 

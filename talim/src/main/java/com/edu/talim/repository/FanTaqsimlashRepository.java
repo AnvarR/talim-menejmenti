@@ -24,4 +24,7 @@ public interface FanTaqsimlashRepository extends JpaRepository<FanTaqsimlash, Lo
             Boolean amaliyotMavjud,
             Boolean kursIshiMavjud
     );
+
+    // Shu guruhga tegishli fan taqsimlashlar soni (guruhni o'chirishdan oldin xavfsiz tekshirish uchun)
+    long countByGuruhId(Long guruhId);
 }

@@ -4,5 +4,6 @@ public enum DarsTuri {
     MARUZA,
     SEMINAR,
     MUSTAQIL_TALIM,
-    AMALIYOT_KURS_ISHI
+    AMALIYOT,
+    KURS_ISHI
 }

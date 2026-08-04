@@ -30,7 +30,7 @@ public class DarsJurnali {
     @JoinColumn(name = "oquv_yili_id", nullable = false)
     private OquvYili oquvYili;
 
-    // Dars turi: MARUZA, SEMINAR, MUSTAQIL_TALIM, AMALIYOT_KURS_ISHI
+    // Dars turi: MARUZA, SEMINAR, MUSTAQIL_TALIM, AMALIYOT, KURS_ISHI
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(30)")
     private DarsTuri darsTuri;

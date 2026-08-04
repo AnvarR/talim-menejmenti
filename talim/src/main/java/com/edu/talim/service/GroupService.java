@@ -6,7 +6,9 @@ import com.edu.talim.entity.Course;
 import com.edu.talim.entity.Group;
 import com.edu.talim.entity.Student;
 import com.edu.talim.repository.CourseRepository;
+import com.edu.talim.repository.FanTaqsimlashRepository;
 import com.edu.talim.repository.GroupRepository;
+import com.edu.talim.repository.OqituvchiFanTaqsimlashRepository;
 import com.edu.talim.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
+    private final FanTaqsimlashRepository fanTaqsimlashRepository;
+    private final OqituvchiFanTaqsimlashRepository oqituvchiFanTaqsimlashRepository;
 
     // Barcha guruhlar (tinglovchi uchun ishlatiladi)
     public List<Group> getAll() {
@@ -75,10 +79,23 @@ public class GroupService {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + id));
 
-        long kursantSoni = groupRepository.countKursantlarByGuruhId(id);
-        if (kursantSoni > 0) {
+        long talabaSoni = groupRepository.countBarchaTalabalarByGuruhId(id);
+        if (talabaSoni > 0) {
             throw new RuntimeException(
-                    "Guruhda " + kursantSoni + " ta kursant bor, avval ularni chiqaring!");
+                    "Guruhda " + talabaSoni + " ta talaba (kursant/tinglovchi) bor, avval ularni chiqaring!");
+        }
+
+        long fanTaqsimlashSoni = fanTaqsimlashRepository.countByGuruhId(id);
+        if (fanTaqsimlashSoni > 0) {
+            throw new RuntimeException(
+                    "Bu guruhga " + fanTaqsimlashSoni + " ta fan taqsimlangan! "
+                            + "Avval \"Fanlarni taqsimlash\" bo'limida shu guruhga tegishli taqsimlashlarni o'chiring.");
+        }
+
+        if (oqituvchiFanTaqsimlashRepository.existsByGuruhId(id)) {
+            throw new RuntimeException(
+                    "Bu guruh biror o'qituvchiga (fan taqsimlash) biriktirilgan! "
+                            + "Avval o'sha taqsimlashni o'chiring yoki guruhni undan chiqaring.");
         }
 
         groupRepository.deleteById(id);

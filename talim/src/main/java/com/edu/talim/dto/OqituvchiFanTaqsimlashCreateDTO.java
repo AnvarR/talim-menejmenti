@@ -23,4 +23,7 @@ public class OqituvchiFanTaqsimlashCreateDTO {
 
     // Guruhlar ID lari (bir nechta)
     private List<Long> guruhIds;
+
+    // Faqat "Kurs ishi" uchun qo'lda kiritiladi (boshqa turlar uchun avtomatik hisoblanadi)
+    private Integer soatHajmi;
 }

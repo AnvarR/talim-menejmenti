@@ -50,30 +50,44 @@ public class OqituvchiFanTaqsimlashService {
             throw new RuntimeException("Noto'g'ri dars turi: " + dto.getDarsTuri());
         }
 
-        // Dublikat tekshiruvi
-        boolean dublikat = repository.existsByFanTaqsimlashIdAndOqituvchiIdAndDarsTuriAndKursId(
-                dto.getFanTaqsimlashId(),
-                dto.getOqituvchiId(),
-                darsTuri,
-                dto.getKursId()
-        );
-        if (dublikat) {
-            throw new RuntimeException("Bu taqsimlash allaqachon mavjud!");
-        }
-
         // Guruhlarni topish
         List<Group> guruhlar = dto.getGuruhIds().stream()
                 .map(id -> groupRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + id)))
                 .collect(Collectors.toList());
 
+        // Dublikat tekshiruvi - guruhlar ustma-ust tushadigan taqsimlash bormi
+        List<OqituvchiFanTaqsimlash> ustmaUsht = repository.findGuruhlariUstmaUshtaTushganlar(
+                dto.getFanTaqsimlashId(),
+                dto.getOqituvchiId(),
+                darsTuri,
+                dto.getKursId(),
+                dto.getGuruhIds(),
+                null
+        );
+        if (!ustmaUsht.isEmpty()) {
+            String guruhNomlari = ustmaUsht.stream()
+                    .flatMap(t -> t.getGuruhlar().stream())
+                    .map(Group::getGuruhNomi)
+                    .distinct()
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException("Bu taqsimlash allaqachon mavjud! (guruh: " + guruhNomlari + ")");
+        }
+
         // Soat hajmini dars turidan avtomatik olish
         Integer soatHajmi = switch (darsTuri) {
             case MARUZA -> fanTaqsimlash.getMarruzaSoati();
             case SEMINAR -> fanTaqsimlash.getSeminarSoati();
             case MUSTAQIL_TALIM -> fanTaqsimlash.getMustaqilTalimSoati();
-            // Amaliyot/Kurs ishi uchun alohida soat maydoni yo'q, null qo'yamiz
-            case AMALIYOT_KURS_ISHI -> null;
+            // Amaliyotda soat hajmi umuman bo'lmaydi
+            case AMALIYOT -> 0;
+            // Kurs ishida esa soat hajmi qo'lda kiritiladi
+            case KURS_ISHI -> {
+                if (dto.getSoatHajmi() == null) {
+                    throw new RuntimeException("Kurs ishi uchun soat hajmini kiriting!");
+                }
+                yield dto.getSoatHajmi();
+            }
         };
 
         OqituvchiFanTaqsimlash taqsimlash = OqituvchiFanTaqsimlash.builder()
@@ -113,12 +127,37 @@ public class OqituvchiFanTaqsimlashService {
                         .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + guruhId)))
                 .collect(Collectors.toList());
 
+        // Dublikat tekshiruvi (o'zini hisobga olmagan holda)
+        List<OqituvchiFanTaqsimlash> ustmaUsht = repository.findGuruhlariUstmaUshtaTushganlar(
+                dto.getFanTaqsimlashId(),
+                dto.getOqituvchiId(),
+                darsTuri,
+                dto.getKursId(),
+                dto.getGuruhIds(),
+                id
+        );
+        if (!ustmaUsht.isEmpty()) {
+            String guruhNomlari = ustmaUsht.stream()
+                    .flatMap(t -> t.getGuruhlar().stream())
+                    .map(Group::getGuruhNomi)
+                    .distinct()
+                    .collect(Collectors.joining(", "));
+            throw new RuntimeException("Bu taqsimlash allaqachon mavjud! (guruh: " + guruhNomlari + ")");
+        }
+
         Integer soatHajmi = switch (darsTuri) {
             case MARUZA -> fanTaqsimlash.getMarruzaSoati();
             case SEMINAR -> fanTaqsimlash.getSeminarSoati();
             case MUSTAQIL_TALIM -> fanTaqsimlash.getMustaqilTalimSoati();
-            // Amaliyot/Kurs ishi uchun alohida soat maydoni yo'q, null qo'yamiz
-            case AMALIYOT_KURS_ISHI -> null;
+            // Amaliyotda soat hajmi umuman bo'lmaydi
+            case AMALIYOT -> 0;
+            // Kurs ishida esa soat hajmi qo'lda kiritiladi
+            case KURS_ISHI -> {
+                if (dto.getSoatHajmi() == null) {
+                    throw new RuntimeException("Kurs ishi uchun soat hajmini kiriting!");
+                }
+                yield dto.getSoatHajmi();
+            }
         };
 
         taqsimlash.setFanTaqsimlash(fanTaqsimlash);
