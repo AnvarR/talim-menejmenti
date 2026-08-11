@@ -25,4 +25,10 @@ public class OquvYili {
 
     @Column(nullable = false)
     private Boolean faol = false;
+
+    // Faol bo'lmagan (eski) o'quv yili uchun standart 10 kunlik muddatdan (1-sentabrdan hisoblab)
+    // keyin ham tahrirlashga ruxsat berish uchun - faqat fakultet boshlig'i/o'rinbosari o'rnatadi
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean qoshimchaTahrirRuxsati = false;
 }

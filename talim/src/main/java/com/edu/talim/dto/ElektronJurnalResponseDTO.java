@@ -43,6 +43,7 @@ public class ElektronJurnalResponseDTO {
         private Double rkb1;
         // R(ON) — 1-oraliq nazorat bahosi (qo'lda)
         private Integer ron1;
+        private Integer ron1QaytaTopshirishBaho;
         // R(MT) — 1-oraliq mustaqil ta'lim (hozircha null)
         private Double rmt1;
         // R(1ON) = (R(KB1)+R(ON1)+R(MT1))/3
@@ -55,6 +56,7 @@ public class ElektronJurnalResponseDTO {
         private Double rkb2;
         // R(ON) — 2-oraliq nazorat bahosi (qo'lda)
         private Integer ron2;
+        private Integer ron2QaytaTopshirishBaho;
         // R(MT) — 2-oraliq mustaqil ta'lim (hozircha null)
         private Double rmt2;
         // R(2ON) = (R(KB2)+R(ON2)+R(MT2))/3
@@ -67,6 +69,7 @@ public class ElektronJurnalResponseDTO {
 
         // R(YN) — yakuniy nazorat bahosi (qo'lda)
         private Integer ryn;
+        private Integer rynQaytaTopshirishBaho;
 
         // R(SEM) — (R(ON.SEM)+R(YN))/2
         private Double rsem;

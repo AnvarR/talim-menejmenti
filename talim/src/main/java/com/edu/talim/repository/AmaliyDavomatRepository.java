@@ -51,6 +51,23 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );
 
+    // Blokni FAQAT shu fan/taqsimlash doirasida tekshirish uchun (boshqa fanlardagi
+    // muammolar bu yerga ta'sir qilmasligi kerak)
+    @Query("""
+        SELECT d FROM AmaliyDavomat d
+        WHERE d.student.id = :studentId
+        AND d.darsJurnali.oqituvchiFanTaqsimlash.id = :taqsimlashId
+        AND d.bloklanganMi = false
+        AND d.qaytaTopshirishBaho IS NULL
+        AND (d.holat IN ('N', 'K', 'S', 'Y') OR d.baho = 2)
+        AND d.darsJurnali.sana <= :yettaKunOldin
+    """)
+    List<AmaliyDavomat> findBloklashKeraklarTaqsimlashBoyicha(
+            @Param("studentId") Long studentId,
+            @Param("taqsimlashId") Long taqsimlashId,
+            @Param("yettaKunOldin") LocalDate yettaKunOldin
+    );
+
     // Kursantning bloklanganmi tekshirish
     @Query("""
         SELECT COUNT(d) > 0 FROM AmaliyDavomat d
@@ -58,4 +75,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
         AND d.bloklanganMi = true
     """)
     boolean isStudentBloklangan(@Param("studentId") Long studentId);
+
+    // Kursantning barcha bloklangan yozuvlari (qayta topshirgach avtomatik blokdan chiqarish uchun)
+    List<AmaliyDavomat> findByStudentIdAndBloklanganMiTrue(Long studentId);
 }

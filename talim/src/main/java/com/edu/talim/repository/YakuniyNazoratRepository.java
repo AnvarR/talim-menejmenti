@@ -10,16 +10,12 @@ import java.util.Optional;
 @Repository
 public interface YakuniyNazoratRepository extends JpaRepository<YakuniyNazorat, Long> {
 
-    // Kursantning shu fan uchun yakuniy nazorati
     Optional<YakuniyNazorat> findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliId(
-            Long oqituvchiFanTaqsimlashId,
-            Long studentId,
-            Long oquvYiliId
-    );
+            Long oqituvchiFanTaqsimlashId, Long studentId, Long oquvYiliId);
 
-    // Barcha kursantlarning yakuniy nazorat baholari (jadval uchun)
     List<YakuniyNazorat> findByOqituvchiFanTaqsimlashIdAndOquvYiliId(
-            Long oqituvchiFanTaqsimlashId,
-            Long oquvYiliId
-    );
+            Long oqituvchiFanTaqsimlashId, Long oquvYiliId);
+
+    // Reyting daftarchasi uchun: shu kursantning barcha yakuniy nazorat yozuvlari
+    List<YakuniyNazorat> findByStudentId(Long studentId);
 }

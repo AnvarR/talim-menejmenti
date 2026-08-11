@@ -42,4 +42,8 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
             Long oqituvchiFanTaqsimlashId,
             Long oquvYiliId
     );
+
+    // Reyting daftarchasi uchun: shu kursantning ma'lum semestrdagi barcha yozuvlari
+    // (qaysi fan/taqsimlashlarda oraliq nazorati borligini aniqlash uchun)
+    List<OraliqNazorat> findByStudentIdAndSemestr(Long studentId, Semestr semestr);
 }

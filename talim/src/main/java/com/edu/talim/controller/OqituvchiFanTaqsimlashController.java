@@ -48,4 +48,43 @@ public class OqituvchiFanTaqsimlashController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    // ====================== Oraliq/Yakuniyga ruxsat ======================
+
+    // Butun fakultet bo'yicha SEMINAR taqsimlashlar ro'yxati (filtrlar bilan)
+    @GetMapping("/oraliq-yakuniy-ruxsat")
+    public ResponseEntity<Page<OqituvchiFanTaqsimlashResponseDTO>> getOraliqYakuniyRuxsatRoyxati(
+            @RequestParam(required = false) Long fanId,
+            @RequestParam(required = false) Long oqituvchiId,
+            @RequestParam(required = false) Long kursId,
+            @RequestParam(required = false) Long guruhId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "15") int size
+    ) {
+        return ResponseEntity.ok(service.getOraliqYakuniyRuxsatRoyxati(fanId, oqituvchiId, kursId, guruhId, page, size));
+    }
+
+    // Oraliq nazoratga ruxsat berish
+    @PutMapping("/{id}/oraliq-ruxsat-berish")
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> oraliqRuxsatBerish(@PathVariable Long id) {
+        return ResponseEntity.ok(service.oraliqRuxsatBerish(id));
+    }
+
+    // Yakuniy nazoratga ruxsat berish
+    @PutMapping("/{id}/yakuniy-ruxsat-berish")
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> yakuniyRuxsatBerish(@PathVariable Long id) {
+        return ResponseEntity.ok(service.yakuniyRuxsatBerish(id));
+    }
+
+    // Oraliq nazorat ruxsatini bekor qilish (yopish)
+    @PutMapping("/{id}/oraliq-ruxsat-bekor-qilish")
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> oraliqRuxsatBekorQilish(@PathVariable Long id) {
+        return ResponseEntity.ok(service.oraliqRuxsatBekorQilish(id));
+    }
+
+    // Yakuniy nazorat ruxsatini bekor qilish (yopish)
+    @PutMapping("/{id}/yakuniy-ruxsat-bekor-qilish")
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> yakuniyRuxsatBekorQilish(@PathVariable Long id) {
+        return ResponseEntity.ok(service.yakuniyRuxsatBekorQilish(id));
+    }
 }

@@ -21,6 +21,7 @@ public class KursIshiJurnalService {
     private final OqituvchiFanTaqsimlashRepository oqituvchiFanTaqsimlashRepository;
     private final OquvYiliRepository oquvYiliRepository;
     private final StudentRepository studentRepository;
+    private final OquvYiliService oquvYiliService;
 
     // ====================== Kurs ishi yaratish/tahrirlash/o'chirish ======================
 
@@ -35,6 +36,8 @@ public class KursIshiJurnalService {
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
                 .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+
+        oquvYiliService.tahririshniTekshir(oquvYiliId);
 
         KursIshi kursIshi = KursIshi.builder()
                 .oqituvchiFanTaqsimlash(taqsimlash)
@@ -69,6 +72,8 @@ public class KursIshiJurnalService {
         KursIshi kursIshi = kursIshiRepository.findById(kursIshiId)
                 .orElseThrow(() -> new RuntimeException("Kurs ishi topilmadi: " + kursIshiId));
 
+        oquvYiliService.tahririshniTekshir(kursIshi.getOquvYili().getId());
+
         if (mavzuNomi != null) kursIshi.setMavzuNomi(mavzuNomi);
         if (muddat != null) kursIshi.setMuddat(muddat);
 
@@ -80,6 +85,7 @@ public class KursIshiJurnalService {
     public void ochirish(Long kursIshiId) {
         KursIshi kursIshi = kursIshiRepository.findById(kursIshiId)
                 .orElseThrow(() -> new RuntimeException("Kurs ishi topilmadi: " + kursIshiId));
+        oquvYiliService.tahririshniTekshir(kursIshi.getOquvYili().getId());
         kursIshiRepository.delete(kursIshi);
     }
 
@@ -93,6 +99,8 @@ public class KursIshiJurnalService {
 
         KursIshiBaho kursIshiBaho = kursIshiBahoRepository.findById(kursIshiBahoId)
                 .orElseThrow(() -> new RuntimeException("Kurs ishi bahosi topilmadi: " + kursIshiBahoId));
+
+        oquvYiliService.tahririshniTekshir(kursIshiBaho.getKursIshi().getOquvYili().getId());
 
         // Agar birinchi baho allaqachon 2 bo'lsa - bu qayta topshirish bosqichi,
         // yangi baho asosiy "baho"ga emas, "qaytaTopshirishBaho"ga yoziladi

@@ -33,4 +33,7 @@ public class OqituvchiFanTaqsimlashResponseDTO {
 
     // Guruhlar
     private List<String> guruhlar;
+
+    private Boolean oraliqNazoratRuxsat;
+    private Boolean yakuniyNazoratRuxsat;
 }

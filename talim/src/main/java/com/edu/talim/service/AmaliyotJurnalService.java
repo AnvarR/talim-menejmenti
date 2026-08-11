@@ -20,6 +20,7 @@ public class AmaliyotJurnalService {
     private final OqituvchiFanTaqsimlashRepository oqituvchiFanTaqsimlashRepository;
     private final OquvYiliRepository oquvYiliRepository;
     private final StudentRepository studentRepository;
+    private final OquvYiliService oquvYiliService;
 
     // ====================== Yaratish/tahrirlash/o'chirish ======================
 
@@ -31,6 +32,8 @@ public class AmaliyotJurnalService {
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
                 .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+
+        oquvYiliService.tahririshniTekshir(oquvYiliId);
 
         Amaliyot amaliyot = Amaliyot.builder()
                 .oqituvchiFanTaqsimlash(taqsimlash)
@@ -62,6 +65,8 @@ public class AmaliyotJurnalService {
         Amaliyot amaliyot = amaliyotRepository.findById(amaliyotId)
                 .orElseThrow(() -> new RuntimeException("Amaliyot topilmadi: " + amaliyotId));
 
+        oquvYiliService.tahririshniTekshir(amaliyot.getOquvYili().getId());
+
         if (tugashSanasi != null) amaliyot.setTugashSanasi(tugashSanasi);
 
         amaliyotRepository.save(amaliyot);
@@ -71,6 +76,7 @@ public class AmaliyotJurnalService {
     public void ochirish(Long amaliyotId) {
         Amaliyot amaliyot = amaliyotRepository.findById(amaliyotId)
                 .orElseThrow(() -> new RuntimeException("Amaliyot topilmadi: " + amaliyotId));
+        oquvYiliService.tahririshniTekshir(amaliyot.getOquvYili().getId());
         amaliyotRepository.delete(amaliyot);
     }
 
@@ -84,6 +90,8 @@ public class AmaliyotJurnalService {
 
         AmaliyotBaho amaliyotBaho = amaliyotBahoRepository.findById(amaliyotBahoId)
                 .orElseThrow(() -> new RuntimeException("Amaliyot bahosi topilmadi: " + amaliyotBahoId));
+
+        oquvYiliService.tahririshniTekshir(amaliyotBaho.getAmaliyot().getOquvYili().getId());
 
         // Agar birinchi baho allaqachon 2 bo'lsa - bu qayta topshirish bosqichi
         if (amaliyotBaho.getBaho() != null && amaliyotBaho.getBaho() == 2) {

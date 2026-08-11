@@ -93,9 +93,10 @@ public class SeminarJurnalController {
             @RequestParam Long oqituvchiFanTaqsimlashId,
             @RequestParam Long studentId,
             @RequestParam Long oquvYiliId,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate sana,
             @RequestParam Integer baho) {
         elektronJurnalService.yakuniyNazoratYangilash(
-                oqituvchiFanTaqsimlashId, studentId, oquvYiliId, baho);
+                oqituvchiFanTaqsimlashId, studentId, oquvYiliId, sana, baho);
         return ResponseEntity.ok().build();
     }
 }

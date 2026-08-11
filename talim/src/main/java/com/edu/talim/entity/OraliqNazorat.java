@@ -46,7 +46,11 @@ public class OraliqNazorat {
     @Column(nullable = false)
     private LocalDate kesimSanasi;
 
-    // Oraliq nazorat bahosi (qo'lda kiritiladi): 3, 4, 5
+    // Oraliq nazorat bahosi (qo'lda kiritiladi): 2, 3, 4, 5
     @Column
     private Integer ronBaho;
+
+    // Agar birinchi baho 2 bo'lsa, qayta topshirgandan keyingi baho shu yerga yoziladi
+    @Column
+    private Integer qaytaTopshirishBaho;
 }

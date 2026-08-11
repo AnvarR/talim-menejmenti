@@ -35,6 +35,18 @@ public class OquvYiliController {
         return ResponseEntity.ok(oquvYiliService.faolQilish(id));
     }
 
+    // Fakultet boshlig'i/o'rinbosari - eski o'quv yilini tahrirlash uchun qayta ochadi
+    @PutMapping("/{id}/tahrirga-ruxsat-berish")
+    public ResponseEntity<OquvYiliDTO> tahrirgaRuxsatBerish(@PathVariable Long id) {
+        return ResponseEntity.ok(oquvYiliService.tahrirgaRuxsatBerish(id));
+    }
+
+    // Berilgan ruxsatni qaytarib yopish
+    @PutMapping("/{id}/tahrir-ruxsatini-yopish")
+    public ResponseEntity<OquvYiliDTO> tahrirRuxsatiniYopish(@PathVariable Long id) {
+        return ResponseEntity.ok(oquvYiliService.tahrirRuxsatiniYopish(id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         oquvYiliService.delete(id);

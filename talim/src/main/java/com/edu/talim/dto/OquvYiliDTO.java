@@ -12,4 +12,5 @@ public class OquvYiliDTO {
     private Integer boshlanishYil;
     private Integer tugashYil;
     private Boolean faol;
+    private Boolean qoshimchaTahrirRuxsati;
 }

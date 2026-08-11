@@ -14,4 +14,8 @@ public interface MustaqilTalimTopshiriqRepository extends JpaRepository<Mustaqil
 
     // Bitta fan taqsimlashga tegishli barcha topshiriqlar (fanlar ro'yxatida "Topshiriqlar"/"Topshiriq tili" ustunlari uchun)
     List<MustaqilTalimTopshiriq> findByOqituvchiFanTaqsimlashId(Long oqituvchiFanTaqsimlashId);
+
+    // Bir nechta "birodar" taqsimlashlar (bir xil fanTaqsimlash+guruh, lekin turli darsTuri) bo'yicha topshiriqlar -
+    // frontend qaysi darsTuriga topshiriq yozishidan qat'i nazar barchasini topish uchun ishlatiladi
+    List<MustaqilTalimTopshiriq> findByOqituvchiFanTaqsimlashIdIn(List<Long> oqituvchiFanTaqsimlashIds);
 }

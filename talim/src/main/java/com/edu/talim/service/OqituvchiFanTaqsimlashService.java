@@ -31,6 +31,43 @@ public class OqituvchiFanTaqsimlashService {
                 .map(this::toResponseDTO);
     }
 
+    // ====================== Oraliq/Yakuniyga ruxsat ======================
+
+    public Page<OqituvchiFanTaqsimlashResponseDTO> getOraliqYakuniyRuxsatRoyxati(
+            Long fanId, Long oqituvchiId, Long kursId, Long guruhId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repository.findOraliqYakuniyRuxsatRoyxati(fanId, oqituvchiId, kursId, guruhId, pageable)
+                .map(this::toResponseDTO);
+    }
+
+    public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBerish(Long id) {
+        OqituvchiFanTaqsimlash t = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+        t.setOraliqNazoratRuxsat(true);
+        return toResponseDTO(repository.save(t));
+    }
+
+    public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBerish(Long id) {
+        OqituvchiFanTaqsimlash t = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+        t.setYakuniyNazoratRuxsat(true);
+        return toResponseDTO(repository.save(t));
+    }
+
+    public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBekorQilish(Long id) {
+        OqituvchiFanTaqsimlash t = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+        t.setOraliqNazoratRuxsat(false);
+        return toResponseDTO(repository.save(t));
+    }
+
+    public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBekorQilish(Long id) {
+        OqituvchiFanTaqsimlash t = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+        t.setYakuniyNazoratRuxsat(false);
+        return toResponseDTO(repository.save(t));
+    }
+
     // Yangi taqsimlash yaratish
     public OqituvchiFanTaqsimlashResponseDTO create(OqituvchiFanTaqsimlashCreateDTO dto) {
         FanTaqsimlash fanTaqsimlash = fanTaqsimlashRepository.findById(dto.getFanTaqsimlashId())
@@ -199,6 +236,8 @@ public class OqituvchiFanTaqsimlashService {
                 .guruhlar(t.getGuruhlar().stream()
                         .map(Group::getGuruhNomi)
                         .collect(Collectors.toList()))
+                .oraliqNazoratRuxsat(t.getOraliqNazoratRuxsat())
+                .yakuniyNazoratRuxsat(t.getYakuniyNazoratRuxsat())
                 .build();
     }
 }

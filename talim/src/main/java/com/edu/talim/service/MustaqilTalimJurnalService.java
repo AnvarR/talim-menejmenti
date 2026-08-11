@@ -131,22 +131,25 @@ public class MustaqilTalimJurnalService {
     // Boshqa modul (masalan Seminar/Amaliy jurnal) uchun R(MT-1)/R(MT-2)ni hisoblab beradi.
     // kesim1Sanasi/kesim2Sanasi - chaqiruvchi modulning O'ZINING kesim sanalari beriladi
     // (masalan Seminar jurnalining R(KB) uchun ishlatgan kesim sanalari qayta ishlatiladi).
-    public Double[] hisoblaRmt1Rmt2(Long mtTaqsimlashId, Long studentId, Semestr semestr, Long oquvYiliId,
+    // mtTaqsimlashCandidateIds - bir xil fanTaqsimlash+guruhga tegishli BARCHA "birodar" taqsimlashlar ID'lari
+    // (faqat MUSTAQIL_TALIM turi emas) - chunki frontend topshiriqni ba'zan noto'g'ri darsTuridagi
+    // taqsimlashga yozib qo'yishi mumkin, shuning uchun barcha nomzodlar orasidan qidiramiz.
+    public Double[] hisoblaRmt1Rmt2(List<Long> mtTaqsimlashCandidateIds, Long studentId, Semestr semestr, Long oquvYiliId,
                                     LocalDate kesim1Sanasi, LocalDate kesim2Sanasi) {
-        System.out.println("[RMT-DEBUG] hisoblaRmt1Rmt2 chaqirildi: mtTaqsimlashId=" + mtTaqsimlashId
+        System.out.println("[RMT-DEBUG] hisoblaRmt1Rmt2 chaqirildi: mtTaqsimlashCandidateIds=" + mtTaqsimlashCandidateIds
                 + ", studentId=" + studentId + ", semestr=" + semestr + ", oquvYiliId=" + oquvYiliId
                 + ", kesim1Sanasi=" + kesim1Sanasi + ", kesim2Sanasi=" + kesim2Sanasi);
 
-        if (mtTaqsimlashId == null) return new Double[]{null, null};
+        if (mtTaqsimlashCandidateIds == null || mtTaqsimlashCandidateIds.isEmpty()) return new Double[]{null, null};
 
         List<MustaqilTalimTopshiriq> topshiriqlar = topshiriqRepository
-                .findByOqituvchiFanTaqsimlashId(mtTaqsimlashId)
+                .findByOqituvchiFanTaqsimlashIdIn(mtTaqsimlashCandidateIds)
                 .stream()
                 .filter(t -> t.getDarsJurnali().getOquvYili().getId().equals(oquvYiliId))
                 .filter(t -> t.getDarsJurnali().getSemestr() == semestr)
                 .collect(Collectors.toList());
 
-        System.out.println("[RMT-DEBUG] mtTaqsimlashId=" + mtTaqsimlashId + " uchun topilgan topshiriqlar: "
+        System.out.println("[RMT-DEBUG] mtTaqsimlashCandidateIds=" + mtTaqsimlashCandidateIds + " uchun topilgan topshiriqlar: "
                 + topshiriqlar.size() + " ta");
 
         if (topshiriqlar.isEmpty()) return new Double[]{null, null};

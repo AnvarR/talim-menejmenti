@@ -50,4 +50,14 @@ public class OqituvchiFanTaqsimlash {
             inverseJoinColumns = @JoinColumn(name = "guruh_id")
     )
     private List<Group> guruhlar;
+
+    // Fakultet boshlig'i tomonidan beriladigan ruxsatlar - shu ruxsat berilmaguncha
+    // o'qituvchi tegishli nazorat sanasini kiritolmaydi
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean oraliqNazoratRuxsat = false;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean yakuniyNazoratRuxsat = false;
 }

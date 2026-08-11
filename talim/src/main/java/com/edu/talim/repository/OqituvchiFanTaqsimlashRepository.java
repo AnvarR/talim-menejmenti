@@ -16,6 +16,26 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
     // Kafedra bo'yicha taqsimlashlar (fan → fanTaqsimlash → fan → kafedra orqali)
     Page<OqituvchiFanTaqsimlash> findByFanTaqsimlashFanKafedraIdOrderByIdDesc(Long kafedraId, Pageable pageable);
 
+    // Oraliq/Yakuniyga ruxsat sahifasi uchun - butun fakultet bo'yicha SEMINAR turidagi
+    // taqsimlashlar, ixtiyoriy filtrlar bilan (fan/o'qituvchi/kurs/guruh)
+    @Query("""
+        SELECT DISTINCT t FROM OqituvchiFanTaqsimlash t
+        LEFT JOIN t.guruhlar g
+        WHERE t.darsTuri = 'SEMINAR'
+        AND (:fanId IS NULL OR t.fanTaqsimlash.fan.id = :fanId)
+        AND (:oqituvchiId IS NULL OR t.oqituvchi.id = :oqituvchiId)
+        AND (:kursId IS NULL OR t.kurs.id = :kursId)
+        AND (:guruhId IS NULL OR g.id = :guruhId)
+        ORDER BY t.id DESC
+    """)
+    Page<OqituvchiFanTaqsimlash> findOraliqYakuniyRuxsatRoyxati(
+            @Param("fanId") Long fanId,
+            @Param("oqituvchiId") Long oqituvchiId,
+            @Param("kursId") Long kursId,
+            @Param("guruhId") Long guruhId,
+            Pageable pageable
+    );
+
     // Bir xil fan+o'qituvchi+dars turi+kurs bo'yicha, GURUHLARI ustma-ust tushadigan
     // mavjud taqsimlashlarni topish (haqiqiy dublikat tekshiruvi).
     // excludeId - tahrirlashda o'zini hisobga olmaslik uchun (yaratishda null yuboriladi)

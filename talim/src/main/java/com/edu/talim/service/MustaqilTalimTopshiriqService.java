@@ -29,6 +29,7 @@ public class MustaqilTalimTopshiriqService {
     private final DarsJurnaliRepository darsJurnaliRepository;
     private final OqituvchiFanTaqsimlashRepository oqituvchiFanTaqsimlashRepository;
     private final StudentRepository studentRepository;
+    private final OquvYiliService oquvYiliService;
 
     @Value("${app.upload.dir}")
     private String uploadDir;
@@ -61,15 +62,26 @@ public class MustaqilTalimTopshiriqService {
                 .findById(oqituvchiFanTaqsimlashId)
                 .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
 
+        // Himoya: Mustaqil ta'lim topshirig'i faqat MUSTAQIL_TALIM turidagi taqsimlashga yaratilishi mumkin
+        if (taqsimlash.getDarsTuri() != com.edu.talim.entity.enums.DarsTuri.MUSTAQIL_TALIM) {
+            throw new RuntimeException(
+                    "Bu taqsimlash Mustaqil ta'lim turiga tegishli emas! (taqsimlashId=" + oqituvchiFanTaqsimlashId
+                            + ", dars_turi=" + taqsimlash.getDarsTuri()
+                            + "). Frontendda \"Mustaqil ta'lim\" bo'limi uchun to'g'ri taqsimlashId yuborilganini tekshiring.");
+        }
+
         DarsJurnali mavzu = darsJurnaliRepository.findById(darsJurnaliId)
                 .orElseThrow(() -> new RuntimeException("Mavzu topilmadi"));
 
-        // Himoya: mavzu chindan ham shu fan taqsimlashga (demak shu guruhga) tegishli ekanini tekshirish
-        if (!mavzu.getOqituvchiFanTaqsimlash().getId().equals(oqituvchiFanTaqsimlashId)) {
+        // Himoya: mavzu shu fanga (fanTaqsimlash) tegishli ekanini tekshirish - mavzular
+        // dars turi/guruhdan qat'i nazar butun fan (masalan Ma'ruzada yaratilgan) doirasida umumiy
+        Long mavzuFanTaqsimlashId = mavzu.getOqituvchiFanTaqsimlash().getFanTaqsimlash().getId();
+        Long soralganFanTaqsimlashId = taqsimlash.getFanTaqsimlash().getId();
+        if (!mavzuFanTaqsimlashId.equals(soralganFanTaqsimlashId)) {
             throw new RuntimeException(
-                    "Bu mavzu boshqa guruh/taqsimlashga tegishli! (mavzu taqsimlashId="
-                            + mavzu.getOqituvchiFanTaqsimlash().getId()
-                            + ", so'ralgan taqsimlashId=" + oqituvchiFanTaqsimlashId + ")");
+                    "Bu mavzu boshqa fanga tegishli! (mavzu fanTaqsimlashId="
+                            + mavzuFanTaqsimlashId
+                            + ", so'ralgan fanTaqsimlashId=" + soralganFanTaqsimlashId + ")");
         }
 
         MustaqilTalimTopshiriq topshiriq = MustaqilTalimTopshiriq.builder()
@@ -259,6 +271,9 @@ public class MustaqilTalimTopshiriqService {
     public TopshiriqJavobResponseDTO baholash(Long javobId, BaholashRequestDTO dto) {
         TopshiriqJavob javob = topshiriqJavobRepository.findById(javobId)
                 .orElseThrow(() -> new RuntimeException("Javob topilmadi"));
+
+        oquvYiliService.tahririshniTekshir(
+                javob.getTopshiriqYuborish().getTopshiriq().getDarsJurnali().getOquvYili().getId());
 
         if (dto.getBaho() < 2 || dto.getBaho() > 5) {
             throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
