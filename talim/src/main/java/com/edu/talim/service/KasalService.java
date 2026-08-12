@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.KasalCreateDTO;
 import com.edu.talim.dto.KasalResponseDTO;
 import com.edu.talim.entity.Kasal;
@@ -49,11 +53,11 @@ public class KasalService {
     // Qo'shish
     public KasalResponseDTO create(KasalCreateDTO dto) {
         Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Kursant topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi!"));
 
         // Kursant hozir kasallar ro'yxatida bormi?
         if (kasalRepository.existsActiveKasal(dto.getStudentId(), LocalDate.now())) {
-            throw new RuntimeException("Bu kursant hozir kasallar ro'yxatida mavjud! Avval ro'yxatdan chiqaring.");
+            throw new ConflictException("Bu kursant hozir kasallar ro'yxatida mavjud! Avval ro'yxatdan chiqaring.");
         }
 
         Kasal kasal = Kasal.builder()
@@ -94,7 +98,7 @@ public class KasalService {
 
     private Kasal findById(Long id) {
         return kasalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kasal topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Kasal topilmadi: " + id));
     }
 
     private LocalDate parseDate(String date) {

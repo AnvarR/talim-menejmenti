@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.JavobCreateDTO;
 import com.edu.talim.dto.JavobResponseDTO;
 import com.edu.talim.entity.Javob;
@@ -34,7 +36,7 @@ public class JavobService {
     /** Javob berish */
     public JavobResponseDTO create(JavobCreateDTO dto) {
         Savol savol = savolRepository.findById(dto.getSavolId())
-                .orElseThrow(() -> new RuntimeException("Savol topilmadi: " + dto.getSavolId()));
+                .orElseThrow(() -> new NotFoundException("Savol topilmadi: " + dto.getSavolId()));
 
         Javob javob = Javob.builder()
                 .savol(savol)

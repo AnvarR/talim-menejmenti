@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.GroupResponseDTO;
 import com.edu.talim.dto.StudentListDTO;
 import com.edu.talim.entity.Course;
@@ -49,10 +53,10 @@ public class GroupService {
     @Transactional
     public GroupResponseDTO create(String guruhNomi, Long courseId) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Kurs topilmadi: " + courseId));
+                .orElseThrow(() -> new NotFoundException("Kurs topilmadi: " + courseId));
 
         if (groupRepository.findByGuruhNomiAndCourseId(guruhNomi, courseId).isPresent()) {
-            throw new RuntimeException("Bu guruh allaqachon mavjud: " + guruhNomi);
+            throw new ConflictException("Bu guruh allaqachon mavjud: " + guruhNomi);
         }
 
         Group group = Group.builder()
@@ -67,7 +71,7 @@ public class GroupService {
     @Transactional
     public GroupResponseDTO update(Long id, String yangiNom) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + id));
 
         group.setGuruhNomi(yangiNom);
         return toDTO(groupRepository.save(group));
@@ -77,7 +81,7 @@ public class GroupService {
     @Transactional
     public void delete(Long id) {
         Group group = groupRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + id));
 
         long talabaSoni = groupRepository.countBarchaTalabalarByGuruhId(id);
         if (talabaSoni > 0) {
@@ -113,13 +117,13 @@ public class GroupService {
     @Transactional
     public void kursantBiriktirish(Long guruhId, Long studentId) {
         Group group = groupRepository.findById(guruhId)
-                .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + guruhId));
+                .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + guruhId));
 
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Kursant topilmadi: " + studentId));
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 
         if (student.getGroup() != null) {
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Kursant allaqachon " + student.getGroup().getGuruhNomi() + " guruhida!");
         }
 
@@ -131,7 +135,7 @@ public class GroupService {
     @Transactional
     public void kursantChiqarish(Long guruhId, Long studentId) {
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Kursant topilmadi: " + studentId));
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 
         if (student.getGroup() == null || !student.getGroup().getId().equals(guruhId)) {
             throw new RuntimeException("Kursant bu guruhda emas!");

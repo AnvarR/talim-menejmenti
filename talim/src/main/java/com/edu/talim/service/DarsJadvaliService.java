@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.DarsJadvaliResponseDTO;
 import com.edu.talim.entity.Course;
 import com.edu.talim.entity.DarsJadvali;
@@ -59,14 +63,14 @@ public class DarsJadvaliService {
 
         if (darsJadvaliRepository.existsByKursIdAndOquvYiliIdAndHaftaKuni(
                 kursId, oquvYiliId, haftaKuni)) {
-            throw new RuntimeException("Bu kurs, o'quv yili va hafta kuni uchun jadval allaqachon mavjud");
+            throw new ConflictException("Bu kurs, o'quv yili va hafta kuni uchun jadval allaqachon mavjud");
         }
 
         Course kurs = courseRepository.findById(kursId)
-                .orElseThrow(() -> new RuntimeException("Kurs topilmadi: " + kursId));
+                .orElseThrow(() -> new NotFoundException("Kurs topilmadi: " + kursId));
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi: " + oquvYiliId));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + oquvYiliId));
 
         String faylTuri = getFileExtension(fayl.getOriginalFilename());
         validateFileType(faylTuri);
@@ -93,7 +97,7 @@ public class DarsJadvaliService {
     @Transactional
     public void delete(Long id) {
         DarsJadvali jadval = darsJadvaliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jadval topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Jadval topilmadi: " + id));
 
         try {
             Path faylYoli = Paths.get(uploadDir, jadval.getFaylYoli());
@@ -107,7 +111,7 @@ public class DarsJadvaliService {
 
     public Path getFaylYoli(Long id) {
         DarsJadvali jadval = darsJadvaliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Jadval topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Jadval topilmadi: " + id));
         return Paths.get(uploadDir, jadval.getFaylYoli());
     }
 

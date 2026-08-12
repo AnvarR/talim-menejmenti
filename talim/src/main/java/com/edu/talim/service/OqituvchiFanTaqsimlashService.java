@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.OqituvchiFanTaqsimlashCreateDTO;
 import com.edu.talim.dto.OqituvchiFanTaqsimlashResponseDTO;
 import com.edu.talim.entity.*;
@@ -42,28 +46,28 @@ public class OqituvchiFanTaqsimlashService {
 
     public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBerish(Long id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setOraliqNazoratRuxsat(true);
         return toResponseDTO(repository.save(t));
     }
 
     public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBerish(Long id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setYakuniyNazoratRuxsat(true);
         return toResponseDTO(repository.save(t));
     }
 
     public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBekorQilish(Long id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setOraliqNazoratRuxsat(false);
         return toResponseDTO(repository.save(t));
     }
 
     public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBekorQilish(Long id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setYakuniyNazoratRuxsat(false);
         return toResponseDTO(repository.save(t));
     }
@@ -71,13 +75,13 @@ public class OqituvchiFanTaqsimlashService {
     // Yangi taqsimlash yaratish
     public OqituvchiFanTaqsimlashResponseDTO create(OqituvchiFanTaqsimlashCreateDTO dto) {
         FanTaqsimlash fanTaqsimlash = fanTaqsimlashRepository.findById(dto.getFanTaqsimlashId())
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi!"));
 
         User oqituvchi = userRepository.findById(dto.getOqituvchiId())
-                .orElseThrow(() -> new RuntimeException("O'qituvchi topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("O'qituvchi topilmadi!"));
 
         Course kurs = courseRepository.findById(dto.getKursId())
-                .orElseThrow(() -> new RuntimeException("Kurs topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kurs topilmadi!"));
 
         // Dars turini parse qilish
         DarsTuri darsTuri;
@@ -90,7 +94,7 @@ public class OqituvchiFanTaqsimlashService {
         // Guruhlarni topish
         List<Group> guruhlar = dto.getGuruhIds().stream()
                 .map(id -> groupRepository.findById(id)
-                        .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + id)))
+                        .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + id)))
                 .collect(Collectors.toList());
 
         // Dublikat tekshiruvi - guruhlar ustma-ust tushadigan taqsimlash bormi
@@ -108,7 +112,7 @@ public class OqituvchiFanTaqsimlashService {
                     .map(Group::getGuruhNomi)
                     .distinct()
                     .collect(Collectors.joining(", "));
-            throw new RuntimeException("Bu taqsimlash allaqachon mavjud! (guruh: " + guruhNomlari + ")");
+            throw new ConflictException("Bu taqsimlash allaqachon mavjud! (guruh: " + guruhNomlari + ")");
         }
 
         // Soat hajmini dars turidan avtomatik olish
@@ -144,13 +148,13 @@ public class OqituvchiFanTaqsimlashService {
         OqituvchiFanTaqsimlash taqsimlash = findById(id);
 
         FanTaqsimlash fanTaqsimlash = fanTaqsimlashRepository.findById(dto.getFanTaqsimlashId())
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi!"));
 
         User oqituvchi = userRepository.findById(dto.getOqituvchiId())
-                .orElseThrow(() -> new RuntimeException("O'qituvchi topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("O'qituvchi topilmadi!"));
 
         Course kurs = courseRepository.findById(dto.getKursId())
-                .orElseThrow(() -> new RuntimeException("Kurs topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kurs topilmadi!"));
 
         DarsTuri darsTuri;
         try {
@@ -161,7 +165,7 @@ public class OqituvchiFanTaqsimlashService {
 
         List<Group> guruhlar = dto.getGuruhIds().stream()
                 .map(guruhId -> groupRepository.findById(guruhId)
-                        .orElseThrow(() -> new RuntimeException("Guruh topilmadi: " + guruhId)))
+                        .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + guruhId)))
                 .collect(Collectors.toList());
 
         // Dublikat tekshiruvi (o'zini hisobga olmagan holda)
@@ -179,7 +183,7 @@ public class OqituvchiFanTaqsimlashService {
                     .map(Group::getGuruhNomi)
                     .distinct()
                     .collect(Collectors.joining(", "));
-            throw new RuntimeException("Bu taqsimlash allaqachon mavjud! (guruh: " + guruhNomlari + ")");
+            throw new ConflictException("Bu taqsimlash allaqachon mavjud! (guruh: " + guruhNomlari + ")");
         }
 
         Integer soatHajmi = switch (darsTuri) {
@@ -216,7 +220,7 @@ public class OqituvchiFanTaqsimlashService {
 
     private OqituvchiFanTaqsimlash findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
     }
 
     private OqituvchiFanTaqsimlashResponseDTO toResponseDTO(OqituvchiFanTaqsimlash t) {

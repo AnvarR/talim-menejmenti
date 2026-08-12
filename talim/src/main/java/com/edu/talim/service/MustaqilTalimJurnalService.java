@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.MustaqilTalimJurnalResponseDTO;
 import com.edu.talim.entity.*;
 import com.edu.talim.entity.enums.DarsTuri;
@@ -33,7 +35,7 @@ public class MustaqilTalimJurnalService {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         // Shu semestr/yilga tegishli barcha topshiriqlar (har biri — bitta sana ustuni)
         List<MustaqilTalimTopshiriq> topshiriqlar = topshiriqRepository
@@ -136,10 +138,6 @@ public class MustaqilTalimJurnalService {
     // taqsimlashga yozib qo'yishi mumkin, shuning uchun barcha nomzodlar orasidan qidiramiz.
     public Double[] hisoblaRmt1Rmt2(List<Long> mtTaqsimlashCandidateIds, Long studentId, Semestr semestr, Long oquvYiliId,
                                     LocalDate kesim1Sanasi, LocalDate kesim2Sanasi) {
-        System.out.println("[RMT-DEBUG] hisoblaRmt1Rmt2 chaqirildi: mtTaqsimlashCandidateIds=" + mtTaqsimlashCandidateIds
-                + ", studentId=" + studentId + ", semestr=" + semestr + ", oquvYiliId=" + oquvYiliId
-                + ", kesim1Sanasi=" + kesim1Sanasi + ", kesim2Sanasi=" + kesim2Sanasi);
-
         if (mtTaqsimlashCandidateIds == null || mtTaqsimlashCandidateIds.isEmpty()) return new Double[]{null, null};
 
         List<MustaqilTalimTopshiriq> topshiriqlar = topshiriqRepository
@@ -149,13 +147,9 @@ public class MustaqilTalimJurnalService {
                 .filter(t -> t.getDarsJurnali().getSemestr() == semestr)
                 .collect(Collectors.toList());
 
-        System.out.println("[RMT-DEBUG] mtTaqsimlashCandidateIds=" + mtTaqsimlashCandidateIds + " uchun topilgan topshiriqlar: "
-                + topshiriqlar.size() + " ta");
-
         if (topshiriqlar.isEmpty()) return new Double[]{null, null};
 
         Map<Long, Integer> topshiriqBaho = topshiriqBahoMap(topshiriqlar, studentId);
-        System.out.println("[RMT-DEBUG] studentId=" + studentId + " uchun topshiriqBaho map: " + topshiriqBaho);
 
         LocalDate oquvYiliBoshlanish = LocalDate.of(
                 topshiriqlar.get(0).getDarsJurnali().getOquvYili().getBoshlanishYil(), 9, 1);

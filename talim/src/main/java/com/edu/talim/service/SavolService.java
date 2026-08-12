@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.SavolCreateDTO;
 import com.edu.talim.dto.SavolResponseDTO;
 import com.edu.talim.dto.SavolStatistikaDTO;
@@ -102,7 +104,7 @@ public class SavolService {
 
     private Savol findById(Long id) {
         return savolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Savol topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Savol topilmadi: " + id));
     }
 
     // Savol -> ResponseDTO ga o'tkazish

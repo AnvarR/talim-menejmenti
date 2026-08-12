@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.FanCreateDTO;
 import com.edu.talim.dto.FanResponseDTO;
 import com.edu.talim.entity.Fan;
@@ -40,11 +44,11 @@ public class FanService {
     public FanResponseDTO create(FanCreateDTO dto) {
         // Dublikat tekshiruvi — bir xil kafedra + fan nomi
         if (fanRepository.existsByKafedraIdAndFanNomi(dto.getKafedraId(), dto.getFanNomi())) {
-            throw new RuntimeException("Bu fan oldin qo'shilgan!");
+            throw new ConflictException("Bu fan oldin qo'shilgan!");
         }
 
         TarkibiyTuzilma kafedra = tarkibiyTuzilmaRepository.findById(dto.getKafedraId())
-                .orElseThrow(() -> new RuntimeException("Kafedra topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kafedra topilmadi!"));
 
         Fan fan = Fan.builder()
                 .kafedra(kafedra)
@@ -59,7 +63,7 @@ public class FanService {
         Fan fan = findById(id);
 
         TarkibiyTuzilma kafedra = tarkibiyTuzilmaRepository.findById(dto.getKafedraId())
-                .orElseThrow(() -> new RuntimeException("Kafedra topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kafedra topilmadi!"));
 
         fan.setKafedra(kafedra);
         fan.setFanNomi(dto.getFanNomi());
@@ -76,7 +80,7 @@ public class FanService {
 
     private Fan findById(Long id) {
         return fanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fan topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Fan topilmadi: " + id));
     }
 
     // Fan → ResponseDTO ga o'tkazish

@@ -4,6 +4,7 @@ import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.Semestr;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -60,9 +61,13 @@ public class DarsJurnali {
     @Column
     private String topshiriqFaylNomi;
 
-    // Shu darsdagi barcha davomatlar (EAGER — response da ko'rinsin)
+    // Shu darsdagi barcha davomatlar (EAGER — response da ko'rinsin).
+    // @BatchSize: bir nechta DarsJurnali qatorlari uchun davomatlar HAR BIRI uchun
+    // alohida SELECT o'rniga bitta IN(...) so'rovi bilan guruh-guruh (25 tadan) yuklanadi —
+    // N+1 muammosining oldini oladi.
     @OneToMany(mappedBy = "darsJurnali", cascade = CascadeType.ALL, orphanRemoval = true,
             fetch = FetchType.EAGER)
+    @BatchSize(size = 25)
     @Builder.Default
     private List<Davomat> davomatlar = new ArrayList<>();
 }

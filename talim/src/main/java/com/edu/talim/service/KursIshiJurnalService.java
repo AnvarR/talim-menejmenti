@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.KursIshiJurnalResponseDTO;
 import com.edu.talim.entity.*;
 import com.edu.talim.entity.enums.Semestr;
@@ -32,10 +34,10 @@ public class KursIshiJurnalService {
                          String mavzuNomi, LocalDate muddat) {
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
         oquvYiliService.tahririshniTekshir(oquvYiliId);
 
@@ -70,7 +72,7 @@ public class KursIshiJurnalService {
     @Transactional
     public void tahrirlash(Long kursIshiId, String mavzuNomi, LocalDate muddat) {
         KursIshi kursIshi = kursIshiRepository.findById(kursIshiId)
-                .orElseThrow(() -> new RuntimeException("Kurs ishi topilmadi: " + kursIshiId));
+                .orElseThrow(() -> new NotFoundException("Kurs ishi topilmadi: " + kursIshiId));
 
         oquvYiliService.tahririshniTekshir(kursIshi.getOquvYili().getId());
 
@@ -84,7 +86,7 @@ public class KursIshiJurnalService {
     @Transactional
     public void ochirish(Long kursIshiId) {
         KursIshi kursIshi = kursIshiRepository.findById(kursIshiId)
-                .orElseThrow(() -> new RuntimeException("Kurs ishi topilmadi: " + kursIshiId));
+                .orElseThrow(() -> new NotFoundException("Kurs ishi topilmadi: " + kursIshiId));
         oquvYiliService.tahririshniTekshir(kursIshi.getOquvYili().getId());
         kursIshiRepository.delete(kursIshi);
     }
@@ -98,7 +100,7 @@ public class KursIshiJurnalService {
         }
 
         KursIshiBaho kursIshiBaho = kursIshiBahoRepository.findById(kursIshiBahoId)
-                .orElseThrow(() -> new RuntimeException("Kurs ishi bahosi topilmadi: " + kursIshiBahoId));
+                .orElseThrow(() -> new NotFoundException("Kurs ishi bahosi topilmadi: " + kursIshiBahoId));
 
         oquvYiliService.tahririshniTekshir(kursIshiBaho.getKursIshi().getOquvYili().getId());
 
@@ -120,7 +122,7 @@ public class KursIshiJurnalService {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         List<KursIshi> kursIshlari = kursIshiRepository
                 .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrOrderByMuddatAsc(

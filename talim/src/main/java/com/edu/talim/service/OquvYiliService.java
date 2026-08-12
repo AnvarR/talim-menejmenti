@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.OquvYiliDTO;
 import com.edu.talim.entity.OquvYili;
 import com.edu.talim.repository.OquvYiliRepository;
@@ -31,17 +35,17 @@ public class OquvYiliService {
     public OquvYiliDTO getFaol() {
         return oquvYiliRepository.findByFaolTrue()
                 .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Faol o'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Faol o'quv yili topilmadi"));
     }
 
     @Transactional
     public OquvYiliDTO create(OquvYiliDTO dto) {
         if (oquvYiliRepository.existsByNom(dto.getNom())) {
-            throw new RuntimeException("Bu o'quv yili allaqachon mavjud: " + dto.getNom());
+            throw new ConflictException("Bu o'quv yili allaqachon mavjud: " + dto.getNom());
         }
         if (oquvYiliRepository.existsByBoshlanishYilAndTugashYil(
                 dto.getBoshlanishYil(), dto.getTugashYil())) {
-            throw new RuntimeException("Bu yillar uchun o'quv yili allaqachon mavjud");
+            throw new ConflictException("Bu yillar uchun o'quv yili allaqachon mavjud");
         }
 
         OquvYili entity = OquvYili.builder()
@@ -63,7 +67,7 @@ public class OquvYiliService {
         });
 
         OquvYili oquvYili = oquvYiliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
 
         oquvYili.setFaol(true);
         return toDTO(oquvYiliRepository.save(oquvYili));
@@ -72,7 +76,7 @@ public class OquvYiliService {
     @Transactional
     public void delete(Long id) {
         OquvYili oquvYili = oquvYiliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
         if (oquvYili.getFaol()) {
             throw new RuntimeException("Faol o'quv yilini o'chirib bo'lmaydi");
         }
@@ -87,7 +91,7 @@ public class OquvYiliService {
     //   (joriy faol yilning boshlanishYili asosida), YOKI fakultet boshlig'i qo'shimcha ruxsat bergan bo'lsa
     public boolean tahririshMumkinmi(Long oquvYiliId) {
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi: " + oquvYiliId));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + oquvYiliId));
 
         if (Boolean.TRUE.equals(oquvYili.getFaol())) {
             return true;
@@ -119,7 +123,7 @@ public class OquvYiliService {
     @Transactional
     public OquvYiliDTO tahrirgaRuxsatBerish(Long id) {
         OquvYili oquvYili = oquvYiliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
         oquvYili.setQoshimchaTahrirRuxsati(true);
         return toDTO(oquvYiliRepository.save(oquvYili));
     }
@@ -128,7 +132,7 @@ public class OquvYiliService {
     @Transactional
     public OquvYiliDTO tahrirRuxsatiniYopish(Long id) {
         OquvYili oquvYili = oquvYiliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
         oquvYili.setQoshimchaTahrirRuxsati(false);
         return toDTO(oquvYiliRepository.save(oquvYili));
     }

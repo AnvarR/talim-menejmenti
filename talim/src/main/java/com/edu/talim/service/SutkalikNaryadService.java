@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.SutkalikNaryadCreateDTO;
 import com.edu.talim.dto.SutkalikNaryadResponseDTO;
 import com.edu.talim.entity.SutkalikNaryad;
@@ -56,7 +58,7 @@ public class SutkalikNaryadService {
 
     public SutkalikNaryadResponseDTO create(SutkalikNaryadCreateDTO dto) {
         Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Kursant topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi!"));
 
         SutkalikNaryad naryad = SutkalikNaryad.builder()
                 .student(student)
@@ -88,7 +90,7 @@ public class SutkalikNaryadService {
 
     private SutkalikNaryad findById(Long id) {
         return naryadRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Naryad topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Naryad topilmadi: " + id));
     }
 
     private LocalDate parseDate(String date) {

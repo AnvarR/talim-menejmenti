@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.FanTaqsimlashCreateDTO;
 import com.edu.talim.dto.FanTaqsimlashResponseDTO;
 import com.edu.talim.entity.*;
@@ -29,13 +31,13 @@ public class FanTaqsimlashService {
     // Yangi taqsimlash yaratish
     public FanTaqsimlashResponseDTO create(FanTaqsimlashCreateDTO dto) {
         Fan fan = fanRepository.findById(dto.getFanId())
-                .orElseThrow(() -> new RuntimeException("Fan topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Fan topilmadi!"));
 
         Course kurs = courseRepository.findById(dto.getKursId())
-                .orElseThrow(() -> new RuntimeException("Kurs topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kurs topilmadi!"));
 
         Group guruh = groupRepository.findById(dto.getGuruhId())
-                .orElseThrow(() -> new RuntimeException("Guruh topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Guruh topilmadi!"));
 
         // Dublikat tekshiruvi — hamma parametrlar bir xil bo'lsa xato qaytaradi
         boolean dublikat = fanTaqsimlashRepository
@@ -75,13 +77,13 @@ public class FanTaqsimlashService {
         FanTaqsimlash taqsimlash = findById(id);
 
         Fan fan = fanRepository.findById(dto.getFanId())
-                .orElseThrow(() -> new RuntimeException("Fan topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Fan topilmadi!"));
 
         Course kurs = courseRepository.findById(dto.getKursId())
-                .orElseThrow(() -> new RuntimeException("Kurs topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kurs topilmadi!"));
 
         Group guruh = groupRepository.findById(dto.getGuruhId())
-                .orElseThrow(() -> new RuntimeException("Guruh topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Guruh topilmadi!"));
 
         taqsimlash.setFan(fan);
         taqsimlash.setKurs(kurs);
@@ -105,7 +107,7 @@ public class FanTaqsimlashService {
 
     private FanTaqsimlash findById(Long id) {
         return fanTaqsimlashRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Taqsimlash topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
     }
 
     private FanTaqsimlashResponseDTO toResponseDTO(FanTaqsimlash t) {

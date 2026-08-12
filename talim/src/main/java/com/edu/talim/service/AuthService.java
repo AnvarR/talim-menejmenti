@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.UnauthorizedException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.LoginRequestDTO;
 import com.edu.talim.dto.LoginResponseDTO;
 import com.edu.talim.entity.Student;
@@ -23,7 +27,7 @@ public class AuthService {
 
         if (user != null) {
             if (!user.getPassword().equals(dto.getPassword())) {
-                throw new RuntimeException("Parol noto'g'ri!");
+                throw new UnauthorizedException("Parol noto'g'ri!");
             }
             return LoginResponseDTO.builder()
                     .id(user.getId())
@@ -36,10 +40,10 @@ public class AuthService {
 
         // 2. Topilmasa students jadvalidan qidiramiz
         Student student = studentRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new RuntimeException("Foydalanuvchi topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Foydalanuvchi topilmadi!"));
 
         if (!student.getPassword().equals(dto.getPassword())) {
-            throw new RuntimeException("Parol noto'g'ri!");
+            throw new UnauthorizedException("Parol noto'g'ri!");
         }
 
         return LoginResponseDTO.builder()

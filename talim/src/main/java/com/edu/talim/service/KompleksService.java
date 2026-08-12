@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.KompleksFaylDTO;
 import com.edu.talim.dto.KompleksResponseDTO;
 import com.edu.talim.entity.Kompleks;
@@ -54,7 +56,7 @@ public class KompleksService {
 
     public KompleksResponseDTO getById(Long id) {
         Kompleks kompleks = kompleksRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kompleks topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Kompleks topilmadi: " + id));
         return toDTO(kompleks);
     }
 
@@ -63,10 +65,10 @@ public class KompleksService {
                                       MaterialKategoriyasi kategoriya, List<MultipartFile> fayllar) throws IOException {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository.findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi: " + oqituvchiFanTaqsimlashId));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi: " + oqituvchiFanTaqsimlashId));
 
         OquvYili faolYil = oquvYiliRepository.findByFaolTrue()
-                .orElseThrow(() -> new RuntimeException("Faol o'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Faol o'quv yili topilmadi"));
 
         Kompleks kompleks = Kompleks.builder()
                 .oqituvchiFanTaqsimlash(taqsimlash)
@@ -90,7 +92,7 @@ public class KompleksService {
                                       List<MultipartFile> yangiFayllar) throws IOException {
 
         Kompleks kompleks = kompleksRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kompleks topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Kompleks topilmadi: " + id));
 
         kompleks.setMaterialNomi(materialNomi);
         kompleks.setMaterialKategoriyasi(kategoriya);
@@ -106,7 +108,7 @@ public class KompleksService {
     @Transactional
     public void delete(Long id) {
         Kompleks kompleks = kompleksRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Kompleks topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Kompleks topilmadi: " + id));
 
         for (KompleksFayl fayl : kompleks.getFayllar()) {
             faylniDiskdanOchirish(fayl.getFaylYoli());
@@ -118,7 +120,7 @@ public class KompleksService {
     @Transactional
     public void faylniOchirish(Long kompleksId, Long faylId) {
         KompleksFayl fayl = kompleksFaylRepository.findById(faylId)
-                .orElseThrow(() -> new RuntimeException("Fayl topilmadi: " + faylId));
+                .orElseThrow(() -> new NotFoundException("Fayl topilmadi: " + faylId));
 
         if (!fayl.getKompleks().getId().equals(kompleksId)) {
             throw new RuntimeException("Fayl bu komplektga tegishli emas");

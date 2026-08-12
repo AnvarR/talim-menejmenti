@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.DarsJurnaliResponseDTO;
 import com.edu.talim.dto.DavomatResponseDTO;
 import com.edu.talim.dto.MavzuDTO;
@@ -66,17 +70,17 @@ public class DarsJurnaliService {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         // Faol o'quv yilini avtomatik olish
         OquvYili faolYil = oquvYiliRepository.findByFaolTrue()
-                .orElseThrow(() -> new RuntimeException("Faol o'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Faol o'quv yili topilmadi"));
 
         // Shu sana uchun dars allaqachon bormi
         darsJurnaliRepository.findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
                         oqituvchiFanTaqsimlashId, darsTuri, sana)
                 .ifPresent(d -> {
-                    throw new RuntimeException("Bu sana uchun dars allaqachon mavjud: " + sana);
+                    throw new ConflictException("Bu sana uchun dars allaqachon mavjud: " + sana);
                 });
 
         // Avval davomatlarsiz saqlaymiz
@@ -122,7 +126,7 @@ public class DarsJurnaliService {
                         darsJurnali.getDarsTuri(), yangiSana)
                 .filter(d -> !d.getId().equals(id))
                 .ifPresent(d -> {
-                    throw new RuntimeException("Bu sana uchun dars allaqachon mavjud: " + yangiSana);
+                    throw new ConflictException("Bu sana uchun dars allaqachon mavjud: " + yangiSana);
                 });
 
         darsJurnali.setSana(yangiSana);
@@ -140,7 +144,7 @@ public class DarsJurnaliService {
         long topshiriqlarSoni = mustaqilTalimTopshiriqRepository
                 .findByDarsJurnaliIdOrderByYaratilganVaqtAsc(id).size();
         if (topshiriqlarSoni > 0) {
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Bu mavzuga tegishli " + topshiriqlarSoni + " ta topshiriq mavjud! "
                             + "Avval o'sha topshiriq(lar)ni o'chiring, keyin mavzuni o'chirishingiz mumkin.");
         }
@@ -192,7 +196,7 @@ public class DarsJurnaliService {
     @Transactional
     public DavomatResponseDTO davomatYangilash(Long davomatId, DavomatHolati holat) {
         Davomat davomat = davomatRepository.findById(davomatId)
-                .orElseThrow(() -> new RuntimeException("Davomat topilmadi: " + davomatId));
+                .orElseThrow(() -> new NotFoundException("Davomat topilmadi: " + davomatId));
 
         // Bloklangan kursantni tekshirish
         if (davomat.getBloklanganMi()) {
@@ -268,7 +272,7 @@ public class DarsJurnaliService {
 
     private DarsJurnali findById(Long id) {
         return darsJurnaliRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dars jurnali topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Dars jurnali topilmadi: " + id));
     }
 
     private String getFileExtension(String faylNomi) {

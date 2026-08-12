@@ -104,6 +104,14 @@ public class Student {
     @Column(nullable = false)
     private StudentType type;
 
+    // Kursantning tizimdagi umumiy holati: FAOL / CHETLATILGAN / BITIRGAN.
+    // Standart kursantlar ro'yxatida (StudentRepository.findAllWithFilters) faqat
+    // FAOL kursantlar ko'rsatiladi - chetlatilgan/bitirganlar avtomatik chiqarib tashlanadi.
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "varchar(20)")
+    @Builder.Default
+    private TalabaHolati holati = TalabaHolati.FAOL;
+
     private LocalDateTime createdAt;
 
     @PrePersist

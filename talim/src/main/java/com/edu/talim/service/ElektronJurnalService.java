@@ -1,11 +1,16 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.AmaliyDavomatResponseDTO;
 import com.edu.talim.dto.DarsJurnaliResponseDTO;
 import com.edu.talim.dto.ElektronJurnalResponseDTO;
 import com.edu.talim.entity.*;
 import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.DavomatHolati;
+import com.edu.talim.entity.enums.KochirishTuri;
 import com.edu.talim.entity.enums.Semestr;
 import com.edu.talim.repository.*;
 import jakarta.persistence.EntityManager;
@@ -38,6 +43,7 @@ public class ElektronJurnalService {
     private final MustaqilTalimTopshiriqRepository mustaqilTalimTopshiriqRepository;
     private final MustaqilTalimJurnalService mustaqilTalimJurnalService;
     private final OquvYiliService oquvYiliService;
+    private final KursKochirishTarixiRepository kursKochirishTarixiRepository;
     private final EntityManager entityManager;
 
     @Value("${app.upload.dir}")
@@ -46,18 +52,32 @@ public class ElektronJurnalService {
     @Value("${app.base-url}")
     private String baseUrl;
 
-    // Elektron jurnal — to'liq jadval
-    public ElektronJurnalResponseDTO getJurnal(Long oqituvchiFanTaqsimlashId,
-                                               DarsTuri darsTuri,
-                                               Semestr semestr,
-                                               Long oquvYiliId) {
+    // Bir nechta kursant/faqat bitta kursant o'rtasida ishlatiladigan umumiy ma'lumotlar
+    // (taqsimlash, darslar, oraliq/yakuniy baholar, R(MT) nomzodlari) — guruh hajmidan qat'i
+    // nazar bir marta hisoblanadi
+    private record JurnalKontekst(
+            OqituvchiFanTaqsimlash taqsimlash,
+            OquvYili oquvYili,
+            List<DarsJurnali> darslar,
+            LocalDate oquvYiliBoshlanish,
+            List<OraliqNazorat> oraliq1lar,
+            List<OraliqNazorat> oraliq2lar,
+            List<OraliqNazorat> yilOraliqlari,
+            List<YakuniyNazorat> yakuniylar,
+            List<Long> mtTaqsimlashCandidateIds
+    ) {}
+
+    private JurnalKontekst tayyorlaKontekst(Long oqituvchiFanTaqsimlashId,
+                                            DarsTuri darsTuri,
+                                            Semestr semestr,
+                                            Long oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
         // Shu semestrga tegishli darslar
         List<DarsJurnali> darslar = darsJurnaliRepository
@@ -69,14 +89,6 @@ public class ElektronJurnalService {
 
         // O'quv yili boshlanish sanasi (R(KB) ning eng birinchi hisoblash nuqtasi)
         LocalDate oquvYiliBoshlanish = LocalDate.of(oquvYili.getBoshlanishYil(), 9, 1);
-
-        // Guruhidagi barcha kursantlar (alifbo tartibida)
-        List<Student> kursantlar = new ArrayList<>();
-        if (taqsimlash.getGuruhlar() != null) {
-            for (var guruh : taqsimlash.getGuruhlar()) {
-                kursantlar.addAll(studentRepository.findByGroupIdOrderByFioAsc(guruh.getId()));
-            }
-        }
 
         // Shu semestrning 1- va 2-oraliq nazorat baholari
         List<OraliqNazorat> oraliq1lar = oraliqNazoratRepository
@@ -104,14 +116,6 @@ public class ElektronJurnalService {
                         taqsimlash.getFanTaqsimlash().getId(),
                         taqsimlash.getOqituvchi().getId(),
                         taqsimlash.getKurs().getId());
-        System.out.println("[RMT-DEBUG] fanTaqsimlashId=" + taqsimlash.getFanTaqsimlash().getId()
-                + ", oqituvchiId=" + taqsimlash.getOqituvchi().getId()
-                + ", kursId=" + taqsimlash.getKurs().getId()
-                + ", mendagiGuruhIdlar=" + mendagiGuruhIdlar);
-        System.out.println("[RMT-DEBUG] topilgan nomzodlar (" + mtNomzodlar.size() + " ta):");
-        mtNomzodlar.forEach(t -> System.out.println("   id=" + t.getId() + ", darsTuri=" + t.getDarsTuri()
-                + ", guruhlar=" + (t.getGuruhlar() == null ? "null" :
-                t.getGuruhlar().stream().map(g -> g.getId() + ":" + g.getGuruhNomi()).collect(Collectors.toList()))));
 
         // Dars turidan qat'i nazar - frontend topshiriqni ba'zan noto'g'ri turdagi taqsimlashga
         // yozib qo'yishi mumkinligi sababli, guruhi mos keladigan BARCHA nomzodlar ID ro'yxatini yig'amiz
@@ -121,37 +125,128 @@ public class ElektronJurnalService {
                         .anyMatch(g -> mendagiGuruhIdlar.contains(g.getId())))
                 .map(OqituvchiFanTaqsimlash::getId)
                 .collect(Collectors.toList());
-        System.out.println("[RMT-DEBUG] topilgan mtTaqsimlashCandidateIds=" + mtTaqsimlashCandidateIds);
+
+        return new JurnalKontekst(taqsimlash, oquvYili, darslar, oquvYiliBoshlanish,
+                oraliq1lar, oraliq2lar, yilOraliqlari, yakuniylar, mtTaqsimlashCandidateIds);
+    }
+
+    // Guruh (demak taqsimlash) SO'RALAYOTGAN o'quv yilida qaysi kursda bo'lganini aniqlaydi.
+    // taqsimlash.kurs - taqsimlash birinchi marta yaratilgandagi ("boshlang'ich") kurs darajasi,
+    // promotsiya (kursdan-kursga ko'chirish) sodir bo'lganda O'ZGARMAYDI, chunki taqsimlash
+    // bir necha yil qayta ishlatilishi mumkin. Shu sababli - eski o'quv yili tanlanganda
+    // eski kurs, yangi (yoki joriy) o'quv yili tanlanganda promotsiyadan keyingi kurs
+    // ko'rsatilishi kerak. Buning uchun KursKochirishTarixi (kursant tarixi) dan foydalanamiz.
+    private Integer effektivKursRaqami(Group guruh, Course taqsimlashKurs, OquvYili soraluvchiYil) {
+        if (guruh == null || soraluvchiYil == null || soraluvchiYil.getBoshlanishYil() == null) {
+            return taqsimlashKurs.getKursRaqami();
+        }
+
+        List<Student> guruhKursantlari = studentRepository.findByGroupIdOrderByFioAsc(guruh.getId());
+        if (guruhKursantlari.isEmpty()) {
+            return taqsimlashKurs.getKursRaqami();
+        }
+
+        // Guruh a'zolari birga (bitta so'rov ichida) ko'chirilgani uchun,
+        // ixtiyoriy bitta a'zoning tarixi butun guruh uchun ham to'g'ri
+        Long vakilStudentId = guruhKursantlari.get(0).getId();
+
+        List<KursKochirishTarixi> otishlar = kursKochirishTarixiRepository
+                .findByStudentIdOrderBySanaDesc(vakilStudentId)
+                .stream()
+                .filter(t -> t.getTuri() == KochirishTuri.KOCHIRISH)
+                .filter(t -> t.getOquvYili() != null && t.getOquvYili().getBoshlanishYil() != null
+                        && t.getYangiKurs() != null)
+                .sorted(Comparator.comparing(t -> t.getOquvYili().getBoshlanishYil()))
+                .collect(Collectors.toList());
+
+        int kurs = taqsimlashKurs.getKursRaqami();
+        for (KursKochirishTarixi otish : otishlar) {
+            if (otish.getOquvYili().getBoshlanishYil() <= soraluvchiYil.getBoshlanishYil()) {
+                kurs = otish.getYangiKurs().getKursRaqami();
+            } else {
+                break;
+            }
+        }
+        return kurs;
+    }
+
+    // Elektron jurnal — to'liq jadval (butun guruh uchun)
+    public ElektronJurnalResponseDTO getJurnal(Long oqituvchiFanTaqsimlashId,
+                                               DarsTuri darsTuri,
+                                               Semestr semestr,
+                                               Long oquvYiliId) {
+
+        JurnalKontekst k = tayyorlaKontekst(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId);
+
+        // Guruhidagi barcha kursantlar (alifbo tartibida)
+        List<Student> kursantlar = new ArrayList<>();
+        if (k.taqsimlash().getGuruhlar() != null) {
+            for (var guruh : k.taqsimlash().getGuruhlar()) {
+                kursantlar.addAll(studentRepository.findByGroupIdOrderByFioAsc(guruh.getId()));
+            }
+        }
 
         // Kursantlar uchun jadval yaratish
         List<ElektronJurnalResponseDTO.KursantJurnalDTO> kursantJurnallar =
                 kursantlar.stream()
                         .map(student -> buildKursantJurnal(
-                                student, darslar, oraliq1lar, oraliq2lar, yilOraliqlari,
-                                yakuniylar, oqituvchiFanTaqsimlashId,
-                                oquvYiliBoshlanish, mtTaqsimlashCandidateIds, semestr, oquvYiliId))
+                                student, k.darslar(), k.oraliq1lar(), k.oraliq2lar(), k.yilOraliqlari(),
+                                k.yakuniylar(), oqituvchiFanTaqsimlashId,
+                                k.oquvYiliBoshlanish(), k.mtTaqsimlashCandidateIds(), semestr, oquvYiliId))
                         .collect(Collectors.toList());
 
         // Guruh nomini birlashtirish
-        String guruhNomi = taqsimlash.getGuruhlar() != null ?
-                taqsimlash.getGuruhlar().stream()
+        String guruhNomi = k.taqsimlash().getGuruhlar() != null ?
+                k.taqsimlash().getGuruhlar().stream()
                         .map(Group::getGuruhNomi)
                         .collect(Collectors.joining(", ")) : null;
 
+        // So'ralayotgan o'quv yiliga mos kurs raqami (promotsiyalarni hisobga olgan holda)
+        Group birinchiGuruh = (k.taqsimlash().getGuruhlar() != null && !k.taqsimlash().getGuruhlar().isEmpty())
+                ? k.taqsimlash().getGuruhlar().get(0) : null;
+        String kursNomi = effektivKursRaqami(birinchiGuruh, k.taqsimlash().getKurs(), k.oquvYili()) + "-kurs";
+
         return ElektronJurnalResponseDTO.builder()
                 .oqituvchiFanTaqsimlashId(oqituvchiFanTaqsimlashId)
-                .fanNomi(taqsimlash.getFanTaqsimlash().getFan().getFanNomi())
-                .oqituvchiFio(taqsimlash.getOqituvchi().getFio())
-                .kursNomi(taqsimlash.getKurs().getKursRaqami() + "-kurs")
+                .fanNomi(k.taqsimlash().getFanTaqsimlash().getFan().getFanNomi())
+                .oqituvchiFio(k.taqsimlash().getOqituvchi().getFio())
+                .kursNomi(kursNomi)
                 .guruhNomi(guruhNomi)
-                .oquvYiliNomi(oquvYili.getNom())
+                .oquvYiliNomi(k.oquvYili().getNom())
                 .darsTuri(darsTuri)
                 .semestr(semestr)
-                .darslar(darslar.stream()
-                        .map(d -> toDarsDTO(d, taqsimlash, oquvYili))
+                .darslar(k.darslar().stream()
+                        .map(d -> toDarsDTO(d, k.taqsimlash(), k.oquvYili(), kursNomi))
                         .collect(Collectors.toList()))
                 .kursantlar(kursantJurnallar)
                 .build();
+    }
+
+    // Fan nomi, o'qituvchi FIO va R(SEM) — faqat bitta kursant uchun, engil
+    public record StudentFanNatijasi(String fanNomi, String oqituvchiFio, Double rsem) {}
+
+    // Reyting daftarchasi kabi joylar uchun: butun guruhni yuklamasdan,
+    // faqat BITTA kursant uchun R(SEM) ni hisoblaydi (N+1 oldini olish uchun)
+    public StudentFanNatijasi getStudentNatija(Long oqituvchiFanTaqsimlashId,
+                                               DarsTuri darsTuri,
+                                               Semestr semestr,
+                                               Long oquvYiliId,
+                                               Long studentId) {
+
+        JurnalKontekst k = tayyorlaKontekst(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId);
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
+
+        ElektronJurnalResponseDTO.KursantJurnalDTO natija = buildKursantJurnal(
+                student, k.darslar(), k.oraliq1lar(), k.oraliq2lar(), k.yilOraliqlari(),
+                k.yakuniylar(), oqituvchiFanTaqsimlashId,
+                k.oquvYiliBoshlanish(), k.mtTaqsimlashCandidateIds(), semestr, oquvYiliId);
+
+        return new StudentFanNatijasi(
+                k.taqsimlash().getFanTaqsimlash().getFan().getFanNomi(),
+                k.taqsimlash().getOqituvchi().getFio(),
+                natija.getRsem());
     }
 
     // Yangi dars qo'shish (sana tanlanganda)
@@ -161,15 +256,15 @@ public class ElektronJurnalService {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         OquvYili faolYil = oquvYiliRepository.findByFaolTrue()
-                .orElseThrow(() -> new RuntimeException("Faol o'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Faol o'quv yili topilmadi"));
 
         darsJurnaliRepository.findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
                         oqituvchiFanTaqsimlashId, darsTuri, sana)
                 .ifPresent(d -> {
-                    throw new RuntimeException("Bu sana uchun dars allaqachon mavjud: " + sana);
+                    throw new ConflictException("Bu sana uchun dars allaqachon mavjud: " + sana);
                 });
 
         DarsJurnali darsJurnali = DarsJurnali.builder()
@@ -189,14 +284,18 @@ public class ElektronJurnalService {
         darsJurnaliRepository.flush();
         entityManager.refresh(darsJurnali);
 
-        return toDarsDTO(darsJurnali, taqsimlash, faolYil);
+        Group birinchiGuruh = (taqsimlash.getGuruhlar() != null && !taqsimlash.getGuruhlar().isEmpty())
+                ? taqsimlash.getGuruhlar().get(0) : null;
+        String kursNomi = effektivKursRaqami(birinchiGuruh, taqsimlash.getKurs(), faolYil) + "-kurs";
+
+        return toDarsDTO(darsJurnali, taqsimlash, faolYil, kursNomi);
     }
 
     // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
     @Transactional
     public DarsJurnaliResponseDTO darsSanasiniOzgartirish(Long darsJurnaliId, LocalDate yangiSana) {
         DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
-                .orElseThrow(() -> new RuntimeException("Dars topilmadi: " + darsJurnaliId));
+                .orElseThrow(() -> new NotFoundException("Dars topilmadi: " + darsJurnaliId));
 
         oquvYiliService.tahririshniTekshir(darsJurnali.getOquvYili().getId());
 
@@ -205,27 +304,32 @@ public class ElektronJurnalService {
                         darsJurnali.getDarsTuri(), yangiSana)
                 .filter(d -> !d.getId().equals(darsJurnaliId))
                 .ifPresent(d -> {
-                    throw new RuntimeException("Bu sana uchun dars allaqachon mavjud: " + yangiSana);
+                    throw new ConflictException("Bu sana uchun dars allaqachon mavjud: " + yangiSana);
                 });
 
         darsJurnali.setSana(yangiSana);
         darsJurnali = darsJurnaliRepository.save(darsJurnali);
 
-        return toDarsDTO(darsJurnali, darsJurnali.getOqituvchiFanTaqsimlash(), darsJurnali.getOquvYili());
+        OqituvchiFanTaqsimlash taqsimlash = darsJurnali.getOqituvchiFanTaqsimlash();
+        Group birinchiGuruh = (taqsimlash.getGuruhlar() != null && !taqsimlash.getGuruhlar().isEmpty())
+                ? taqsimlash.getGuruhlar().get(0) : null;
+        String kursNomi = effektivKursRaqami(birinchiGuruh, taqsimlash.getKurs(), darsJurnali.getOquvYili()) + "-kurs";
+
+        return toDarsDTO(darsJurnali, taqsimlash, darsJurnali.getOquvYili(), kursNomi);
     }
 
     // Darsni o'chirish (cheklovsiz — istalgan vaqtda), bog'liq davomatlar bilan birga
     @Transactional
     public void darsniOchirish(Long darsJurnaliId) {
         DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
-                .orElseThrow(() -> new RuntimeException("Dars topilmadi: " + darsJurnaliId));
+                .orElseThrow(() -> new NotFoundException("Dars topilmadi: " + darsJurnaliId));
 
         oquvYiliService.tahririshniTekshir(darsJurnali.getOquvYili().getId());
 
         long topshiriqlarSoni = mustaqilTalimTopshiriqRepository
                 .findByDarsJurnaliIdOrderByYaratilganVaqtAsc(darsJurnaliId).size();
         if (topshiriqlarSoni > 0) {
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Bu mavzuga tegishli " + topshiriqlarSoni + " ta topshiriq mavjud! "
                             + "Avval o'sha topshiriq(lar)ni o'chiring, keyin mavzuni o'chirishingiz mumkin.");
         }
@@ -243,7 +347,7 @@ public class ElektronJurnalService {
                                                      DavomatHolati holat,
                                                      Integer baho) {
         AmaliyDavomat davomat = amaliyDavomatRepository.findById(davomatId)
-                .orElseThrow(() -> new RuntimeException("Davomat topilmadi: " + davomatId));
+                .orElseThrow(() -> new NotFoundException("Davomat topilmadi: " + davomatId));
 
         oquvYiliService.tahririshniTekshir(davomat.getDarsJurnali().getOquvYili().getId());
 
@@ -313,7 +417,7 @@ public class ElektronJurnalService {
 
         OqituvchiFanTaqsimlash egaTaqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
         if (!Boolean.TRUE.equals(egaTaqsimlash.getOraliqNazoratRuxsat())) {
             throw new RuntimeException(
                     "Oraliq nazorat kiritishga hali ruxsat berilmagan! Fakultet boshlig'iga murojaat qiling.");
@@ -327,11 +431,11 @@ public class ElektronJurnalService {
         if (nazorat == null) {
             OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                     .findById(oqituvchiFanTaqsimlashId)
-                    .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
             Student student = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new RuntimeException("Kursant topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Kursant topilmadi"));
             OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                    .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
             nazorat = OraliqNazorat.builder()
                     .oqituvchiFanTaqsimlash(taqsimlash)
@@ -371,7 +475,7 @@ public class ElektronJurnalService {
 
         OqituvchiFanTaqsimlash egaTaqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
         if (!Boolean.TRUE.equals(egaTaqsimlash.getYakuniyNazoratRuxsat())) {
             throw new RuntimeException(
                     "Yakuniy nazorat kiritishga hali ruxsat berilmagan! Fakultet boshlig'iga murojaat qiling.");
@@ -385,11 +489,11 @@ public class ElektronJurnalService {
         if (nazorat == null) {
             OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                     .findById(oqituvchiFanTaqsimlashId)
-                    .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
             Student student = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new RuntimeException("Kursant topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Kursant topilmadi"));
             OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                    .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
             nazorat = YakuniyNazorat.builder()
                     .oqituvchiFanTaqsimlash(taqsimlash)
@@ -664,7 +768,8 @@ public class ElektronJurnalService {
 
     private DarsJurnaliResponseDTO toDarsDTO(DarsJurnali entity,
                                              OqituvchiFanTaqsimlash taqsimlash,
-                                             OquvYili oquvYili) {
+                                             OquvYili oquvYili,
+                                             String kursNomi) {
         String guruhNomi = taqsimlash.getGuruhlar() != null ?
                 taqsimlash.getGuruhlar().stream()
                         .map(Group::getGuruhNomi)
@@ -675,7 +780,7 @@ public class ElektronJurnalService {
                 .oqituvchiFanTaqsimlashId(taqsimlash.getId())
                 .fanNomi(taqsimlash.getFanTaqsimlash().getFan().getFanNomi())
                 .oqituvchiFio(taqsimlash.getOqituvchi().getFio())
-                .kursNomi(taqsimlash.getKurs().getKursRaqami() + "-kurs")
+                .kursNomi(kursNomi)
                 .guruhNomi(guruhNomi)
                 .oquvYiliId(oquvYili.getId())
                 .oquvYiliNomi(oquvYili.getNom())

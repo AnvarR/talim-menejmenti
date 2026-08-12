@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.AmaliyotJurnalResponseDTO;
 import com.edu.talim.entity.*;
 import com.edu.talim.repository.*;
@@ -28,10 +30,10 @@ public class AmaliyotJurnalService {
     public void yaratish(Long oqituvchiFanTaqsimlashId, Long oquvYiliId, LocalDate tugashSanasi) {
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
         oquvYiliService.tahririshniTekshir(oquvYiliId);
 
@@ -63,7 +65,7 @@ public class AmaliyotJurnalService {
     @Transactional
     public void tahrirlash(Long amaliyotId, LocalDate tugashSanasi) {
         Amaliyot amaliyot = amaliyotRepository.findById(amaliyotId)
-                .orElseThrow(() -> new RuntimeException("Amaliyot topilmadi: " + amaliyotId));
+                .orElseThrow(() -> new NotFoundException("Amaliyot topilmadi: " + amaliyotId));
 
         oquvYiliService.tahririshniTekshir(amaliyot.getOquvYili().getId());
 
@@ -75,7 +77,7 @@ public class AmaliyotJurnalService {
     @Transactional
     public void ochirish(Long amaliyotId) {
         Amaliyot amaliyot = amaliyotRepository.findById(amaliyotId)
-                .orElseThrow(() -> new RuntimeException("Amaliyot topilmadi: " + amaliyotId));
+                .orElseThrow(() -> new NotFoundException("Amaliyot topilmadi: " + amaliyotId));
         oquvYiliService.tahririshniTekshir(amaliyot.getOquvYili().getId());
         amaliyotRepository.delete(amaliyot);
     }
@@ -89,7 +91,7 @@ public class AmaliyotJurnalService {
         }
 
         AmaliyotBaho amaliyotBaho = amaliyotBahoRepository.findById(amaliyotBahoId)
-                .orElseThrow(() -> new RuntimeException("Amaliyot bahosi topilmadi: " + amaliyotBahoId));
+                .orElseThrow(() -> new NotFoundException("Amaliyot bahosi topilmadi: " + amaliyotBahoId));
 
         oquvYiliService.tahririshniTekshir(amaliyotBaho.getAmaliyot().getOquvYili().getId());
 
@@ -109,10 +111,10 @@ public class AmaliyotJurnalService {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
-                .orElseThrow(() -> new RuntimeException("O'quv yili topilmadi"));
+                .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
         List<Amaliyot> amaliyotlar = amaliyotRepository
                 .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdOrderByTugashSanasiAsc(

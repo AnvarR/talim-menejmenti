@@ -1,5 +1,11 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.UnauthorizedException;
+
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.*;
 import com.edu.talim.entity.TarkibiyTuzilma;
 import com.edu.talim.entity.User;
@@ -45,9 +51,8 @@ public class UserService {
 
     // Qo'shish
     public UserDetailDTO create(UserCreateDTO dto) {
-        System.out.println("Kelgan DTO: " + dto);
         if (userRepository.existsByJshshir(dto.getJshshir())) {
-            throw new RuntimeException("Bu JSHSHIR bilan foydalanuvchi allaqachon mavjud!");
+            throw new ConflictException("Bu JSHSHIR bilan foydalanuvchi allaqachon mavjud!");
         }
 
         // Kafedra boshlig'i tekshiruvi
@@ -56,7 +61,7 @@ public class UserService {
                     .findByTarkibiyTuzilmaIdAndRole(dto.getTarkibiyTuzilmaId(), Role.KAFEDRA_BOSHLIGHI)
                     .isPresent();
             if (boshligBor) {
-                throw new RuntimeException("Bu kafedrада allaqachon kafedra boshlig'i mavjud!");
+                throw new ConflictException("Bu kafedrада allaqachon kafedra boshlig'i mavjud!");
             }
         }
 
@@ -96,7 +101,7 @@ public class UserService {
     public void changePassword(Long id, ChangePasswordDTO dto) {
         User user = findById(id);
         if (!user.getPassword().equals(dto.getHozirgiParol())) {
-            throw new RuntimeException("Hozirgi parol noto'g'ri!");
+            throw new UnauthorizedException("Hozirgi parol noto'g'ri!");
         }
         if (!dto.getYangiParol().equals(dto.getYangiParolTakror())) {
             throw new RuntimeException("Yangi parollar mos kelmaydi!");
@@ -118,7 +123,7 @@ public class UserService {
 
     private User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Foydalanuvchi topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Foydalanuvchi topilmadi: " + id));
     }
 
     private LocalDate parseDate(String date) {
@@ -139,7 +144,7 @@ public class UserService {
         TarkibiyTuzilma tarkibiyTuzilma = null;
         if (dto.getTarkibiyTuzilmaId() != null) {
             tarkibiyTuzilma = tarkibiyTuzilmaRepository.findById(dto.getTarkibiyTuzilmaId())
-                    .orElseThrow(() -> new RuntimeException("Tarkibiy tuzilma topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Tarkibiy tuzilma topilmadi"));
         }
 
         String username = dto.getPassportMalumotlari();
@@ -196,7 +201,7 @@ public class UserService {
         if (dto.getTarkibiyTuzilmaId() != null) {
             TarkibiyTuzilma tarkibiyTuzilma = tarkibiyTuzilmaRepository
                     .findById(dto.getTarkibiyTuzilmaId())
-                    .orElseThrow(() -> new RuntimeException("Tarkibiy tuzilma topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Tarkibiy tuzilma topilmadi"));
             user.setTarkibiyTuzilma(tarkibiyTuzilma);
         }
     }

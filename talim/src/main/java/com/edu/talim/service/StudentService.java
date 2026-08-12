@@ -1,5 +1,9 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.ConflictException;
+
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.StudentCreateDTO;
 import com.edu.talim.dto.StudentDetailDTO;
 import com.edu.talim.dto.StudentListDTO;
@@ -61,7 +65,7 @@ public class StudentService {
     // Qo'shish
     public StudentDetailDTO create(StudentCreateDTO dto) {
         if (studentRepository.existsByJshshir(dto.getJshshir())) {
-            throw new RuntimeException("Bu JSHSHIR bilan student allaqachon mavjud!");
+            throw new ConflictException("Bu JSHSHIR bilan student allaqachon mavjud!");
         }
         Student student = buildStudent(dto);
         return toDetailDTO(studentRepository.save(student));
@@ -92,13 +96,13 @@ public class StudentService {
 
         // Institutdan chiqish yozuvi bormi tekshirish
         if (institutdanChiqishRepository.existsByStudentId(id)) {
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Bu kursantda institutdan chiqish yozuvi mavjud, o'chirib bo'lmaydi!");
         }
 
         // Sutkalik naryad yozuvi bormi tekshirish
         if (sutkalikNaryadRepository.existsByStudentId(id)) {
-            throw new RuntimeException(
+            throw new ConflictException(
                     "Bu kursantda sutkalik naryad yozuvi mavjud, o'chirib bo'lmaydi!");
         }
 
@@ -112,7 +116,7 @@ public class StudentService {
 
     private Student findById(Long id) {
         return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Student topilmadi: " + id));
     }
 
     // "12.01.2024" yoki "2024-01-12" → LocalDate
@@ -146,7 +150,7 @@ public class StudentService {
         if (dto.getKursi() != null && !dto.getKursi().isEmpty()) {
             course = courseRepository
                     .findByKursRaqami(parseKurs(dto.getKursi()))
-                    .orElseThrow(() -> new RuntimeException("Kurs topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Kurs topilmadi"));
         }
 
         // Guruh faqat TINGLOVCHI uchun
@@ -233,7 +237,7 @@ public class StudentService {
         if (dto.getKursi() != null && !dto.getKursi().isEmpty()) {
             Course course = courseRepository
                     .findByKursRaqami(parseKurs(dto.getKursi()))
-                    .orElseThrow(() -> new RuntimeException("Kurs topilmadi"));
+                    .orElseThrow(() -> new NotFoundException("Kurs topilmadi"));
             student.setCourse(course);
 
             // Guruh faqat TINGLOVCHI uchun yangilanadi

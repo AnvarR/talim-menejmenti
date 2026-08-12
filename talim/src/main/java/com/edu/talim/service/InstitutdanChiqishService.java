@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.InstitutdanChiqishCreateDTO;
 import com.edu.talim.dto.InstitutdanChiqishResponseDTO;
 import com.edu.talim.entity.InstitutdanChiqish;
@@ -54,7 +56,7 @@ public class InstitutdanChiqishService {
 
     public InstitutdanChiqishResponseDTO create(InstitutdanChiqishCreateDTO dto) {
         Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Kursant topilmadi!"));
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi!"));
 
         InstitutdanChiqish chiqish = InstitutdanChiqish.builder()
                 .student(student)
@@ -92,7 +94,7 @@ public class InstitutdanChiqishService {
 
     private InstitutdanChiqish findById(Long id) {
         return chiqishRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Chiqish topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Chiqish topilmadi: " + id));
     }
 
     private LocalDate parseDate(String date) {

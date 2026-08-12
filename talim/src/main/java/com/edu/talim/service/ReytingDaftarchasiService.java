@@ -1,6 +1,7 @@
 package com.edu.talim.service;
 
-import com.edu.talim.dto.ElektronJurnalResponseDTO;
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.ReytingDaftarchasiDTO;
 import com.edu.talim.entity.OqituvchiFanTaqsimlash;
 import com.edu.talim.entity.OraliqNazorat;
@@ -44,7 +45,7 @@ public class ReytingDaftarchasiService {
         }
 
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Kursant topilmadi: " + studentId));
+                .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 
         int kursRaqami = kursRaqamiHisobla(globalSemestr);
         Semestr semestr = semestrHisobla(globalSemestr);
@@ -73,26 +74,25 @@ public class ReytingDaftarchasiService {
                         yn.getOqituvchiFanTaqsimlash().getId(),
                         new TaqsimlashYil(yn.getOqituvchiFanTaqsimlash().getId(), yn.getOquvYili().getId())));
 
+        // soatHajmi larni bitta so'rovda, hammasi uchun birga olamiz (N+1 o'rniga)
+        Map<Long, Integer> soatHajmilar = oqituvchiFanTaqsimlashRepository
+                .findAllById(taqsimlashlar.keySet())
+                .stream()
+                .collect(Collectors.toMap(
+                        OqituvchiFanTaqsimlash::getId,
+                        t -> t.getFanTaqsimlash().getSoatHajmi()));
+
+        // Har bir fan uchun BUTUN guruhni emas, faqat shu studentning natijasini hisoblaymiz
         List<ReytingDaftarchasiDTO.FanNatijaDTO> fanlar = taqsimlashlar.values().stream()
                 .map(ty -> {
-                    ElektronJurnalResponseDTO jurnal = elektronJurnalService.getJurnal(
-                            ty.taqsimlashId(), DarsTuri.SEMINAR, semestr, ty.oquvYiliId());
-
-                    Double rsem = jurnal.getKursantlar().stream()
-                            .filter(k -> k.getStudentId().equals(studentId))
-                            .findFirst()
-                            .map(ElektronJurnalResponseDTO.KursantJurnalDTO::getRsem)
-                            .orElse(null);
-
-                    Integer soatHajmi = oqituvchiFanTaqsimlashRepository.findById(ty.taqsimlashId())
-                            .map(t -> t.getFanTaqsimlash().getSoatHajmi())
-                            .orElse(null);
+                    var natija = elektronJurnalService.getStudentNatija(
+                            ty.taqsimlashId(), DarsTuri.SEMINAR, semestr, ty.oquvYiliId(), studentId);
 
                     return ReytingDaftarchasiDTO.FanNatijaDTO.builder()
-                            .fanNomi(jurnal.getFanNomi())
-                            .soatHajmi(soatHajmi)
-                            .oqituvchiFio(jurnal.getOqituvchiFio())
-                            .semestrBahosi(rsem)
+                            .fanNomi(natija.fanNomi())
+                            .soatHajmi(soatHajmilar.get(ty.taqsimlashId()))
+                            .oqituvchiFio(natija.oqituvchiFio())
+                            .semestrBahosi(natija.rsem())
                             .build();
                 })
                 .collect(Collectors.toList());

@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.*;
 import com.edu.talim.entity.*;
 import com.edu.talim.entity.enums.TopshiriqHolati;
@@ -60,7 +62,7 @@ public class MustaqilTalimTopshiriqService {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
-                .orElseThrow(() -> new RuntimeException("Fan taqsimlash topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
 
         // Himoya: Mustaqil ta'lim topshirig'i faqat MUSTAQIL_TALIM turidagi taqsimlashga yaratilishi mumkin
         if (taqsimlash.getDarsTuri() != com.edu.talim.entity.enums.DarsTuri.MUSTAQIL_TALIM) {
@@ -71,7 +73,7 @@ public class MustaqilTalimTopshiriqService {
         }
 
         DarsJurnali mavzu = darsJurnaliRepository.findById(darsJurnaliId)
-                .orElseThrow(() -> new RuntimeException("Mavzu topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Mavzu topilmadi"));
 
         // Himoya: mavzu shu fanga (fanTaqsimlash) tegishli ekanini tekshirish - mavzular
         // dars turi/guruhdan qat'i nazar butun fan (masalan Ma'ruzada yaratilgan) doirasida umumiy
@@ -141,7 +143,7 @@ public class MustaqilTalimTopshiriqService {
     @Transactional
     public void faylOchirish(Long faylId) {
         TopshiriqFayl fayl = topshiriqFaylRepository.findById(faylId)
-                .orElseThrow(() -> new RuntimeException("Fayl topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Fayl topilmadi"));
         faylniDiskdanOchirish(fayl.getFaylYoli());
         topshiriqFaylRepository.delete(fayl);
     }
@@ -161,7 +163,7 @@ public class MustaqilTalimTopshiriqService {
             if (allaqachonBor) continue;
 
             Student student = studentRepository.findById(item.getStudentId())
-                    .orElseThrow(() -> new RuntimeException("Kursant topilmadi: " + item.getStudentId()));
+                    .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + item.getStudentId()));
 
             TopshiriqYuborish yuborish = TopshiriqYuborish.builder()
                     .topshiriq(topshiriq)
@@ -185,7 +187,7 @@ public class MustaqilTalimTopshiriqService {
                                                        TopshiriqHolati holati, String topshiriqTuri) {
 
         DarsJurnali mavzu = darsJurnaliRepository.findById(darsJurnaliId)
-                .orElseThrow(() -> new RuntimeException("Mavzu topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Mavzu topilmadi"));
 
         List<TopshiriqYuborishHolatiDTO> qatorlar = topshiriqYuborishRepository
                 .findByTopshiriq_DarsJurnaliId(darsJurnaliId)
@@ -228,7 +230,7 @@ public class MustaqilTalimTopshiriqService {
     public TopshiriqJavobResponseDTO javobBerish(Long topshiriqYuborishId, String izoh,
                                                  MultipartFile fayl) throws IOException {
         TopshiriqYuborish yuborish = topshiriqYuborishRepository.findById(topshiriqYuborishId)
-                .orElseThrow(() -> new RuntimeException("Topshiriq topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Topshiriq topilmadi"));
 
         Integer urinishlarSoni = yuborish.getTopshiriq().getUrinishlarSoni();
         if (urinishlarSoni != null) {
@@ -270,7 +272,7 @@ public class MustaqilTalimTopshiriqService {
     @Transactional
     public TopshiriqJavobResponseDTO baholash(Long javobId, BaholashRequestDTO dto) {
         TopshiriqJavob javob = topshiriqJavobRepository.findById(javobId)
-                .orElseThrow(() -> new RuntimeException("Javob topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Javob topilmadi"));
 
         oquvYiliService.tahririshniTekshir(
                 javob.getTopshiriqYuborish().getTopshiriq().getDarsJurnali().getOquvYili().getId());
@@ -295,7 +297,7 @@ public class MustaqilTalimTopshiriqService {
     @Transactional
     public TopshiriqJavobResponseDTO qaytarish(Long javobId, String sabab) {
         TopshiriqJavob javob = topshiriqJavobRepository.findById(javobId)
-                .orElseThrow(() -> new RuntimeException("Javob topilmadi"));
+                .orElseThrow(() -> new NotFoundException("Javob topilmadi"));
 
         javob.setQaytarilganMi(true);
         javob.setQaytarishSababi(sabab);
@@ -371,7 +373,7 @@ public class MustaqilTalimTopshiriqService {
 
     private MustaqilTalimTopshiriq findById(Long id) {
         return topshiriqRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Topshiriq topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Topshiriq topilmadi: " + id));
     }
 
     private void saqlaFayllar(MustaqilTalimTopshiriq topshiriq, List<MultipartFile> fayllar) throws IOException {

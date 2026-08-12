@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import com.edu.talim.exception.NotFoundException;
+
 import com.edu.talim.dto.XabarCreateDTO;
 import com.edu.talim.dto.XabarResponseDTO;
 import com.edu.talim.entity.Xabar;
@@ -63,7 +65,7 @@ public class XabarService {
     /** Xabarni o'qilgan deb belgilash */
     public void markAsRead(Long id) {
         Xabar xabar = xabarRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Xabar topilmadi: " + id));
+                .orElseThrow(() -> new NotFoundException("Xabar topilmadi: " + id));
         xabar.setOqilgan(true);
         xabarRepository.save(xabar);
     }
