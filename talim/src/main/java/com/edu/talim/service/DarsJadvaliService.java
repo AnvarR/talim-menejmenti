@@ -129,11 +129,17 @@ public class DarsJadvaliService {
                 .build();
     }
 
+    // XAVFSIZLIK: faqat harf/raqamdan iborat, qisqa kengaytma qabul qilinadi -
+    // aks holda ("/" yoki ".." kabi belgilar bo'lsa) xato qaytariladi
     private String getFileExtension(String faylNomi) {
         if (faylNomi == null || !faylNomi.contains(".")) {
             throw new RuntimeException("Fayl nomi noto'g'ri");
         }
-        return faylNomi.substring(faylNomi.lastIndexOf(".") + 1).toLowerCase();
+        String ext = faylNomi.substring(faylNomi.lastIndexOf(".") + 1).toLowerCase();
+        if (ext.isEmpty() || ext.length() > 10 || !ext.matches("[a-z0-9]+")) {
+            throw new RuntimeException("Fayl nomi noto'g'ri");
+        }
+        return ext;
     }
 
     private void validateFileType(String tur) {

@@ -404,11 +404,21 @@ public class MustaqilTalimTopshiriqService {
         }
     }
 
+    // XAVFSIZLIK: faqat harf/raqamdan iborat, qisqa kengaytma qabul qilinadi -
+    // aks holda ("/" yoki ".." kabi belgilar bo'lsa) xato qaytariladi
     private String getFileExtension(String faylNomi) {
         if (faylNomi == null || !faylNomi.contains(".")) {
             throw new RuntimeException("Fayl nomi noto'g'ri");
         }
-        return faylNomi.substring(faylNomi.lastIndexOf(".") + 1).toLowerCase();
+        String ext = faylNomi.substring(faylNomi.lastIndexOf(".") + 1).toLowerCase();
+        if (ext.isEmpty() || ext.length() > 10 || !ext.matches("[a-z0-9]+")) {
+            throw new RuntimeException("Fayl nomi noto'g'ri");
+        }
+        if (!com.edu.talim.config.FaylTurlari.HUJJAT_VA_RASM.contains(ext)) {
+            throw new RuntimeException("Ruxsat etilmagan fayl turi! Faqat quyidagilar qabul qilinadi: "
+                    + String.join(", ", com.edu.talim.config.FaylTurlari.HUJJAT_VA_RASM));
+        }
+        return ext;
     }
 
     private MustaqilTalimTopshiriqResponseDTO toDTO(MustaqilTalimTopshiriq entity) {

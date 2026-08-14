@@ -20,6 +20,7 @@ import com.edu.talim.repository.StudentRepository;
 import com.edu.talim.repository.SutkalikNaryadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,6 +38,7 @@ public class StudentService {
     private final FileService fileService;
     private final InstitutdanChiqishRepository institutdanChiqishRepository;
     private final SutkalikNaryadRepository sutkalikNaryadRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // Ro'yxat (filter bilan)
     public Page<StudentListDTO> getAll(
@@ -87,7 +89,7 @@ public class StudentService {
         if (student.getPhotoUrl() != null) {
             fileService.deleteFile(student.getPhotoUrl());
         }
-        String photoUrl = fileService.saveFile(file);
+        String photoUrl = fileService.saveFile(file, com.edu.talim.config.FaylTurlari.RASM);
         student.setPhotoUrl(photoUrl);
         studentRepository.save(student);
         return photoUrl;
@@ -191,7 +193,7 @@ public class StudentService {
 
         // Avtomatik username, password, role
         String username = dto.getPassportSeria();
-        String password = "12345678";
+        String password = passwordEncoder.encode("12345678");
         Role role = tinglovchiMi ? Role.TINGLOVCHI : Role.KURSANT;
 
         OquvYili oquvYili = null;

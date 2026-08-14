@@ -2,6 +2,7 @@ package com.edu.talim.controller;
 
 import com.edu.talim.dto.*;
 import com.edu.talim.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +39,7 @@ public class UserController {
 
     // Qo'shish
     @PostMapping
-    public ResponseEntity<UserDetailDTO> create(@RequestBody UserCreateDTO dto) {
+    public ResponseEntity<UserDetailDTO> create(@Valid @RequestBody UserCreateDTO dto) {
         return ResponseEntity.ok(userService.create(dto));
     }
 
@@ -55,7 +56,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDetailDTO> update(
             @PathVariable Long id,
-            @RequestBody UserCreateDTO dto
+            @Valid @RequestBody UserCreateDTO dto
     ) {
         return ResponseEntity.ok(userService.update(id, dto));
     }
@@ -71,7 +72,7 @@ public class UserController {
     @PutMapping("/{id}/change-password")
     public ResponseEntity<Void> changePassword(
             @PathVariable Long id,
-            @RequestBody ChangePasswordDTO dto
+            @Valid @RequestBody ChangePasswordDTO dto
     ) {
         userService.changePassword(id, dto);
         return ResponseEntity.ok().build();

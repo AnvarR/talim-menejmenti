@@ -275,9 +275,18 @@ public class DarsJurnaliService {
                 .orElseThrow(() -> new NotFoundException("Dars jurnali topilmadi: " + id));
     }
 
+    // XAVFSIZLIK: faqat harf/raqamdan iborat, qisqa kengaytma qaytariladi.
+    // Aks holda (masalan "/" yoki ".." kabi belgilar bo'lsa) standart "pdf" qaytariladi -
+    // shu bilan path traversal (katalogdan chiqib ketish) imkoni butunlay yo'qoladi
     private String getFileExtension(String faylNomi) {
         if (faylNomi == null || !faylNomi.contains(".")) return "pdf";
-        return faylNomi.substring(faylNomi.lastIndexOf(".") + 1).toLowerCase();
+        String ext = faylNomi.substring(faylNomi.lastIndexOf(".") + 1).toLowerCase();
+        if (ext.isEmpty() || ext.length() > 10 || !ext.matches("[a-z0-9]+")) return "pdf";
+        if (!com.edu.talim.config.FaylTurlari.HUJJAT.contains(ext)) {
+            throw new RuntimeException("Ruxsat etilmagan fayl turi! Faqat quyidagilar qabul qilinadi: "
+                    + String.join(", ", com.edu.talim.config.FaylTurlari.HUJJAT));
+        }
+        return ext;
     }
 
     private DarsJurnaliResponseDTO toDTO(DarsJurnali entity) {

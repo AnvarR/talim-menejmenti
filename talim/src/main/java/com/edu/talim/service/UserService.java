@@ -12,7 +12,9 @@ import com.edu.talim.entity.User;
 import com.edu.talim.entity.enums.*;
 import com.edu.talim.repository.TarkibiyTuzilmaRepository;
 import com.edu.talim.repository.UserRepository;
+import com.edu.talim.config.KirishUrinishLimiter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +29,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final TarkibiyTuzilmaRepository tarkibiyTuzilmaRepository;
     private final FileService fileService;
+    private final PasswordEncoder passwordEncoder;
+    private final KirishUrinishLimiter kirishUrinishLimiter;
 
     // Hammasini olish
     public List<UserDetailDTO> getAll() {
@@ -75,7 +79,7 @@ public class UserService {
         if (user.getPhotoUrl() != null) {
             fileService.deleteFile(user.getPhotoUrl());
         }
-        String photoUrl = fileService.saveFile(file);
+        String photoUrl = fileService.saveFile(file, com.edu.talim.config.FaylTurlari.RASM);
         user.setPhotoUrl(photoUrl);
         userRepository.save(user);
         return photoUrl;
@@ -100,13 +104,20 @@ public class UserService {
     // Parol o'zgartirish
     public void changePassword(Long id, ChangePasswordDTO dto) {
         User user = findById(id);
-        if (!user.getPassword().equals(dto.getHozirgiParol())) {
+
+        String limiterKaliti = "change-password:" + id;
+        kirishUrinishLimiter.tekshir(limiterKaliti);
+
+        if (!passwordEncoder.matches(dto.getHozirgiParol(), user.getPassword())) {
+            kirishUrinishLimiter.muvaffaqiyatsiz(limiterKaliti);
             throw new UnauthorizedException("Hozirgi parol noto'g'ri!");
         }
+        kirishUrinishLimiter.muvaffaqiyatli(limiterKaliti);
+
         if (!dto.getYangiParol().equals(dto.getYangiParolTakror())) {
             throw new RuntimeException("Yangi parollar mos kelmaydi!");
         }
-        user.setPassword(dto.getYangiParol());
+        user.setPassword(passwordEncoder.encode(dto.getYangiParol()));
         userRepository.save(user);
     }
 
@@ -148,7 +159,7 @@ public class UserService {
         }
 
         String username = dto.getPassportMalumotlari();
-        String password = "12345678";
+        String password = passwordEncoder.encode("12345678");
 
         return User.builder()
                 .jshshir(dto.getJshshir())

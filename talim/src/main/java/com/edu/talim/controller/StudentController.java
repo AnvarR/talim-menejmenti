@@ -4,6 +4,7 @@ import com.edu.talim.dto.StudentCreateDTO;
 import com.edu.talim.dto.StudentDetailDTO;
 import com.edu.talim.dto.StudentListDTO;
 import com.edu.talim.service.StudentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class StudentController {
 
     // Qo'shish
     @PostMapping
-    public ResponseEntity<StudentDetailDTO> create(@RequestBody StudentCreateDTO dto) {
+    public ResponseEntity<StudentDetailDTO> create(@Valid @RequestBody StudentCreateDTO dto) {
         return ResponseEntity.ok(studentService.create(dto));
     }
 
@@ -59,7 +60,7 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<StudentDetailDTO> update(
             @PathVariable Long id,
-            @RequestBody StudentCreateDTO dto
+            @Valid @RequestBody StudentCreateDTO dto
     ) {
         return ResponseEntity.ok(studentService.update(id, dto));
     }

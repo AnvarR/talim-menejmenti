@@ -70,7 +70,7 @@ public class SavolService {
         }
 
         // Yangi fayl saqlanadi
-        String faylUrl = fileService.saveFile(fayl);
+        String faylUrl = fileService.saveFile(fayl, com.edu.talim.config.FaylTurlari.HUJJAT_VA_RASM);
         savol.setFaylUrl(faylUrl);
         return toResponseDTO(savolRepository.save(savol));
     }
