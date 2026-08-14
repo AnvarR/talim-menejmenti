@@ -85,6 +85,17 @@ public class Student {
     @JoinColumn(name = "group_id")
     private Group group;
 
+    // Reyting daftarchasi raqami - guruhga biriktirilganda kiritiladi, kursant uchun
+    // noyob hujjat raqami (bo'sh/null bo'lishi mumkin, biriktirish paytida to'ldirilmasa ham bo'ladi)
+    @Column(unique = true, columnDefinition = "varchar(50)")
+    private String reytingDaftarchasiRaqami;
+
+    // Kursant/Tinglovchi qaysi o'quv yilida ro'yxatga olinganini bildiradi
+    // (Inson resurslari bo'limi kursant/tinglovchi qo'shishda tanlaydi)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "oquv_yili_id")
+    private OquvYili oquvYili;
+
     @Column(columnDefinition = "varchar(255)")
     private String lavozimi;
 

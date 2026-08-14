@@ -32,5 +32,6 @@ public class StudentDetailDTO {
     private String guruhi;
     private String lavozimi;
     private String type;
+    private String oquvYili;
     private LocalDateTime createdAt;
 }

@@ -22,9 +22,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         SELECT s FROM Student s
         LEFT JOIN s.course c
         LEFT JOIN s.group g
+        LEFT JOIN s.oquvYili oy
         WHERE s.type = :type
         AND s.holati = com.edu.talim.entity.enums.TalabaHolati.FAOL
-        AND (:oquvYili IS NULL OR c.oquvYili = :oquvYili)
+        AND (:oquvYili IS NULL OR oy.nom = :oquvYili)
         AND (:kurs IS NULL OR c.kursRaqami = :kurs)
         AND (:guruh IS NULL OR g.guruhNomi = :guruh)
         AND (:jinsi IS NULL OR s.jinsi = :jinsi)
@@ -39,6 +40,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     );
 
     boolean existsByJshshir(String jshshir);
+
+    boolean existsByReytingDaftarchasiRaqami(String reytingDaftarchasiRaqami);
 
     Optional<Student> findByUsername(String username);
 

@@ -27,4 +27,5 @@ public class StudentCreateDTO {
     private String guruhi;              // "125-guruh"
     private String lavozimi;
     private String type;                // "KURSANT" yoki "TINGLOVCHI"
+    private Long oquvYiliId;            // Ro'yxatga olingan o'quv yili
 }

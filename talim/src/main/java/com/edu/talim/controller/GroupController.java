@@ -69,8 +69,9 @@ public class GroupController {
     @PutMapping("/{guruhId}/kursant-biriktirish/{studentId}")
     public ResponseEntity<Void> kursantBiriktirish(
             @PathVariable Long guruhId,
-            @PathVariable Long studentId) {
-        groupService.kursantBiriktirish(guruhId, studentId);
+            @PathVariable Long studentId,
+            @RequestParam(required = false) String reytingDaftarchasiRaqami) {
+        groupService.kursantBiriktirish(guruhId, studentId, reytingDaftarchasiRaqami);
         return ResponseEntity.ok().build();
     }
 

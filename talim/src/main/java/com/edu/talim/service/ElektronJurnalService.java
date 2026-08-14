@@ -222,8 +222,12 @@ public class ElektronJurnalService {
                 .build();
     }
 
-    // Fan nomi, o'qituvchi FIO va R(SEM) — faqat bitta kursant uchun, engil
-    public record StudentFanNatijasi(String fanNomi, String oqituvchiFio, Double rsem) {}
+    // Fan nomi, o'qituvchi FIO va batafsil baholar — faqat bitta kursant uchun, engil
+    // (Reyting daftarchasi rsem dan, Baholash hisobotlari esa qolgan maydonlardan foydalanadi)
+    public record StudentFanNatijasi(String fanNomi, String oqituvchiFio,
+                                     Double rkb1, Double rkb2,
+                                     Double ronSem, Integer ryn, Integer rynEffektiv,
+                                     Double rsem) {}
 
     // Reyting daftarchasi kabi joylar uchun: butun guruhni yuklamasdan,
     // faqat BITTA kursant uchun R(SEM) ni hisoblaydi (N+1 oldini olish uchun)
@@ -243,9 +247,17 @@ public class ElektronJurnalService {
                 k.yakuniylar(), oqituvchiFanTaqsimlashId,
                 k.oquvYiliBoshlanish(), k.mtTaqsimlashCandidateIds(), semestr, oquvYiliId);
 
+        Integer rynEffektiv = natija.getRynQaytaTopshirishBaho() != null
+                ? natija.getRynQaytaTopshirishBaho() : natija.getRyn();
+
         return new StudentFanNatijasi(
                 k.taqsimlash().getFanTaqsimlash().getFan().getFanNomi(),
                 k.taqsimlash().getOqituvchi().getFio(),
+                natija.getRkb1(),
+                natija.getRkb2(),
+                natija.getRonSem(),
+                natija.getRyn(),
+                rynEffektiv,
                 natija.getRsem());
     }
 

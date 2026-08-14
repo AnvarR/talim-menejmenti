@@ -9,11 +9,13 @@ import com.edu.talim.dto.StudentDetailDTO;
 import com.edu.talim.dto.StudentListDTO;
 import com.edu.talim.entity.Course;
 import com.edu.talim.entity.Group;
+import com.edu.talim.entity.OquvYili;
 import com.edu.talim.entity.Student;
 import com.edu.talim.entity.enums.*;
 import com.edu.talim.repository.CourseRepository;
 import com.edu.talim.repository.GroupRepository;
 import com.edu.talim.repository.InstitutdanChiqishRepository;
+import com.edu.talim.repository.OquvYiliRepository;
 import com.edu.talim.repository.StudentRepository;
 import com.edu.talim.repository.SutkalikNaryadRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
     private final GroupRepository groupRepository;
+    private final OquvYiliRepository oquvYiliRepository;
     private final FileService fileService;
     private final InstitutdanChiqishRepository institutdanChiqishRepository;
     private final SutkalikNaryadRepository sutkalikNaryadRepository;
@@ -50,10 +53,17 @@ public class StudentService {
         Jins jinsEnum = (jinsi != null && !jinsi.isEmpty())
                 ? Jins.fromLabel(jinsi) : null;
 
+        // Frontend hali "2025-2026-yil" formatida yuborishi mumkin, OquvYili.nom esa "2025-2026" -
+        // shuning uchun "-yil" qo'shimchasini olib tashlab, ikkala format bilan ham ishlaydi
+        String oquvYiliNorm = oquvYili;
+        if (oquvYiliNorm != null && oquvYiliNorm.endsWith("-yil")) {
+            oquvYiliNorm = oquvYiliNorm.substring(0, oquvYiliNorm.length() - 4);
+        }
+
         Pageable pageable = PageRequest.of(page, size);
 
         return studentRepository
-                .findAllWithFilters(studentType, oquvYili, kurs, guruh, jinsEnum, pageable)
+                .findAllWithFilters(studentType, oquvYiliNorm, kurs, guruh, jinsEnum, pageable)
                 .map(this::toListDTO);
     }
 
@@ -184,6 +194,12 @@ public class StudentService {
         String password = "12345678";
         Role role = tinglovchiMi ? Role.TINGLOVCHI : Role.KURSANT;
 
+        OquvYili oquvYili = null;
+        if (dto.getOquvYiliId() != null) {
+            oquvYili = oquvYiliRepository.findById(dto.getOquvYiliId())
+                    .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + dto.getOquvYiliId()));
+        }
+
         return Student.builder()
                 .jshshir(dto.getJshshir())
                 .fio(dto.getFio())
@@ -203,6 +219,7 @@ public class StudentService {
                 .guvohnomaNomeri(dto.getGuvohnomaNomeri())
                 .course(course)
                 .group(group)
+                .oquvYili(oquvYili)
                 .lavozimi(dto.getLavozimi())
                 .type(StudentType.fromLabel(dto.getType()))
                 .username(username)
@@ -233,6 +250,12 @@ public class StudentService {
         student.setLavozimi(dto.getLavozimi());
         // Username ni passportSeria bilan yangilash
         student.setUsername(dto.getPassportSeria());
+
+        if (dto.getOquvYiliId() != null) {
+            OquvYili oquvYili = oquvYiliRepository.findById(dto.getOquvYiliId())
+                    .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + dto.getOquvYiliId()));
+            student.setOquvYili(oquvYili);
+        }
 
         if (dto.getKursi() != null && !dto.getKursi().isEmpty()) {
             Course course = courseRepository
@@ -272,7 +295,7 @@ public class StudentService {
     private StudentListDTO toListDTO(Student s) {
         return StudentListDTO.builder()
                 .id(s.getId())
-                .oquvYili(s.getCourse() != null ? s.getCourse().getOquvYili() : null)
+                .oquvYili(s.getOquvYili() != null ? s.getOquvYili().getNom() : null)
                 .kursi(s.getCourse() != null ? s.getCourse().getKursRaqami() + "-kurs" : null)
                 .guruhi(s.getGroup() != null ? s.getGroup().getGuruhNomi() : null)
                 .fio(s.getFio())
@@ -305,6 +328,7 @@ public class StudentService {
                 .guruhi(s.getGroup() != null ? s.getGroup().getGuruhNomi() : null)
                 .lavozimi(s.getLavozimi())
                 .type(s.getType().name())
+                .oquvYili(s.getOquvYili() != null ? s.getOquvYili().getNom() : null)
                 .createdAt(s.getCreatedAt())
                 .build();
     }

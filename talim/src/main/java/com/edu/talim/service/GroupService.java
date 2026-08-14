@@ -115,7 +115,7 @@ public class GroupService {
 
     // Kursantni guruhga biriktirish
     @Transactional
-    public void kursantBiriktirish(Long guruhId, Long studentId) {
+    public void kursantBiriktirish(Long guruhId, Long studentId, String reytingDaftarchasiRaqami) {
         Group group = groupRepository.findById(guruhId)
                 .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + guruhId));
 
@@ -125,6 +125,14 @@ public class GroupService {
         if (student.getGroup() != null) {
             throw new ConflictException(
                     "Kursant allaqachon " + student.getGroup().getGuruhNomi() + " guruhida!");
+        }
+
+        if (reytingDaftarchasiRaqami != null && !reytingDaftarchasiRaqami.isBlank()) {
+            if (studentRepository.existsByReytingDaftarchasiRaqami(reytingDaftarchasiRaqami)) {
+                throw new ConflictException(
+                        "Bu reyting daftarchasi raqami (" + reytingDaftarchasiRaqami + ") allaqachon boshqa kursantda mavjud!");
+            }
+            student.setReytingDaftarchasiRaqami(reytingDaftarchasiRaqami);
         }
 
         student.setGroup(group);

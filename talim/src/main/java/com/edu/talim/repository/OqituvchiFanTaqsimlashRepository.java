@@ -69,4 +69,8 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
     // Shu guruhga bog'langan taqsimlashlar bor-yo'qligi (guruhni o'chirishdan oldin tekshirish uchun)
     @Query("SELECT COUNT(t) > 0 FROM OqituvchiFanTaqsimlash t JOIN t.guruhlar g WHERE g.id = :guruhId")
     boolean existsByGuruhId(@Param("guruhId") Long guruhId);
+
+    // Baholash hisobotlari uchun: shu guruh o'qiydigan barcha fanlar (SEMINAR taqsimlashlar)
+    List<OqituvchiFanTaqsimlash> findByDarsTuriAndGuruhlarId(
+            com.edu.talim.entity.enums.DarsTuri darsTuri, Long guruhlarId);
 }
