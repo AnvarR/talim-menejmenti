@@ -11,6 +11,7 @@ import com.edu.talim.entity.Student;
 import com.edu.talim.entity.User;
 import com.edu.talim.repository.StudentRepository;
 import com.edu.talim.repository.UserRepository;
+import com.edu.talim.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class AuthService {
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
     private final KirishUrinishLimiter kirishUrinishLimiter;
+    private final JwtService jwtService;
 
     public LoginResponseDTO login(LoginRequestDTO dto) {
         String limiterKaliti = "login:" + dto.getUsername();
@@ -37,12 +39,17 @@ public class AuthService {
                 throw new UnauthorizedException("Parol noto'g'ri!");
             }
             kirishUrinishLimiter.muvaffaqiyatli(limiterKaliti);
+
+            String role = user.getRole() != null ? user.getRole().name() : null;
+            String token = jwtService.generateToken(user.getId(), "USER", role);
+
             return LoginResponseDTO.builder()
                     .id(user.getId())
                     .fio(user.getFio())
-                    .role(user.getRole() != null ? user.getRole().name() : null)
+                    .role(role)
                     .username(user.getUsername())
                     .photoUrl(user.getPhotoUrl())
+                    .token(token)
                     .build();
         }
 
@@ -59,12 +66,17 @@ public class AuthService {
         }
 
         kirishUrinishLimiter.muvaffaqiyatli(limiterKaliti);
+
+        String role = student.getRole() != null ? student.getRole().name() : null;
+        String token = jwtService.generateToken(student.getId(), "STUDENT", role);
+
         return LoginResponseDTO.builder()
                 .id(student.getId())
                 .fio(student.getFio())
-                .role(student.getRole() != null ? student.getRole().name() : null)
+                .role(role)
                 .username(student.getUsername())
                 .photoUrl(student.getPhotoUrl())
+                .token(token)
                 .build();
     }
 }
