@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,7 +13,7 @@ import java.util.List;
 public class MustaqilTalimTopshiriqResponseDTO {
 
     private Long id;
-    private Long darsJurnaliId;
+    private UUID darsJurnaliId;
     private String mavzuNomi;
 
     private String topshiriqTuri;

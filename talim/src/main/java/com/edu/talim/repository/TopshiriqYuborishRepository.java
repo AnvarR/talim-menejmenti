@@ -20,13 +20,13 @@ public interface TopshiriqYuborishRepository extends JpaRepository<TopshiriqYubo
 
     // Bitta mavzuga (darsJurnali) tegishli BARCHA topshiriqlar bo'yicha yuborishlar
     // ("Topshiriq holati" umumiy ro'yxati uchun - turli topshiriq turlari aralash chiqadi)
-    List<TopshiriqYuborish> findByTopshiriq_DarsJurnaliId(Long darsJurnaliId);
+    List<TopshiriqYuborish> findByTopshiriq_DarsJurnaliId(UUID darsJurnaliId);
 
     // Bitta kursantga yuborilgan BARCHA topshiriqlar (kursant tarafidagi ro'yxat uchun)
     List<TopshiriqYuborish> findByStudentId(UUID studentId);
 
     // Bitta kursantga, aniq bir mavzu (darsJurnali) bo'yicha yuborilgan topshiriqlar
-    List<TopshiriqYuborish> findByStudentIdAndTopshiriq_DarsJurnaliId(UUID studentId, Long darsJurnaliId);
+    List<TopshiriqYuborish> findByStudentIdAndTopshiriq_DarsJurnaliId(UUID studentId, UUID darsJurnaliId);
 
     // Status bo'yicha hisoblash: jami yuborilganlar soni
     long countByTopshiriqId(Long topshiriqId);

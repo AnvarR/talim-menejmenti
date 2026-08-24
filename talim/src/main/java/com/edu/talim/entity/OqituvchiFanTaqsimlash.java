@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "oqituvchi_fan_taqsimlash")
@@ -15,8 +16,8 @@ import java.util.List;
 public class OqituvchiFanTaqsimlash {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // O'quv bo'limi taqsimlagan fan (FanTaqsimlash dan)
     @ManyToOne(fetch = FetchType.LAZY)

@@ -17,10 +17,10 @@ import java.util.Optional;
 public interface DavomatRepository extends JpaRepository<Davomat, Long> {
 
     // Bitta dars uchun barcha davomatlar
-    List<Davomat> findByDarsJurnaliId(Long darsJurnaliId);
+    List<Davomat> findByDarsJurnaliId(UUID darsJurnaliId);
 
     // Bitta kursantning bitta darsdagi davomati
-    Optional<Davomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, UUID studentId);
+    Optional<Davomat> findByDarsJurnaliIdAndStudentId(UUID darsJurnaliId, UUID studentId);
 
     // 7 kundan oshgan va qayta topshirilmagan darslar
     // Ya'ni: dars sanasi bugundan 7 kun oldin bo'lgan va holat N/K/S/Y bo'lgan
@@ -67,7 +67,7 @@ public interface DavomatRepository extends JpaRepository<Davomat, Long> {
     """)
     List<Davomat> findByStudentAndTaqsimlash(
             @Param("studentId") UUID studentId,
-            @Param("taqsimlashId") Long taqsimlashId
+            @Param("taqsimlashId") UUID taqsimlashId
     );
 
     boolean existsByStudentIdAndDarsJurnaliSanaAndHolatIn(

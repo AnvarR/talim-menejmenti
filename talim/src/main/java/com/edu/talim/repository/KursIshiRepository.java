@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.KursIshi;
 import com.edu.talim.entity.enums.Semestr;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +13,5 @@ import java.util.List;
 public interface KursIshiRepository extends JpaRepository<KursIshi, Long> {
 
     List<KursIshi> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrOrderByMuddatAsc(
-            Long oqituvchiFanTaqsimlashId, Long oquvYiliId, Semestr semestr);
+            UUID oqituvchiFanTaqsimlashId, Long oquvYiliId, Semestr semestr);
 }

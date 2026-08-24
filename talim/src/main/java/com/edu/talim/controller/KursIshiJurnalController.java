@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.KursIshiJurnalResponseDTO;
 import com.edu.talim.entity.enums.Semestr;
 import com.edu.talim.service.KursIshiJurnalService;
@@ -20,7 +22,7 @@ public class KursIshiJurnalController {
     // Jurnalni ko'rish
     @GetMapping
     public ResponseEntity<KursIshiJurnalResponseDTO> getJurnal(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Semestr semestr,
             @RequestParam Long oquvYiliId) {
         return ResponseEntity.ok(jurnalService.getJurnal(oqituvchiFanTaqsimlashId, semestr, oquvYiliId));
@@ -29,7 +31,7 @@ public class KursIshiJurnalController {
     // Yangi kurs ishi yaratish (mavzu + umumiy topshirish muddati)
     @PostMapping
     public ResponseEntity<Void> yaratish(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr,
             @RequestParam String mavzuNomi,

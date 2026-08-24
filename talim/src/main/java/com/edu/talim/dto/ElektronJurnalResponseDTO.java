@@ -15,7 +15,7 @@ import java.util.List;
 public class ElektronJurnalResponseDTO {
 
     // Fan va o'qituvchi ma'lumotlari
-    private Long oqituvchiFanTaqsimlashId;
+    private UUID oqituvchiFanTaqsimlashId;
     private String fanNomi;
     private String oqituvchiFio;
     private String kursNomi;

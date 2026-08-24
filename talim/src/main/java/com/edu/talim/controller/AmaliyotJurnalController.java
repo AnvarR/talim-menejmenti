@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.AmaliyotJurnalResponseDTO;
 import com.edu.talim.service.AmaliyotJurnalService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,7 @@ public class AmaliyotJurnalController {
     // Jurnalni ko'rish (semestrsiz - butun o'quv yili uchun)
     @GetMapping
     public ResponseEntity<AmaliyotJurnalResponseDTO> getJurnal(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Long oquvYiliId) {
         return ResponseEntity.ok(jurnalService.getJurnal(oqituvchiFanTaqsimlashId, oquvYiliId));
     }
@@ -27,7 +29,7 @@ public class AmaliyotJurnalController {
     // Yangi amaliyot yaratish (faqat tugash sanasi)
     @PostMapping
     public ResponseEntity<Void> yaratish(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Long oquvYiliId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tugashSanasi) {
         jurnalService.yaratish(oqituvchiFanTaqsimlashId, oquvYiliId, tugashSanasi);

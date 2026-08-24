@@ -15,19 +15,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DarsJurnaliRepository extends JpaRepository<DarsJurnali, Long> {
+public interface DarsJurnaliRepository extends JpaRepository<DarsJurnali, UUID> {
 
     // O'qituvchi fan taqsimlash, dars turi va o'quv yili bo'yicha darslar
     List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliId(
-            Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId);
+            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId);
 
     // Semestr bo'yicha ham filtrlangan darslar
     List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
-            Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId, Semestr semestr);
+            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId, Semestr semestr);
 
     // Bir xil sana va taqsimlashda dars bormi tekshirish
     Optional<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
-            Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri, LocalDate sana);
+            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, LocalDate sana);
 
     // Blok tekshiruvi uchun: kursantning so'nggi N/K/S/Y davomati
     @Query("""

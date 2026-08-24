@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.AmaliyotJurnalResponseDTO;
@@ -27,7 +29,7 @@ public class AmaliyotJurnalService {
     // ====================== Yaratish/tahrirlash/o'chirish ======================
 
     @Transactional
-    public void yaratish(Long oqituvchiFanTaqsimlashId, Long oquvYiliId, LocalDate tugashSanasi) {
+    public void yaratish(UUID oqituvchiFanTaqsimlashId, Long oquvYiliId, LocalDate tugashSanasi) {
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
                 .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
@@ -107,7 +109,7 @@ public class AmaliyotJurnalService {
 
     // ====================== Jurnalni ko'rish ======================
 
-    public AmaliyotJurnalResponseDTO getJurnal(Long oqituvchiFanTaqsimlashId, Long oquvYiliId) {
+    public AmaliyotJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId, Long oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)

@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.Semestr;
 import lombok.*;
@@ -12,8 +14,8 @@ import java.util.List;
 @Builder
 public class DarsJurnaliResponseDTO {
 
-    private Long id;
-    private Long oqituvchiFanTaqsimlashId;
+    private UUID id;
+    private UUID oqituvchiFanTaqsimlashId;
     private String fanNomi;
     private String oqituvchiFio;
     private String kursNomi;

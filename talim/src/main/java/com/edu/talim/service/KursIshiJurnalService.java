@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.KursIshiJurnalResponseDTO;
@@ -30,7 +32,7 @@ public class KursIshiJurnalService {
     // Yangi kurs ishi yaratish (mavzu + umumiy muddat). Guruhdagi barcha kursantlar
     // uchun avtomatik ravishda bahosiz (baho=null) yozuvlar yaratiladi
     @Transactional
-    public void yaratish(Long oqituvchiFanTaqsimlashId, Long oquvYiliId, Semestr semestr,
+    public void yaratish(UUID oqituvchiFanTaqsimlashId, Long oquvYiliId, Semestr semestr,
                          String mavzuNomi, LocalDate muddat) {
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
@@ -117,7 +119,7 @@ public class KursIshiJurnalService {
 
     // ====================== Jurnalni ko'rish ======================
 
-    public KursIshiJurnalResponseDTO getJurnal(Long oqituvchiFanTaqsimlashId,
+    public KursIshiJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId,
                                                Semestr semestr, Long oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository

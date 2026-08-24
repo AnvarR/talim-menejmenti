@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.Amaliyot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,5 +12,5 @@ import java.util.List;
 public interface AmaliyotRepository extends JpaRepository<Amaliyot, Long> {
 
     List<Amaliyot> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdOrderByTugashSanasiAsc(
-            Long oqituvchiFanTaqsimlashId, Long oquvYiliId);
+            UUID oqituvchiFanTaqsimlashId, Long oquvYiliId);
 }

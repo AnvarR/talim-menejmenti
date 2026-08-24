@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.DarsJurnaliResponseDTO;
 import com.edu.talim.dto.DavomatResponseDTO;
 import com.edu.talim.dto.MavzuDTO;
@@ -28,7 +30,7 @@ public class DarsJurnaliController {
     // O'qituvchiga tegishli darslar ro'yxati
     @GetMapping
     public ResponseEntity<List<DarsJurnaliResponseDTO>> getAll(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
             @RequestParam Long oquvYiliId) {
@@ -38,14 +40,14 @@ public class DarsJurnaliController {
 
     // Bitta dars
     @GetMapping("/{id}")
-    public ResponseEntity<DarsJurnaliResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<DarsJurnaliResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(darsJurnaliService.getById(id));
     }
 
     // Yangi dars qo'shish (sana va semestr tanlanganda)
     @PostMapping
     public ResponseEntity<DarsJurnaliResponseDTO> create(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana) {
@@ -56,7 +58,7 @@ public class DarsJurnaliController {
     // Mavzu nomi va soatni yangilash
     @PutMapping("/{id}")
     public ResponseEntity<DarsJurnaliResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam(required = false) String mavzuNomi,
             @RequestParam(required = false) Integer soat) {
         return ResponseEntity.ok(darsJurnaliService.update(id, mavzuNomi, soat));
@@ -65,14 +67,14 @@ public class DarsJurnaliController {
     // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
     @PutMapping("/{id}/sana")
     public ResponseEntity<DarsJurnaliResponseDTO> darsSanasiniOzgartirish(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate yangiSana) {
         return ResponseEntity.ok(darsJurnaliService.darsSanasiniOzgartirish(id, yangiSana));
     }
 
     // Darsni o'chirish (cheklovsiz — istalgan vaqtda)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> darsniOchirish(@PathVariable Long id) {
+    public ResponseEntity<Void> darsniOchirish(@PathVariable UUID id) {
         darsJurnaliService.darsniOchirish(id);
         return ResponseEntity.noContent().build();
     }
@@ -80,7 +82,7 @@ public class DarsJurnaliController {
     // Faqat mashg'ulot mavzulari ro'yxati (boshqa joylarda qayta ishlatish uchun yengil endpoint)
     @GetMapping("/mavzular")
     public ResponseEntity<List<MavzuDTO>> getMavzular(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
             @RequestParam Long oquvYiliId) {
@@ -91,7 +93,7 @@ public class DarsJurnaliController {
     // Topshiriq fayl yuklash
     @PostMapping(value = "/{id}/topshiriq", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<DarsJurnaliResponseDTO> topshiriqYuklash(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam MultipartFile fayl) throws IOException {
         return ResponseEntity.ok(darsJurnaliService.topshiriqYuklash(id, fayl));
     }

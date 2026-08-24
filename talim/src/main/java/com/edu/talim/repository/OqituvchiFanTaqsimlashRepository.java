@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<OqituvchiFanTaqsimlash, Long> {
+public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<OqituvchiFanTaqsimlash, UUID> {
 
     // Kafedra bo'yicha taqsimlashlar (fan → fanTaqsimlash → fan → kafedra orqali)
     Page<OqituvchiFanTaqsimlash> findByFanTaqsimlashFanKafedraIdOrderByIdDesc(UUID kafedraId, Pageable pageable);
@@ -57,7 +57,7 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
             @Param("darsTuri") com.edu.talim.entity.enums.DarsTuri darsTuri,
             @Param("kursId") UUID kursId,
             @Param("guruhIds") List<UUID> guruhIds,
-            @Param("excludeId") Long excludeId
+            @Param("excludeId") UUID excludeId
     );
 
     // Bir xil fan+o'qituvchi+kurs bo'yicha BOSHQA dars turidagi taqsimlashlar
@@ -74,5 +74,5 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
 
     // Baholash hisobotlari uchun: shu guruh o'qiydigan barcha fanlar (SEMINAR taqsimlashlar)
     List<OqituvchiFanTaqsimlash> findByDarsTuriAndGuruhlarId(
-            com.edu.talim.entity.enums.DarsTuri darsTuri, UUID guruhlarId);
+            com.edu.talim.entity.enums.DarsTuri darsTuri, java.util.UUID guruhlarId);
 }

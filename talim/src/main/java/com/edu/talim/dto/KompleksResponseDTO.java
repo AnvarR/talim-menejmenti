@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.MaterialKategoriyasi;
 import lombok.*;
 
@@ -12,7 +14,7 @@ import java.util.List;
 public class KompleksResponseDTO {
 
     private Long id;
-    private Long oqituvchiFanTaqsimlashId;
+    private UUID oqituvchiFanTaqsimlashId;
     private String fanNomi;
     private String oqituvchiFISH;
     private String kursNomi;

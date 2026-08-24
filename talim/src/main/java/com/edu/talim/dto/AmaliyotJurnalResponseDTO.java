@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class AmaliyotJurnalResponseDTO {
 
-    private Long oqituvchiFanTaqsimlashId;
+    private UUID oqituvchiFanTaqsimlashId;
     private String fanNomi;
     private String oqituvchiFio;
     private String kursNomi;

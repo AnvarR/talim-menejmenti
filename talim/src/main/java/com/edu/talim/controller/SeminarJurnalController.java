@@ -26,7 +26,7 @@ public class SeminarJurnalController {
     // To'liq elektron jurnal (kursantlar + baholar)
     @GetMapping
     public ResponseEntity<ElektronJurnalResponseDTO> getJurnal(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
             @RequestParam Long oquvYiliId) {
@@ -38,7 +38,7 @@ public class SeminarJurnalController {
     // Yangi dars qo'shish (sana tanlanganda)
     @PostMapping("/dars")
     public ResponseEntity<DarsJurnaliResponseDTO> darsQoshish(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana) {
@@ -50,7 +50,7 @@ public class SeminarJurnalController {
     // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
     @PutMapping("/dars/{darsJurnaliId}")
     public ResponseEntity<DarsJurnaliResponseDTO> darsSanasiniOzgartirish(
-            @PathVariable Long darsJurnaliId,
+            @PathVariable UUID darsJurnaliId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate yangiSana) {
         return ResponseEntity.ok(
                 elektronJurnalService.darsSanasiniOzgartirish(darsJurnaliId, yangiSana));
@@ -58,7 +58,7 @@ public class SeminarJurnalController {
 
     // Darsni o'chirish (cheklovsiz — istalgan vaqtda)
     @DeleteMapping("/dars/{darsJurnaliId}")
-    public ResponseEntity<Void> darsniOchirish(@PathVariable Long darsJurnaliId) {
+    public ResponseEntity<Void> darsniOchirish(@PathVariable UUID darsJurnaliId) {
         elektronJurnalService.darsniOchirish(darsJurnaliId);
         return ResponseEntity.noContent().build();
     }
@@ -76,7 +76,7 @@ public class SeminarJurnalController {
     // Oraliq nazorat bahosini kiritish (oraliqRaqami: 1 yoki 2, kesimSanasi — o'qituvchi belgilaydi)
     @PutMapping("/oraliq-nazorat")
     public ResponseEntity<Void> oraliqNazoratYangilash(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam UUID studentId,
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr,
@@ -92,7 +92,7 @@ public class SeminarJurnalController {
     // Yakuniy nazorat bahosini kiritish
     @PutMapping("/yakuniy-nazorat")
     public ResponseEntity<Void> yakuniyNazoratYangilash(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam UUID studentId,
             @RequestParam Long oquvYiliId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana,

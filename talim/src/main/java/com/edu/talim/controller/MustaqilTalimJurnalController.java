@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.MustaqilTalimJurnalResponseDTO;
 import com.edu.talim.entity.enums.Semestr;
 import com.edu.talim.service.MustaqilTalimJurnalService;
@@ -16,7 +18,7 @@ public class MustaqilTalimJurnalController {
 
     @GetMapping
     public ResponseEntity<MustaqilTalimJurnalResponseDTO> getJurnal(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Semestr semestr,
             @RequestParam Long oquvYiliId) {
         return ResponseEntity.ok(jurnalService.getJurnal(oqituvchiFanTaqsimlashId, semestr, oquvYiliId));

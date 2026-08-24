@@ -13,10 +13,10 @@ import java.util.Optional;
 public interface YakuniyNazoratRepository extends JpaRepository<YakuniyNazorat, Long> {
 
     Optional<YakuniyNazorat> findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliId(
-            Long oqituvchiFanTaqsimlashId, UUID studentId, Long oquvYiliId);
+            UUID oqituvchiFanTaqsimlashId, UUID studentId, Long oquvYiliId);
 
     List<YakuniyNazorat> findByOqituvchiFanTaqsimlashIdAndOquvYiliId(
-            Long oqituvchiFanTaqsimlashId, Long oquvYiliId);
+            UUID oqituvchiFanTaqsimlashId, Long oquvYiliId);
 
     // Reyting daftarchasi uchun: shu kursantning barcha yakuniy nazorat yozuvlari
     List<YakuniyNazorat> findByStudentId(UUID studentId);

@@ -42,7 +42,7 @@ public class MustaqilTalimTopshiriqService {
     // ====================== Topshiriq CRUD ======================
 
     // Bitta mavzuga (dars jurnali) tegishli barcha topshiriqlar ro'yxati
-    public List<MustaqilTalimTopshiriqResponseDTO> getByMavzu(Long darsJurnaliId) {
+    public List<MustaqilTalimTopshiriqResponseDTO> getByMavzu(UUID darsJurnaliId) {
         return topshiriqRepository.findByDarsJurnaliIdOrderByYaratilganVaqtAsc(darsJurnaliId)
                 .stream()
                 .map(this::toDTO)
@@ -54,7 +54,7 @@ public class MustaqilTalimTopshiriqService {
     }
 
     @Transactional
-    public MustaqilTalimTopshiriqResponseDTO create(Long oqituvchiFanTaqsimlashId, Long darsJurnaliId,
+    public MustaqilTalimTopshiriqResponseDTO create(UUID oqituvchiFanTaqsimlashId, UUID darsJurnaliId,
                                                     String topshiriqTuri, String nomi, String izoh,
                                                     LocalDateTime boshlanishSanasi, LocalDateTime yakunlanishSanasi,
                                                     Integer urinishlarSoni,
@@ -183,7 +183,7 @@ public class MustaqilTalimTopshiriqService {
 
     // ====================== Topshiriq holati (kursantlar bo'yicha umumiy ro'yxat) ======================
 
-    public TopshiriqHolatiSahifaDTO getTopshiriqHolati(Long darsJurnaliId, String guruhNomi,
+    public TopshiriqHolatiSahifaDTO getTopshiriqHolati(UUID darsJurnaliId, String guruhNomi,
                                                        TopshiriqHolati holati, String topshiriqTuri) {
 
         DarsJurnali mavzu = darsJurnaliRepository.findById(darsJurnaliId)
@@ -340,7 +340,7 @@ public class MustaqilTalimTopshiriqService {
     }
 
     // Kursantga shu mavzu bo'yicha yuborilgan barcha topshiriqlar (statusi bilan) (2-rasm)
-    public List<KursantTopshiriqDTO> getMeningTopshiriqlarim(UUID studentId, Long darsJurnaliId) {
+    public List<KursantTopshiriqDTO> getMeningTopshiriqlarim(UUID studentId, UUID darsJurnaliId) {
         return topshiriqYuborishRepository
                 .findByStudentIdAndTopshiriq_DarsJurnaliId(studentId, darsJurnaliId)
                 .stream()

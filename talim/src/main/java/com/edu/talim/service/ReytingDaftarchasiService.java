@@ -54,9 +54,9 @@ public class ReytingDaftarchasiService {
 
         // Har bir "yozuv" - {taqsimlashId, oquvYiliId} juftligi. Fan bo'yicha SEMINAR
         // turidagi taqsimlash orqali aniqlanadi, chunki R(ON)/R(YN)/R(SEM) aynan shu yerda hisoblanadi.
-        record TaqsimlashYil(Long taqsimlashId, Long oquvYiliId) {}
+        record TaqsimlashYil(UUID taqsimlashId, Long oquvYiliId) {}
 
-        Map<Long, TaqsimlashYil> taqsimlashlar = new LinkedHashMap<>();
+        Map<UUID, TaqsimlashYil> taqsimlashlar = new LinkedHashMap<>();
 
         // 1) Shu semestrdagi oraliq nazoratlar orqali
         oraliqNazoratRepository.findByStudentIdAndSemestr(studentId, semestr).stream()
@@ -77,7 +77,7 @@ public class ReytingDaftarchasiService {
                         new TaqsimlashYil(yn.getOqituvchiFanTaqsimlash().getId(), yn.getOquvYili().getId())));
 
         // soatHajmi larni bitta so'rovda, hammasi uchun birga olamiz (N+1 o'rniga)
-        Map<Long, Integer> soatHajmilar = oqituvchiFanTaqsimlashRepository
+        Map<UUID, Integer> soatHajmilar = oqituvchiFanTaqsimlashRepository
                 .findAllById(taqsimlashlar.keySet())
                 .stream()
                 .collect(Collectors.toMap(

@@ -61,7 +61,7 @@ public class KompleksService {
     }
 
     @Transactional
-    public KompleksResponseDTO create(Long oqituvchiFanTaqsimlashId, String materialNomi,
+    public KompleksResponseDTO create(UUID oqituvchiFanTaqsimlashId, String materialNomi,
                                       MaterialKategoriyasi kategoriya, List<MultipartFile> fayllar) throws IOException {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository.findById(oqituvchiFanTaqsimlashId)

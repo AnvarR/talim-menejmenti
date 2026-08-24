@@ -9,6 +9,7 @@ import org.hibernate.annotations.BatchSize;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "dars_jurnali")
@@ -18,8 +19,8 @@ import java.util.List;
 public class DarsJurnali {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // Qaysi o'qituvchi, fan, kurs, guruhga tegishli
     @ManyToOne(fetch = FetchType.LAZY)

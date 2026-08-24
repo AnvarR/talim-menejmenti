@@ -48,7 +48,7 @@ public class DarsJurnaliService {
     private String baseUrl;
 
     // O'qituvchiga tegishli darslar ro'yxati (semestr bo'yicha filtrlangan)
-    public List<DarsJurnaliResponseDTO> getAll(Long oqituvchiFanTaqsimlashId,
+    public List<DarsJurnaliResponseDTO> getAll(UUID oqituvchiFanTaqsimlashId,
                                                DarsTuri darsTuri, Semestr semestr, Long oquvYiliId) {
         return darsJurnaliRepository
                 .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
@@ -59,13 +59,13 @@ public class DarsJurnaliService {
     }
 
     // Bitta dars
-    public DarsJurnaliResponseDTO getById(Long id) {
+    public DarsJurnaliResponseDTO getById(UUID id) {
         return toDTO(findById(id));
     }
 
     // Yangi dars qo'shish (sana va semestr tanlanganda)
     @Transactional
-    public DarsJurnaliResponseDTO create(Long oqituvchiFanTaqsimlashId,
+    public DarsJurnaliResponseDTO create(UUID oqituvchiFanTaqsimlashId,
                                          DarsTuri darsTuri, Semestr semestr, LocalDate sana) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
@@ -107,7 +107,7 @@ public class DarsJurnaliService {
 
     // Mavzu nomi va soatni yangilash
     @Transactional
-    public DarsJurnaliResponseDTO update(Long id, String mavzuNomi, Integer soat) {
+    public DarsJurnaliResponseDTO update(UUID id, String mavzuNomi, Integer soat) {
         DarsJurnali darsJurnali = findById(id);
 
         if (mavzuNomi != null) darsJurnali.setMavzuNomi(mavzuNomi);
@@ -118,7 +118,7 @@ public class DarsJurnaliService {
 
     // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
     @Transactional
-    public DarsJurnaliResponseDTO darsSanasiniOzgartirish(Long id, LocalDate yangiSana) {
+    public DarsJurnaliResponseDTO darsSanasiniOzgartirish(UUID id, LocalDate yangiSana) {
         DarsJurnali darsJurnali = findById(id);
 
         darsJurnaliRepository.findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(
@@ -136,7 +136,7 @@ public class DarsJurnaliService {
     // Darsni o'chirish (cheklovsiz — istalgan vaqtda).
     // Davomatlar avtomatik o'chadi (orphanRemoval=true, cascade=ALL DarsJurnali entity'sida)
     @Transactional
-    public void darsniOchirish(Long id) {
+    public void darsniOchirish(UUID id) {
         DarsJurnali darsJurnali = findById(id);
 
         // Agar shu mavzuga (dars) tegishli mustaqil ta'lim topshiriqlari bo'lsa,
@@ -153,7 +153,7 @@ public class DarsJurnaliService {
     }
 
     // Faqat mashg'ulot mavzulari ro'yxati (yengil, boshqa joylarda qayta ishlatish uchun)
-    public List<MavzuDTO> getMavzular(Long oqituvchiFanTaqsimlashId, DarsTuri darsTuri,
+    public List<MavzuDTO> getMavzular(UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri,
                                       Semestr semestr, Long oquvYiliId) {
         return darsJurnaliRepository
                 .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
@@ -170,7 +170,7 @@ public class DarsJurnaliService {
 
     // Topshiriq fayl yuklash
     @Transactional
-    public DarsJurnaliResponseDTO topshiriqYuklash(Long id, MultipartFile fayl) throws IOException {
+    public DarsJurnaliResponseDTO topshiriqYuklash(UUID id, MultipartFile fayl) throws IOException {
         DarsJurnali darsJurnali = findById(id);
 
         // Eski faylni o'chirish
@@ -270,7 +270,7 @@ public class DarsJurnaliService {
         return !bloklashKeraklar.isEmpty();
     }
 
-    private DarsJurnali findById(Long id) {
+    private DarsJurnali findById(UUID id) {
         return darsJurnaliRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Dars jurnali topilmadi: " + id));
     }

@@ -66,10 +66,10 @@ public class ElektronJurnalService {
             List<OraliqNazorat> oraliq2lar,
             List<OraliqNazorat> yilOraliqlari,
             List<YakuniyNazorat> yakuniylar,
-            List<Long> mtTaqsimlashCandidateIds
+            List<UUID> mtTaqsimlashCandidateIds
     ) {}
 
-    private JurnalKontekst tayyorlaKontekst(Long oqituvchiFanTaqsimlashId,
+    private JurnalKontekst tayyorlaKontekst(UUID oqituvchiFanTaqsimlashId,
                                             DarsTuri darsTuri,
                                             Semestr semestr,
                                             Long oquvYiliId) {
@@ -121,7 +121,7 @@ public class ElektronJurnalService {
 
         // Dars turidan qat'i nazar - frontend topshiriqni ba'zan noto'g'ri turdagi taqsimlashga
         // yozib qo'yishi mumkinligi sababli, guruhi mos keladigan BARCHA nomzodlar ID ro'yxatini yig'amiz
-        List<Long> mtTaqsimlashCandidateIds = mtNomzodlar
+        List<UUID> mtTaqsimlashCandidateIds = mtNomzodlar
                 .stream()
                 .filter(t -> t.getGuruhlar() != null && t.getGuruhlar().stream()
                         .anyMatch(g -> mendagiGuruhIdlar.contains(g.getId())))
@@ -173,7 +173,7 @@ public class ElektronJurnalService {
     }
 
     // Elektron jurnal — to'liq jadval (butun guruh uchun)
-    public ElektronJurnalResponseDTO getJurnal(Long oqituvchiFanTaqsimlashId,
+    public ElektronJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId,
                                                DarsTuri darsTuri,
                                                Semestr semestr,
                                                Long oquvYiliId) {
@@ -233,7 +233,7 @@ public class ElektronJurnalService {
 
     // Reyting daftarchasi kabi joylar uchun: butun guruhni yuklamasdan,
     // faqat BITTA kursant uchun R(SEM) ni hisoblaydi (N+1 oldini olish uchun)
-    public StudentFanNatijasi getStudentNatija(Long oqituvchiFanTaqsimlashId,
+    public StudentFanNatijasi getStudentNatija(UUID oqituvchiFanTaqsimlashId,
                                                DarsTuri darsTuri,
                                                Semestr semestr,
                                                Long oquvYiliId,
@@ -265,7 +265,7 @@ public class ElektronJurnalService {
 
     // Yangi dars qo'shish (sana tanlanganda)
     @Transactional
-    public DarsJurnaliResponseDTO darsQoshish(Long oqituvchiFanTaqsimlashId,
+    public DarsJurnaliResponseDTO darsQoshish(UUID oqituvchiFanTaqsimlashId,
                                               DarsTuri darsTuri, Semestr semestr, LocalDate sana) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
@@ -307,7 +307,7 @@ public class ElektronJurnalService {
 
     // Dars sanasini o'zgartirish (cheklovsiz — istalgan vaqtda)
     @Transactional
-    public DarsJurnaliResponseDTO darsSanasiniOzgartirish(Long darsJurnaliId, LocalDate yangiSana) {
+    public DarsJurnaliResponseDTO darsSanasiniOzgartirish(UUID darsJurnaliId, LocalDate yangiSana) {
         DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
                 .orElseThrow(() -> new NotFoundException("Dars topilmadi: " + darsJurnaliId));
 
@@ -334,7 +334,7 @@ public class ElektronJurnalService {
 
     // Darsni o'chirish (cheklovsiz — istalgan vaqtda), bog'liq davomatlar bilan birga
     @Transactional
-    public void darsniOchirish(Long darsJurnaliId) {
+    public void darsniOchirish(UUID darsJurnaliId) {
         DarsJurnali darsJurnali = darsJurnaliRepository.findById(darsJurnaliId)
                 .orElseThrow(() -> new NotFoundException("Dars topilmadi: " + darsJurnaliId));
 
@@ -413,7 +413,7 @@ public class ElektronJurnalService {
 
     // Oraliq nazorat bahosini kiritish/yangilash (oraliqRaqami: 1 yoki 2, kesimSanasi — o'qituvchi belgilaydi)
     @Transactional
-    public void oraliqNazoratYangilash(Long oqituvchiFanTaqsimlashId,
+    public void oraliqNazoratYangilash(UUID oqituvchiFanTaqsimlashId,
                                        UUID studentId, Long oquvYiliId,
                                        Semestr semestr, Integer oraliqRaqami,
                                        LocalDate kesimSanasi, Integer baho) {
@@ -475,7 +475,7 @@ public class ElektronJurnalService {
 
     // Yakuniy nazorat bahosini kiritish/yangilash
     @Transactional
-    public void yakuniyNazoratYangilash(Long oqituvchiFanTaqsimlashId,
+    public void yakuniyNazoratYangilash(UUID oqituvchiFanTaqsimlashId,
                                         UUID studentId, Long oquvYiliId,
                                         LocalDate sana, Integer baho) {
         if (baho < 2 || baho > 5) {
@@ -555,7 +555,7 @@ public class ElektronJurnalService {
     // R(KB) — berilgan sana oralig'idagi kunlik baholarning yaxlitlangan o'rtachasi
     // Shu davrda qayta topshirilmagan 2 baho bor-yo'qligini alohida tekshiradi
     // (R(KB) va shu bilan birga R(ON)ni ham to'liq bloklash uchun ishlatiladi)
-    private boolean qaytaTopshirilmaganIkkiBormi(UUID studentId, Long taqsimlashId,
+    private boolean qaytaTopshirilmaganIkkiBormi(UUID studentId, UUID taqsimlashId,
                                                  LocalDate boshlanish, LocalDate tugash) {
         if (boshlanish == null || tugash == null || boshlanish.isAfter(tugash)) return false;
         List<AmaliyDavomat> baholangan = amaliyDavomatRepository
@@ -564,7 +564,7 @@ public class ElektronJurnalService {
                 .anyMatch(d -> d.getBaho() != null && d.getBaho() == 2 && d.getQaytaTopshirishBaho() == null);
     }
 
-    private Double hisoblaRkb(UUID studentId, Long taqsimlashId,
+    private Double hisoblaRkb(UUID studentId, UUID taqsimlashId,
                               LocalDate boshlanish, LocalDate tugash) {
         if (boshlanish == null || tugash == null || boshlanish.isAfter(tugash)) return null;
         List<AmaliyDavomat> baholangan = amaliyDavomatRepository
@@ -591,9 +591,9 @@ public class ElektronJurnalService {
             List<OraliqNazorat> oraliq2lar,
             List<OraliqNazorat> yilOraliqlari,
             List<YakuniyNazorat> yakuniylar,
-            Long taqsimlashId,
+            UUID taqsimlashId,
             LocalDate oquvYiliBoshlanish,
-            List<Long> mtTaqsimlashCandidateIds,
+            List<UUID> mtTaqsimlashCandidateIds,
             Semestr semestr,
             Long oquvYiliId) {
 
@@ -773,7 +773,7 @@ public class ElektronJurnalService {
     }
 
     // Blok tekshiruvi: 7 kundan oshgan va qayta topshirilmagan (FAQAT shu fan/taqsimlash doirasida)
-    private boolean bloklashniTekshir(UUID studentId, Long taqsimlashId, LocalDate sana) {
+    private boolean bloklashniTekshir(UUID studentId, UUID taqsimlashId, LocalDate sana) {
         LocalDate yettaKunOldin = sana.minusDays(7);
         List<AmaliyDavomat> bloklashKeraklar = amaliyDavomatRepository
                 .findBloklashKeraklarTaqsimlashBoyicha(studentId, taqsimlashId, yettaKunOldin);

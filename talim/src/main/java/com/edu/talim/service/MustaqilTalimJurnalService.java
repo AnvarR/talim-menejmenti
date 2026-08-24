@@ -32,7 +32,7 @@ public class MustaqilTalimJurnalService {
     private final OraliqNazoratRepository oraliqNazoratRepository;
     private final StudentRepository studentRepository;
 
-    public MustaqilTalimJurnalResponseDTO getJurnal(Long oqituvchiFanTaqsimlashId,
+    public MustaqilTalimJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId,
                                                     Semestr semestr, Long oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
@@ -72,7 +72,7 @@ public class MustaqilTalimJurnalService {
         List<OraliqNazorat> yilOraliqlari = List.of();
 
         if (!birodarlar.isEmpty()) {
-            Long birodarTaqsimlashId = birodarlar.get(0).getId();
+            UUID birodarTaqsimlashId = birodarlar.get(0).getId();
             oraliq1lar = oraliqNazoratRepository
                     .findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
                             birodarTaqsimlashId, oquvYiliId, semestr, 1);
@@ -138,7 +138,7 @@ public class MustaqilTalimJurnalService {
     // mtTaqsimlashCandidateIds - bir xil fanTaqsimlash+guruhga tegishli BARCHA "birodar" taqsimlashlar ID'lari
     // (faqat MUSTAQIL_TALIM turi emas) - chunki frontend topshiriqni ba'zan noto'g'ri darsTuridagi
     // taqsimlashga yozib qo'yishi mumkin, shuning uchun barcha nomzodlar orasidan qidiramiz.
-    public Double[] hisoblaRmt1Rmt2(List<Long> mtTaqsimlashCandidateIds, UUID studentId, Semestr semestr, Long oquvYiliId,
+    public Double[] hisoblaRmt1Rmt2(List<UUID> mtTaqsimlashCandidateIds, UUID studentId, Semestr semestr, Long oquvYiliId,
                                     LocalDate kesim1Sanasi, LocalDate kesim2Sanasi) {
         if (mtTaqsimlashCandidateIds == null || mtTaqsimlashCandidateIds.isEmpty()) return new Double[]{null, null};
 

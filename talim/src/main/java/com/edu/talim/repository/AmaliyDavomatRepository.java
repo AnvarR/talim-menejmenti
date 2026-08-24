@@ -16,10 +16,10 @@ import java.util.Optional;
 public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Long> {
 
     // Bitta dars uchun barcha davomatlar
-    List<AmaliyDavomat> findByDarsJurnaliIdOrderByStudentFioAsc(Long darsJurnaliId);
+    List<AmaliyDavomat> findByDarsJurnaliIdOrderByStudentFioAsc(UUID darsJurnaliId);
 
     // Bitta kursantning bitta darsdagi davomati
-    Optional<AmaliyDavomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, UUID studentId);
+    Optional<AmaliyDavomat> findByDarsJurnaliIdAndStudentId(UUID darsJurnaliId, UUID studentId);
 
     // Kursantning bitta fan taqsimlashdagi barcha davomatlari (R(KB) hisoblash uchun)
     // Diqqat: baho YOKI qaytaTopshirishBaho bo'lgan yozuvlar ham hisobga olinadi,
@@ -34,7 +34,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
     """)
     List<AmaliyDavomat> findBaholangan(
             @Param("studentId") UUID studentId,
-            @Param("taqsimlashId") Long taqsimlashId,
+            @Param("taqsimlashId") UUID taqsimlashId,
             @Param("boshlanish") LocalDate boshlanish,
             @Param("tugash") LocalDate tugash
     );
@@ -66,7 +66,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
     """)
     List<AmaliyDavomat> findBloklashKeraklarTaqsimlashBoyicha(
             @Param("studentId") UUID studentId,
-            @Param("taqsimlashId") Long taqsimlashId,
+            @Param("taqsimlashId") UUID taqsimlashId,
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );
 

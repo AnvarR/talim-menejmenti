@@ -25,7 +25,7 @@ public class MustaqilTalimTopshiriqController {
     // Bitta mavzuga tegishli topshiriqlar ro'yxati
     @GetMapping
     public ResponseEntity<List<MustaqilTalimTopshiriqResponseDTO>> getByMavzu(
-            @RequestParam Long darsJurnaliId) {
+            @RequestParam UUID darsJurnaliId) {
         return ResponseEntity.ok(topshiriqService.getByMavzu(darsJurnaliId));
     }
 
@@ -38,8 +38,8 @@ public class MustaqilTalimTopshiriqController {
     // Yangi topshiriq yaratish (fayl(lar) bilan birga)
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<MustaqilTalimTopshiriqResponseDTO> create(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
-            @RequestParam Long darsJurnaliId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
+            @RequestParam UUID darsJurnaliId,
             @RequestParam String topshiriqTuri,
             @RequestParam String nomi,
             @RequestParam(required = false) String izoh,
@@ -98,7 +98,7 @@ public class MustaqilTalimTopshiriqController {
     // Topshiriq holati (barcha kursantlar, filtrlar bilan)
     @GetMapping("/holati")
     public ResponseEntity<TopshiriqHolatiSahifaDTO> getTopshiriqHolati(
-            @RequestParam Long darsJurnaliId,
+            @RequestParam UUID darsJurnaliId,
             @RequestParam(required = false) String guruhNomi,
             @RequestParam(required = false) TopshiriqHolati holati,
             @RequestParam(required = false) String topshiriqTuri) {
@@ -119,7 +119,7 @@ public class MustaqilTalimTopshiriqController {
     @GetMapping("/kursant")
     public ResponseEntity<List<KursantTopshiriqDTO>> getMeningTopshiriqlarim(
             @RequestParam UUID studentId,
-            @RequestParam Long darsJurnaliId) {
+            @RequestParam UUID darsJurnaliId) {
         return ResponseEntity.ok(topshiriqService.getMeningTopshiriqlarim(studentId, darsJurnaliId));
     }
 

@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.KompleksResponseDTO;
 import com.edu.talim.entity.enums.MaterialKategoriyasi;
 import com.edu.talim.service.KompleksService;
@@ -31,7 +33,7 @@ public class KompleksController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<KompleksResponseDTO> create(
-            @RequestParam Long oqituvchiFanTaqsimlashId,
+            @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam String materialNomi,
             @RequestParam MaterialKategoriyasi materialKategoriyasi,
             @RequestParam List<MultipartFile> fayllar) throws IOException {

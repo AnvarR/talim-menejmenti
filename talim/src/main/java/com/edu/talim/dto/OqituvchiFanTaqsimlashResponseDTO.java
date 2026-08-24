@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OqituvchiFanTaqsimlashResponseDTO {
 
-    private Long id;
+    private UUID id;
 
     // Fan ma'lumotlari
     private UUID fanTaqsimlashId;

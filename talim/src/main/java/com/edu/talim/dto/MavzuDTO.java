@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.time.LocalDate;
@@ -8,7 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class MavzuDTO {
-    private Long darsJurnaliId;
+    private UUID darsJurnaliId;
     private LocalDate sana;
     private String mavzuNomi;
 }

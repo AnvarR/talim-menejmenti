@@ -38,7 +38,7 @@ public class OqituvchiFanTaqsimlashController {
     // Taqsimlashni tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody OqituvchiFanTaqsimlashCreateDTO dto
     ) {
         return ResponseEntity.ok(service.update(id, dto));
@@ -46,7 +46,7 @@ public class OqituvchiFanTaqsimlashController {
 
     // Taqsimlashni o'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -68,25 +68,25 @@ public class OqituvchiFanTaqsimlashController {
 
     // Oraliq nazoratga ruxsat berish
     @PutMapping("/{id}/oraliq-ruxsat-berish")
-    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> oraliqRuxsatBerish(@PathVariable Long id) {
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> oraliqRuxsatBerish(@PathVariable UUID id) {
         return ResponseEntity.ok(service.oraliqRuxsatBerish(id));
     }
 
     // Yakuniy nazoratga ruxsat berish
     @PutMapping("/{id}/yakuniy-ruxsat-berish")
-    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> yakuniyRuxsatBerish(@PathVariable Long id) {
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> yakuniyRuxsatBerish(@PathVariable UUID id) {
         return ResponseEntity.ok(service.yakuniyRuxsatBerish(id));
     }
 
     // Oraliq nazorat ruxsatini bekor qilish (yopish)
     @PutMapping("/{id}/oraliq-ruxsat-bekor-qilish")
-    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> oraliqRuxsatBekorQilish(@PathVariable Long id) {
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> oraliqRuxsatBekorQilish(@PathVariable UUID id) {
         return ResponseEntity.ok(service.oraliqRuxsatBekorQilish(id));
     }
 
     // Yakuniy nazorat ruxsatini bekor qilish (yopish)
     @PutMapping("/{id}/yakuniy-ruxsat-bekor-qilish")
-    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> yakuniyRuxsatBekorQilish(@PathVariable Long id) {
+    public ResponseEntity<OqituvchiFanTaqsimlashResponseDTO> yakuniyRuxsatBekorQilish(@PathVariable UUID id) {
         return ResponseEntity.ok(service.yakuniyRuxsatBekorQilish(id));
     }
 }

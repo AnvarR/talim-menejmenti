@@ -46,28 +46,28 @@ public class OqituvchiFanTaqsimlashService {
                 .map(this::toResponseDTO);
     }
 
-    public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBerish(Long id) {
+    public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBerish(UUID id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setOraliqNazoratRuxsat(true);
         return toResponseDTO(repository.save(t));
     }
 
-    public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBerish(Long id) {
+    public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBerish(UUID id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setYakuniyNazoratRuxsat(true);
         return toResponseDTO(repository.save(t));
     }
 
-    public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBekorQilish(Long id) {
+    public OqituvchiFanTaqsimlashResponseDTO oraliqRuxsatBekorQilish(UUID id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setOraliqNazoratRuxsat(false);
         return toResponseDTO(repository.save(t));
     }
 
-    public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBekorQilish(Long id) {
+    public OqituvchiFanTaqsimlashResponseDTO yakuniyRuxsatBekorQilish(UUID id) {
         OqituvchiFanTaqsimlash t = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
         t.setYakuniyNazoratRuxsat(false);
@@ -146,7 +146,7 @@ public class OqituvchiFanTaqsimlashService {
     }
 
     // Taqsimlashni tahrirlash
-    public OqituvchiFanTaqsimlashResponseDTO update(Long id, OqituvchiFanTaqsimlashCreateDTO dto) {
+    public OqituvchiFanTaqsimlashResponseDTO update(UUID id, OqituvchiFanTaqsimlashCreateDTO dto) {
         OqituvchiFanTaqsimlash taqsimlash = findById(id);
 
         FanTaqsimlash fanTaqsimlash = fanTaqsimlashRepository.findById(dto.getFanTaqsimlashId())
@@ -214,13 +214,13 @@ public class OqituvchiFanTaqsimlashService {
     }
 
     // Taqsimlashni o'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         repository.delete(findById(id));
     }
 
     // ===== HELPER METODLAR =====
 
-    private OqituvchiFanTaqsimlash findById(Long id) {
+    private OqituvchiFanTaqsimlash findById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
     }
