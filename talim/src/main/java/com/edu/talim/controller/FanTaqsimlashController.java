@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.FanTaqsimlashCreateDTO;
 import com.edu.talim.dto.FanTaqsimlashResponseDTO;
 import com.edu.talim.service.FanTaqsimlashService;
@@ -35,7 +37,7 @@ public class FanTaqsimlashController {
     // Taqsimlashni tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<FanTaqsimlashResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody FanTaqsimlashCreateDTO dto
     ) {
         return ResponseEntity.ok(fanTaqsimlashService.update(id, dto));
@@ -43,7 +45,7 @@ public class FanTaqsimlashController {
 
     // Taqsimlashni o'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         fanTaqsimlashService.delete(id);
         return ResponseEntity.noContent().build();
     }

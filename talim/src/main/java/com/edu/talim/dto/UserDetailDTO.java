@@ -28,7 +28,7 @@ public class UserDetailDTO {
     private String pochtaManzili;
 
     // Ish joyi va lavozimi
-    private Long tarkibiyTuzilmaId;
+    private UUID tarkibiyTuzilmaId;
     private String tarkibiyTuzilmaNomi;
     private String lavozimi;
     private String ilmiyUnvoni;

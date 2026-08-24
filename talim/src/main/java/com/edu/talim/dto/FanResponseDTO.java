@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -9,10 +11,10 @@ import lombok.*;
 public class FanResponseDTO {
 
     // Fan ID si
-    private Long id;
+    private UUID id;
 
     // Kafedra ID si
-    private Long kafedraId;
+    private UUID kafedraId;
 
     // Kafedra nomi
     private String kafedraNomi;

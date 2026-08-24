@@ -77,8 +77,8 @@ public class MustaqilTalimTopshiriqService {
 
         // Himoya: mavzu shu fanga (fanTaqsimlash) tegishli ekanini tekshirish - mavzular
         // dars turi/guruhdan qat'i nazar butun fan (masalan Ma'ruzada yaratilgan) doirasida umumiy
-        Long mavzuFanTaqsimlashId = mavzu.getOqituvchiFanTaqsimlash().getFanTaqsimlash().getId();
-        Long soralganFanTaqsimlashId = taqsimlash.getFanTaqsimlash().getId();
+        UUID mavzuFanTaqsimlashId = mavzu.getOqituvchiFanTaqsimlash().getFanTaqsimlash().getId();
+        UUID soralganFanTaqsimlashId = taqsimlash.getFanTaqsimlash().getId();
         if (!mavzuFanTaqsimlashId.equals(soralganFanTaqsimlashId)) {
             throw new RuntimeException(
                     "Bu mavzu boshqa fanga tegishli! (mavzu fanTaqsimlashId="

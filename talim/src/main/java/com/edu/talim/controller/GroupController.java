@@ -27,7 +27,7 @@ public class GroupController {
 
     // Kurs bo'yicha guruhlar
     @GetMapping("/by-course/{courseId}")
-    public ResponseEntity<List<Group>> getByCourse(@PathVariable Long courseId) {
+    public ResponseEntity<List<Group>> getByCourse(@PathVariable UUID courseId) {
         return ResponseEntity.ok(groupService.getByCourseId(courseId));
     }
 
@@ -40,7 +40,7 @@ public class GroupController {
     // Guruhga biriktirilmagan kursantlar (kurs bo'yicha)
     @GetMapping("/biriktirilmagan-kursantlar")
     public ResponseEntity<List<StudentListDTO>> getBiriktirilmaganKursantlar(
-            @RequestParam Long kursId) {
+            @RequestParam UUID kursId) {
         return ResponseEntity.ok(groupService.getBiriktirilmaganKursantlar(kursId));
     }
 
@@ -48,21 +48,21 @@ public class GroupController {
     @PostMapping
     public ResponseEntity<GroupResponseDTO> create(
             @RequestParam String guruhNomi,
-            @RequestParam Long courseId) {
+            @RequestParam UUID courseId) {
         return ResponseEntity.ok(groupService.create(guruhNomi, courseId));
     }
 
     // Guruh nomini tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<GroupResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String guruhNomi) {
         return ResponseEntity.ok(groupService.update(id, guruhNomi));
     }
 
     // Guruhni o'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         groupService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -70,7 +70,7 @@ public class GroupController {
     // Kursantni guruhga biriktirish
     @PutMapping("/{guruhId}/kursant-biriktirish/{studentId}")
     public ResponseEntity<Void> kursantBiriktirish(
-            @PathVariable Long guruhId,
+            @PathVariable UUID guruhId,
             @PathVariable UUID studentId,
             @RequestParam(required = false) String reytingDaftarchasiRaqami) {
         groupService.kursantBiriktirish(guruhId, studentId, reytingDaftarchasiRaqami);
@@ -80,7 +80,7 @@ public class GroupController {
     // Kursantni guruhdan chiqarish
     @DeleteMapping("/{guruhId}/kursant-chiqarish/{studentId}")
     public ResponseEntity<Void> kursantChiqarish(
-            @PathVariable Long guruhId,
+            @PathVariable UUID guruhId,
             @PathVariable UUID studentId) {
         groupService.kursantChiqarish(guruhId, studentId);
         return ResponseEntity.noContent().build();

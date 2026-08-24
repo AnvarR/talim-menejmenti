@@ -111,7 +111,7 @@ public class ElektronJurnalService {
                         oqituvchiFanTaqsimlashId, oquvYiliId);
 
         // R(MT) uchun "birodar" Mustaqil ta'lim taqsimlashini topish (bir xil fan+o'qituvchi+kurs+guruh)
-        Set<Long> mendagiGuruhIdlar = taqsimlash.getGuruhlar() == null ? Set.of() :
+        Set<UUID> mendagiGuruhIdlar = taqsimlash.getGuruhlar() == null ? Set.of() :
                 taqsimlash.getGuruhlar().stream().map(Group::getId).collect(Collectors.toSet());
         List<OqituvchiFanTaqsimlash> mtNomzodlar = oqituvchiFanTaqsimlashRepository
                 .findByFanTaqsimlashIdAndOqituvchiIdAndKursId(

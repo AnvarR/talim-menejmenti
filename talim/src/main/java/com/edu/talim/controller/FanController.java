@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.FanCreateDTO;
 import com.edu.talim.dto.FanResponseDTO;
 import com.edu.talim.service.FanService;
@@ -26,7 +28,7 @@ public class FanController {
 
     // Bitta fan
     @GetMapping("/{id}")
-    public ResponseEntity<FanResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<FanResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(fanService.getById(id));
     }
 
@@ -39,7 +41,7 @@ public class FanController {
     // Fanni tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<FanResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody FanCreateDTO dto
     ) {
         return ResponseEntity.ok(fanService.update(id, dto));
@@ -47,7 +49,7 @@ public class FanController {
 
     // Fanni o'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         fanService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -47,10 +47,10 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     Optional<Student> findByUsername(String username);
 
     // Guruhga tegishli kursantlar ro'yxati
-    List<Student> findByGroupId(Long groupId);
+    List<Student> findByGroupId(UUID groupId);
 
     // Guruhga tegishli kursantlar - fio bo'yicha alifbo tartibida
-    List<Student> findByGroupIdOrderByFioAsc(Long groupId);
+    List<Student> findByGroupIdOrderByFioAsc(UUID groupId);
 
     // Kursdan-kursga ko'chirish sahifasi uchun: shu kurs/guruhdagi FAOL kursantlar
     @Query("""
@@ -62,6 +62,6 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
         AND (:guruhId IS NULL OR g.id = :guruhId)
         ORDER BY s.fio ASC
     """)
-    List<Student> findKochirishUchunKursantlar(@Param("kursId") Long kursId,
-                                               @Param("guruhId") Long guruhId);
+    List<Student> findKochirishUchunKursantlar(@Param("kursId") UUID kursId,
+                                               @Param("guruhId") UUID guruhId);
 }

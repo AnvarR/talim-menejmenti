@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.TarkibiyTuzilma;
 import com.edu.talim.entity.enums.TarkibiyTuzilmaTuri;
 import com.edu.talim.repository.TarkibiyTuzilmaRepository;
@@ -39,7 +41,7 @@ public class TarkibiyTuzilmaService {
     }
 
     // O'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         tarkibiyTuzilmaRepository.deleteById(id);
     }
 }

@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.FanTaqsimlash;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,16 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FanTaqsimlashRepository extends JpaRepository<FanTaqsimlash, Long> {
+public interface FanTaqsimlashRepository extends JpaRepository<FanTaqsimlash, UUID> {
 
     // Sahifalash bilan barcha taqsimlashlar
     Page<FanTaqsimlash> findAllByOrderByIdDesc(Pageable pageable);
 
     // Dublikat tekshiruvi — oqituvchisiz
     boolean existsByFanIdAndKursIdAndGuruhIdAndSoatHajmiAndMarruzaSoatiAndSeminarSoatiAndMustaqilTalimSoatiAndAmaliyotMavjudAndKursIshiMavjud(
-            Long fanId,
-            Long kursId,
-            Long guruhId,
+            UUID fanId,
+            UUID kursId,
+            UUID guruhId,
             Integer soatHajmi,
             Integer marruzaSoati,
             Integer seminarSoati,
@@ -26,5 +28,5 @@ public interface FanTaqsimlashRepository extends JpaRepository<FanTaqsimlash, Lo
     );
 
     // Shu guruhga tegishli fan taqsimlashlar soni (guruhni o'chirishdan oldin xavfsiz tekshirish uchun)
-    long countByGuruhId(Long guruhId);
+    long countByGuruhId(UUID guruhId);
 }

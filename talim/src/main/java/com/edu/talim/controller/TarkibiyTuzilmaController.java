@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.TarkibiyTuzilma;
 import com.edu.talim.service.TarkibiyTuzilmaService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +46,7 @@ public class TarkibiyTuzilmaController {
 
     // O'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         tarkibiyTuzilmaService.delete(id);
         return ResponseEntity.noContent().build();
     }

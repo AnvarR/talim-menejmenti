@@ -45,7 +45,7 @@ public class KursdanKursgaKochirishService {
 
     // Berilgan kurs (va ixtiyoriy guruh) bo'yicha FAOL kursantlar ro'yxati,
     // har biriga shu o'quv yilida allaqachon ko'chirilgan-ko'chirilmaganligi (holati) qo'shib beriladi
-    public List<KochirishKursantDTO> getKursantlar(Long kursId, Long guruhId, Long oquvYiliId) {
+    public List<KochirishKursantDTO> getKursantlar(UUID kursId, UUID guruhId, Long oquvYiliId) {
         courseRepository.findById(kursId)
                 .orElseThrow(() -> new NotFoundException("Kurs topilmadi: " + kursId));
 
@@ -83,8 +83,8 @@ public class KursdanKursgaKochirishService {
 
         // Ko'chirilayotgan guruhlarni bir marta yig'amiz (dedupe) - har biri faqat
         // BITTA marta yangilanadi, hatto guruhda bir nechta kursant tanlangan bo'lsa ham
-        Map<Long, Group> tegishliGuruhlar = new LinkedHashMap<>();
-        Map<Long, Course> guruhningYangiKursi = new LinkedHashMap<>();
+        Map<UUID, Group> tegishliGuruhlar = new LinkedHashMap<>();
+        Map<UUID, Course> guruhningYangiKursi = new LinkedHashMap<>();
 
         for (UUID studentId : dto.getStudentIds()) {
             Student student = studentRepository.findById(studentId)
@@ -146,7 +146,7 @@ public class KursdanKursgaKochirishService {
         }
 
         // Endi tegishli guruhlarning o'zini ham yangi kursga o'tkazamiz (har biri FAQAT bir marta)
-        for (Map.Entry<Long, Group> entry : tegishliGuruhlar.entrySet()) {
+        for (Map.Entry<UUID, Group> entry : tegishliGuruhlar.entrySet()) {
             Group guruh = entry.getValue();
             Course yangiKurs = guruhningYangiKursi.get(entry.getKey());
             guruh.setCourse(yangiKurs);

@@ -14,8 +14,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByJshshir(String jshshir);
     Optional<User> findByUsername(String username);
     // Kafedra ID si va roli bo'yicha xodimni topish
-    Optional<User> findByTarkibiyTuzilmaIdAndRole(Long tarkibiyTuzilmaId, Role role);
+    Optional<User> findByTarkibiyTuzilmaIdAndRole(UUID tarkibiyTuzilmaId, Role role);
     // Kafedradagi barcha o'qituvchilarni topish (ro'yxat)
-    List<User> findAllByTarkibiyTuzilmaIdAndRole(Long tarkibiyTuzilmaId, Role role);
+    List<User> findAllByTarkibiyTuzilmaIdAndRole(UUID tarkibiyTuzilmaId, Role role);
 
 }

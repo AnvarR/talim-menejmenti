@@ -31,7 +31,7 @@ public class OqituvchiFanTaqsimlashService {
     private final GroupRepository groupRepository;
 
     // Kafedra bo'yicha taqsimlashlar ro'yxati
-    public Page<OqituvchiFanTaqsimlashResponseDTO> getByKafedra(Long kafedraId, int page, int size) {
+    public Page<OqituvchiFanTaqsimlashResponseDTO> getByKafedra(UUID kafedraId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return repository.findByFanTaqsimlashFanKafedraIdOrderByIdDesc(kafedraId, pageable)
                 .map(this::toResponseDTO);
@@ -40,7 +40,7 @@ public class OqituvchiFanTaqsimlashService {
     // ====================== Oraliq/Yakuniyga ruxsat ======================
 
     public Page<OqituvchiFanTaqsimlashResponseDTO> getOraliqYakuniyRuxsatRoyxati(
-            Long fanId, UUID oqituvchiId, Long kursId, Long guruhId, int page, int size) {
+            UUID fanId, UUID oqituvchiId, UUID kursId, UUID guruhId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return repository.findOraliqYakuniyRuxsatRoyxati(fanId, oqituvchiId, kursId, guruhId, pageable)
                 .map(this::toResponseDTO);

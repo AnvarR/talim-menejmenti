@@ -25,8 +25,8 @@ public class KursdanKursgaKochirishController {
     // o'quv yili (ixtiyoriy - Ruxsat/Tasdiqlash holatini aniqlash uchun)
     @GetMapping
     public ResponseEntity<List<KochirishKursantDTO>> getKursantlar(
-            @RequestParam Long kursId,
-            @RequestParam(required = false) Long guruhId,
+            @RequestParam UUID kursId,
+            @RequestParam(required = false) UUID guruhId,
             @RequestParam(required = false) Long oquvYiliId) {
         return ResponseEntity.ok(service.getKursantlar(kursId, guruhId, oquvYiliId));
     }

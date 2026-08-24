@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -8,22 +10,22 @@ import lombok.*;
 @AllArgsConstructor
 public class FanTaqsimlashResponseDTO {
 
-    private Long id;
+    private UUID id;
 
     // Fan ma'lumotlari
-    private Long fanId;
+    private UUID fanId;
     private String fanNomi;
 
     // Kafedra ma'lumotlari
-    private Long kafedraId;
+    private UUID kafedraId;
     private String kafedraNomi;
 
     // Kurs ma'lumotlari
-    private Long kursId;
+    private UUID kursId;
     private String kursRaqami;
 
     // Guruh ma'lumotlari
-    private Long guruhId;
+    private UUID guruhId;
     private String guruhNomi;
 
     // Soat ma'lumotlari

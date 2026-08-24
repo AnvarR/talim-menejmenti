@@ -16,7 +16,7 @@ import java.util.List;
 public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<OqituvchiFanTaqsimlash, Long> {
 
     // Kafedra bo'yicha taqsimlashlar (fan → fanTaqsimlash → fan → kafedra orqali)
-    Page<OqituvchiFanTaqsimlash> findByFanTaqsimlashFanKafedraIdOrderByIdDesc(Long kafedraId, Pageable pageable);
+    Page<OqituvchiFanTaqsimlash> findByFanTaqsimlashFanKafedraIdOrderByIdDesc(UUID kafedraId, Pageable pageable);
 
     // Oraliq/Yakuniyga ruxsat sahifasi uchun - butun fakultet bo'yicha SEMINAR turidagi
     // taqsimlashlar, ixtiyoriy filtrlar bilan (fan/o'qituvchi/kurs/guruh)
@@ -31,10 +31,10 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
         ORDER BY t.id DESC
     """)
     Page<OqituvchiFanTaqsimlash> findOraliqYakuniyRuxsatRoyxati(
-            @Param("fanId") Long fanId,
+            @Param("fanId") UUID fanId,
             @Param("oqituvchiId") UUID oqituvchiId,
-            @Param("kursId") Long kursId,
-            @Param("guruhId") Long guruhId,
+            @Param("kursId") UUID kursId,
+            @Param("guruhId") UUID guruhId,
             Pageable pageable
     );
 
@@ -52,27 +52,27 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
         AND (:excludeId IS NULL OR t.id <> :excludeId)
     """)
     List<OqituvchiFanTaqsimlash> findGuruhlariUstmaUshtaTushganlar(
-            @Param("fanTaqsimlashId") Long fanTaqsimlashId,
+            @Param("fanTaqsimlashId") UUID fanTaqsimlashId,
             @Param("oqituvchiId") UUID oqituvchiId,
             @Param("darsTuri") com.edu.talim.entity.enums.DarsTuri darsTuri,
-            @Param("kursId") Long kursId,
-            @Param("guruhIds") List<Long> guruhIds,
+            @Param("kursId") UUID kursId,
+            @Param("guruhIds") List<UUID> guruhIds,
             @Param("excludeId") Long excludeId
     );
 
     // Bir xil fan+o'qituvchi+kurs bo'yicha BOSHQA dars turidagi taqsimlashlar
     // (masalan Mustaqil ta'lim uchun Seminar/Amaliyning oraliq kesim sanalarini topish uchun)
     List<OqituvchiFanTaqsimlash> findByFanTaqsimlashIdAndOqituvchiIdAndKursId(
-            Long fanTaqsimlashId,
+            UUID fanTaqsimlashId,
             UUID oqituvchiId,
-            Long kursId
+            UUID kursId
     );
 
     // Shu guruhga bog'langan taqsimlashlar bor-yo'qligi (guruhni o'chirishdan oldin tekshirish uchun)
     @Query("SELECT COUNT(t) > 0 FROM OqituvchiFanTaqsimlash t JOIN t.guruhlar g WHERE g.id = :guruhId")
-    boolean existsByGuruhId(@Param("guruhId") Long guruhId);
+    boolean existsByGuruhId(@Param("guruhId") UUID guruhId);
 
     // Baholash hisobotlari uchun: shu guruh o'qiydigan barcha fanlar (SEMINAR taqsimlashlar)
     List<OqituvchiFanTaqsimlash> findByDarsTuriAndGuruhlarId(
-            com.edu.talim.entity.enums.DarsTuri darsTuri, Long guruhlarId);
+            com.edu.talim.entity.enums.DarsTuri darsTuri, UUID guruhlarId);
 }

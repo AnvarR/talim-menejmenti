@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -36,7 +38,7 @@ public class UserCreateDTO {
     private String pochtaManzili;
 
     // Ish joyi va lavozimi
-    private Long tarkibiyTuzilmaId;
+    private UUID tarkibiyTuzilmaId;
     private String lavozimi;
     private String ilmiyUnvoni;
     private String ilmiyDarajasi;

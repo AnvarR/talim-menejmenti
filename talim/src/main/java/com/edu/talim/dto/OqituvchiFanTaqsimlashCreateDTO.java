@@ -12,7 +12,7 @@ import java.util.List;
 public class OqituvchiFanTaqsimlashCreateDTO {
 
     // O'quv bo'limi taqsimlagan fan ID si
-    private Long fanTaqsimlashId;
+    private UUID fanTaqsimlashId;
 
     // O'qituvchi ID si
     private UUID oqituvchiId;
@@ -21,10 +21,10 @@ public class OqituvchiFanTaqsimlashCreateDTO {
     private String darsTuri;
 
     // Kurs ID si
-    private Long kursId;
+    private UUID kursId;
 
     // Guruhlar ID lari (bir nechta)
-    private List<Long> guruhIds;
+    private List<UUID> guruhIds;
 
     // Faqat "Kurs ishi" uchun qo'lda kiritiladi (boshqa turlar uchun avtomatik hisoblanadi)
     private Integer soatHajmi;

@@ -20,7 +20,7 @@ public class OqituvchiFanTaqsimlashController {
     // Kafedra bo'yicha taqsimlashlar ro'yxati
     @GetMapping
     public ResponseEntity<Page<OqituvchiFanTaqsimlashResponseDTO>> getByKafedra(
-            @RequestParam Long kafedraId,
+            @RequestParam UUID kafedraId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size
     ) {
@@ -56,10 +56,10 @@ public class OqituvchiFanTaqsimlashController {
     // Butun fakultet bo'yicha SEMINAR taqsimlashlar ro'yxati (filtrlar bilan)
     @GetMapping("/oraliq-yakuniy-ruxsat")
     public ResponseEntity<Page<OqituvchiFanTaqsimlashResponseDTO>> getOraliqYakuniyRuxsatRoyxati(
-            @RequestParam(required = false) Long fanId,
+            @RequestParam(required = false) UUID fanId,
             @RequestParam(required = false) UUID oqituvchiId,
-            @RequestParam(required = false) Long kursId,
-            @RequestParam(required = false) Long guruhId,
+            @RequestParam(required = false) UUID kursId,
+            @RequestParam(required = false) UUID guruhId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size
     ) {

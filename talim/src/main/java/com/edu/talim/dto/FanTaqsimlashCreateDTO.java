@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -8,13 +10,13 @@ import lombok.*;
 public class FanTaqsimlashCreateDTO {
 
     // Fan ID si
-    private Long fanId;
+    private UUID fanId;
 
     // Kurs ID si
-    private Long kursId;
+    private UUID kursId;
 
     // Guruh ID si
-    private Long guruhId;
+    private UUID guruhId;
 
     // Umumiy soat hajmi
     private Integer soatHajmi;

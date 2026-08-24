@@ -39,7 +39,7 @@ public class GroupService {
     }
 
     // Kurs bo'yicha guruhlar
-    public List<Group> getByCourseId(Long courseId) {
+    public List<Group> getByCourseId(UUID courseId) {
         return groupRepository.findByCourseId(courseId);
     }
 
@@ -53,7 +53,7 @@ public class GroupService {
 
     // Yangi guruh yaratish
     @Transactional
-    public GroupResponseDTO create(String guruhNomi, Long courseId) {
+    public GroupResponseDTO create(String guruhNomi, UUID courseId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Kurs topilmadi: " + courseId));
 
@@ -71,7 +71,7 @@ public class GroupService {
 
     // Guruh nomini tahrirlash
     @Transactional
-    public GroupResponseDTO update(Long id, String yangiNom) {
+    public GroupResponseDTO update(UUID id, String yangiNom) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + id));
 
@@ -81,7 +81,7 @@ public class GroupService {
 
     // Guruhni o'chirish
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + id));
 
@@ -108,7 +108,7 @@ public class GroupService {
     }
 
     // Guruhga biriktirilmagan kursantlar (kurs bo'yicha)
-    public List<StudentListDTO> getBiriktirilmaganKursantlar(Long kursId) {
+    public List<StudentListDTO> getBiriktirilmaganKursantlar(UUID kursId) {
         return groupRepository.findBiriktirilmaganKursantlar(kursId)
                 .stream()
                 .map(this::toStudentListDTO)
@@ -117,7 +117,7 @@ public class GroupService {
 
     // Kursantni guruhga biriktirish
     @Transactional
-    public void kursantBiriktirish(Long guruhId, UUID studentId, String reytingDaftarchasiRaqami) {
+    public void kursantBiriktirish(UUID guruhId, UUID studentId, String reytingDaftarchasiRaqami) {
         Group group = groupRepository.findById(guruhId)
                 .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + guruhId));
 
@@ -143,7 +143,7 @@ public class GroupService {
 
     // Kursantni guruhdan chiqarish
     @Transactional
-    public void kursantChiqarish(Long guruhId, UUID studentId) {
+    public void kursantChiqarish(UUID guruhId, UUID studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 

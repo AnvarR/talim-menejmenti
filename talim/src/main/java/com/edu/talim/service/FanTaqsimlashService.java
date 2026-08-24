@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.FanTaqsimlashCreateDTO;
@@ -73,7 +75,7 @@ public class FanTaqsimlashService {
     }
 
     // Taqsimlashni tahrirlash
-    public FanTaqsimlashResponseDTO update(Long id, FanTaqsimlashCreateDTO dto) {
+    public FanTaqsimlashResponseDTO update(UUID id, FanTaqsimlashCreateDTO dto) {
         FanTaqsimlash taqsimlash = findById(id);
 
         Fan fan = fanRepository.findById(dto.getFanId())
@@ -99,13 +101,13 @@ public class FanTaqsimlashService {
     }
 
     // Taqsimlashni o'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         fanTaqsimlashRepository.delete(findById(id));
     }
 
     // ===== HELPER METODLAR =====
 
-    private FanTaqsimlash findById(Long id) {
+    private FanTaqsimlash findById(UUID id) {
         return fanTaqsimlashRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Taqsimlash topilmadi: " + id));
     }

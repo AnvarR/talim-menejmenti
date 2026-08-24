@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.DarsJadvaliResponseDTO;
 import com.edu.talim.entity.enums.HaftaKuni;
 import com.edu.talim.service.DarsJadvaliService;
@@ -25,7 +27,7 @@ public class DarsJadvaliController {
 
     @GetMapping
     public ResponseEntity<List<DarsJadvaliResponseDTO>> getAll(
-            @RequestParam(required = false) Long kursId,
+            @RequestParam(required = false) UUID kursId,
             @RequestParam(required = false) Long oquvYiliId,
             @RequestParam(required = false) HaftaKuni haftaKuni) {
         return ResponseEntity.ok(darsJadvaliService.getAll(kursId, oquvYiliId, haftaKuni));
@@ -33,7 +35,7 @@ public class DarsJadvaliController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<DarsJadvaliResponseDTO> create(
-            @RequestParam Long kursId,
+            @RequestParam UUID kursId,
             @RequestParam Long oquvYiliId,
             @RequestParam HaftaKuni haftaKuni,
             @RequestParam MultipartFile fayl) throws IOException {

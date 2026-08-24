@@ -50,7 +50,7 @@ public class BaholashHisobotlariService {
     }
 
     // ============ 2) Fan bo'yicha - bitta fandan butun guruhning hisoboti ============
-    public List<HisobotSatriDTO> fanBoyicha(Long fanId, Long kursId, Long guruhId, Long oquvYiliId, Semestr semestr) {
+    public List<HisobotSatriDTO> fanBoyicha(UUID fanId, UUID kursId, UUID guruhId, Long oquvYiliId, Semestr semestr) {
         var sahifa = taqsimlashRepository.findOraliqYakuniyRuxsatRoyxati(
                 fanId, null, kursId, guruhId, Pageable.unpaged());
         if (sahifa.isEmpty()) {
@@ -72,7 +72,7 @@ public class BaholashHisobotlariService {
     }
 
     // ============ 3) Kurs/Guruh bo'yicha - guruhlar kesimida umumiy hisobot ============
-    public KursGuruhHisobotDTO kursGuruhBoyicha(Long oquvYiliId, Semestr semestr, Long kursId, Long guruhId) {
+    public KursGuruhHisobotDTO kursGuruhBoyicha(Long oquvYiliId, Semestr semestr, UUID kursId, UUID guruhId) {
         if (oquvYiliId == null || semestr == null) {
             throw new RuntimeException("O'quv yili va semestr tanlanishi shart!");
         }
@@ -154,7 +154,7 @@ public class BaholashHisobotlariService {
 
     // ============ 4) Past o'zlashtiruvchilar - o'zlashtirishi <3.5 bo'lgan barcha (kursant,fan) juftliklar ============
     public List<HisobotSatriDTO> pastOzlashtiruvchilar(Long oquvYiliId, Semestr semestr,
-                                                       Long kursId, Long guruhId, Long fanId) {
+                                                       UUID kursId, UUID guruhId, UUID fanId) {
         List<Group> guruhlar = aniqlaGuruhlar(kursId, guruhId);
         List<HisobotSatriDTO> natija = new ArrayList<>();
 
@@ -229,7 +229,7 @@ public class BaholashHisobotlariService {
 
     // ===== Yordamchi metodlar =====
 
-    private List<Group> aniqlaGuruhlar(Long kursId, Long guruhId) {
+    private List<Group> aniqlaGuruhlar(UUID kursId, UUID guruhId) {
         if (guruhId != null) {
             Group g = groupRepository.findById(guruhId)
                     .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + guruhId));

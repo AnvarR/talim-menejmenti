@@ -53,7 +53,7 @@ public class MustaqilTalimJurnalService {
         // Amaliy/Seminar modulida kiritilgan oraliq kesim sanalari qayta ishlatiladi.
         // MUHIM: faqat GURUHI ham bir xil bo'lgan taqsimlash to'g'ri "birodar" hisoblanadi,
         // aks holda boshqa guruhning kesim sanasi noto'g'ri ishlatilib qolishi mumkin.
-        Set<Long> mendagiGuruhIdlar = taqsimlash.getGuruhlar() == null ? Set.of() :
+        Set<UUID> mendagiGuruhIdlar = taqsimlash.getGuruhlar() == null ? Set.of() :
                 taqsimlash.getGuruhlar().stream().map(Group::getId).collect(Collectors.toSet());
 
         List<OqituvchiFanTaqsimlash> birodarlar = oqituvchiFanTaqsimlashRepository

@@ -15,7 +15,7 @@ public class OqituvchiFanTaqsimlashResponseDTO {
     private Long id;
 
     // Fan ma'lumotlari
-    private Long fanTaqsimlashId;
+    private UUID fanTaqsimlashId;
     private String fanNomi;
     private String kafedraNomi;
 
@@ -30,7 +30,7 @@ public class OqituvchiFanTaqsimlashResponseDTO {
     private Integer soatHajmi;
 
     // Kurs
-    private Long kursId;
+    private UUID kursId;
     private String kursRaqami;
 
     // Guruhlar

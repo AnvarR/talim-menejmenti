@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.HaftaKuni;
 import lombok.*;
 
@@ -9,7 +11,7 @@ import lombok.*;
 public class DarsJadvaliResponseDTO {
 
     private Long id;
-    private Long kursId;
+    private UUID kursId;
     private String kursNomi;
     private Long oquvYiliId;
     private String oquvYiliNomi;

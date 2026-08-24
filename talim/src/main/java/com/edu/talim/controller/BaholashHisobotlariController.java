@@ -33,9 +33,9 @@ public class BaholashHisobotlariController {
     // 2) Fan bo'yicha - bitta fandan butun guruhning hisoboti
     @GetMapping("/fan-boyicha")
     public ResponseEntity<List<HisobotSatriDTO>> fanBoyicha(
-            @RequestParam Long fanId,
-            @RequestParam Long kursId,
-            @RequestParam Long guruhId,
+            @RequestParam UUID fanId,
+            @RequestParam UUID kursId,
+            @RequestParam UUID guruhId,
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr) {
         return ResponseEntity.ok(service.fanBoyicha(fanId, kursId, guruhId, oquvYiliId, semestr));
@@ -46,8 +46,8 @@ public class BaholashHisobotlariController {
     public ResponseEntity<KursGuruhHisobotDTO> kursGuruhBoyicha(
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr,
-            @RequestParam(required = false) Long kursId,
-            @RequestParam(required = false) Long guruhId) {
+            @RequestParam(required = false) UUID kursId,
+            @RequestParam(required = false) UUID guruhId) {
         return ResponseEntity.ok(service.kursGuruhBoyicha(oquvYiliId, semestr, kursId, guruhId));
     }
 
@@ -56,9 +56,9 @@ public class BaholashHisobotlariController {
     public ResponseEntity<List<HisobotSatriDTO>> pastOzlashtiruvchilar(
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr,
-            @RequestParam(required = false) Long kursId,
-            @RequestParam(required = false) Long guruhId,
-            @RequestParam(required = false) Long fanId) {
+            @RequestParam(required = false) UUID kursId,
+            @RequestParam(required = false) UUID guruhId,
+            @RequestParam(required = false) UUID fanId) {
         return ResponseEntity.ok(service.pastOzlashtiruvchilar(oquvYiliId, semestr, kursId, guruhId, fanId));
     }
 

@@ -43,7 +43,7 @@ public class UserService {
     }
 
     // Kafedradagi barcha o'qituvchilar — fan taqsimlashda o'qituvchi tanlash uchun
-    public List<UserDetailDTO> getOqituvchilar(Long kafedraId) {
+    public List<UserDetailDTO> getOqituvchilar(UUID kafedraId) {
         return userRepository.findAllByTarkibiyTuzilmaIdAndRole(kafedraId, Role.OQITUVCHI)
                 .stream()
                 .map(this::toDetailDTO)

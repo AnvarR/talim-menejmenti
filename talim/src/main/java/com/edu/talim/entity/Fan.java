@@ -1,6 +1,7 @@
 package com.edu.talim.entity;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.*;
 
 @Entity
@@ -12,8 +13,8 @@ import lombok.*;
 public class Fan {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // Qaysi kafedra fani ekanligi
     @ManyToOne(fetch = FetchType.LAZY)

@@ -28,7 +28,7 @@ public class UserController {
     // Kafedradagi o'qituvchilar ro'yxati — fan taqsimlashda o'qituvchi tanlash uchun
     @GetMapping("/oqituvchilar")
     public ResponseEntity<List<UserDetailDTO>> getOqituvchilar(
-            @RequestParam Long kafedraId
+            @RequestParam UUID kafedraId
     ) {
         return ResponseEntity.ok(userService.getOqituvchilar(kafedraId));
     }

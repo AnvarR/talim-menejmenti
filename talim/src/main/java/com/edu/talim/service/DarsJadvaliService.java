@@ -38,7 +38,7 @@ public class DarsJadvaliService {
     @Value("${app.base-url}")
     private String baseUrl;
 
-    public List<DarsJadvaliResponseDTO> getAll(Long kursId, Long oquvYiliId, HaftaKuni haftaKuni) {
+    public List<DarsJadvaliResponseDTO> getAll(UUID kursId, Long oquvYiliId, HaftaKuni haftaKuni) {
         if (kursId != null && oquvYiliId != null && haftaKuni != null) {
             return darsJadvaliRepository
                     .findByKursIdAndOquvYiliIdAndHaftaKuni(kursId, oquvYiliId, haftaKuni)
@@ -58,7 +58,7 @@ public class DarsJadvaliService {
     }
 
     @Transactional
-    public DarsJadvaliResponseDTO create(Long kursId, Long oquvYiliId,
+    public DarsJadvaliResponseDTO create(UUID kursId, Long oquvYiliId,
                                          HaftaKuni haftaKuni, MultipartFile fayl) throws IOException {
 
         if (darsJadvaliRepository.existsByKursIdAndOquvYiliIdAndHaftaKuni(

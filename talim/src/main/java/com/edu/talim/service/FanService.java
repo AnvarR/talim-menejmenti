@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -35,7 +37,7 @@ public class FanService {
     }
 
     // Bitta fan
-    public FanResponseDTO getById(Long id) {
+    public FanResponseDTO getById(UUID id) {
         return toResponseDTO(findById(id));
     }
 
@@ -59,7 +61,7 @@ public class FanService {
     }
 
     // Fanni tahrirlash
-    public FanResponseDTO update(Long id, FanCreateDTO dto) {
+    public FanResponseDTO update(UUID id, FanCreateDTO dto) {
         Fan fan = findById(id);
 
         TarkibiyTuzilma kafedra = tarkibiyTuzilmaRepository.findById(dto.getKafedraId())
@@ -72,13 +74,13 @@ public class FanService {
     }
 
     // Fanni o'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         fanRepository.delete(findById(id));
     }
 
     // ===== HELPER METODLAR =====
 
-    private Fan findById(Long id) {
+    private Fan findById(UUID id) {
         return fanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Fan topilmadi: " + id));
     }
