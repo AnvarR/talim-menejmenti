@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.*;
 import com.edu.talim.service.UserService;
 import jakarta.validation.Valid;
@@ -33,7 +35,7 @@ public class UserController {
 
     // Bitta user
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<UserDetailDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getById(id));
     }
 
@@ -46,7 +48,7 @@ public class UserController {
     // Rasm yuklash
     @PostMapping(value = "/{id}/photo", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadPhoto(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam("file") MultipartFile file
     ) {
         return ResponseEntity.ok(userService.uploadPhoto(id, file));
@@ -55,7 +57,7 @@ public class UserController {
     // Tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<UserDetailDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UserCreateDTO dto
     ) {
         return ResponseEntity.ok(userService.update(id, dto));
@@ -63,7 +65,7 @@ public class UserController {
 
     // O'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -71,7 +73,7 @@ public class UserController {
     // Parol o'zgartirish
     @PutMapping("/{id}/change-password")
     public ResponseEntity<Void> changePassword(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody ChangePasswordDTO dto
     ) {
         userService.changePassword(id, dto);
@@ -81,7 +83,7 @@ public class UserController {
     // Telefon va email o'zgartirish
     @PutMapping("/{id}/update-contacts")
     public ResponseEntity<UserDetailDTO> updateContacts(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody UpdateContactsDTO dto
     ) {
         return ResponseEntity.ok(userService.updateContacts(id, dto));

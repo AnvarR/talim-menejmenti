@@ -263,7 +263,7 @@ public class DarsJurnaliService {
     }
 
     // Bloklash tekshiruvi: 7 kundan oshgan va qayta topshirilmagan dars bormi?
-    private boolean bloklashniTekshir(Long studentId, LocalDate sana) {
+    private boolean bloklashniTekshir(UUID studentId, LocalDate sana) {
         LocalDate yettaKunOldin = sana.minusDays(7);
         List<Davomat> bloklashKeraklar = davomatRepository
                 .findBloklashKeraklar(studentId, yettaKunOldin);

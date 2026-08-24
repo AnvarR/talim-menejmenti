@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -70,7 +72,7 @@ public class StudentService {
     }
 
     // Bitta student
-    public StudentDetailDTO getById(Long id) {
+    public StudentDetailDTO getById(UUID id) {
         return toDetailDTO(findById(id));
     }
 
@@ -84,7 +86,7 @@ public class StudentService {
     }
 
     // Rasm yuklash
-    public String uploadPhoto(Long id, MultipartFile file) {
+    public String uploadPhoto(UUID id, MultipartFile file) {
         Student student = findById(id);
         if (student.getPhotoUrl() != null) {
             fileService.deleteFile(student.getPhotoUrl());
@@ -96,14 +98,14 @@ public class StudentService {
     }
 
     // Tahrirlash
-    public StudentDetailDTO update(Long id, StudentCreateDTO dto) {
+    public StudentDetailDTO update(UUID id, StudentCreateDTO dto) {
         Student student = findById(id);
         updateStudent(student, dto);
         return toDetailDTO(studentRepository.save(student));
     }
 
     // O'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Student student = findById(id);
 
         // Institutdan chiqish yozuvi bormi tekshirish
@@ -126,7 +128,7 @@ public class StudentService {
 
     // ===== HELPER METODLAR =====
 
-    private Student findById(Long id) {
+    private Student findById(UUID id) {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Student topilmadi: " + id));
     }

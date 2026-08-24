@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.UnauthorizedException;
 
 import com.edu.talim.exception.ConflictException;
@@ -49,7 +51,7 @@ public class UserService {
     }
 
     // Bitta user
-    public UserDetailDTO getById(Long id) {
+    public UserDetailDTO getById(UUID id) {
         return toDetailDTO(findById(id));
     }
 
@@ -74,7 +76,7 @@ public class UserService {
     }
 
     // Rasm yuklash
-    public String uploadPhoto(Long id, MultipartFile file) {
+    public String uploadPhoto(UUID id, MultipartFile file) {
         User user = findById(id);
         if (user.getPhotoUrl() != null) {
             fileService.deleteFile(user.getPhotoUrl());
@@ -86,14 +88,14 @@ public class UserService {
     }
 
     // Tahrirlash
-    public UserDetailDTO update(Long id, UserCreateDTO dto) {
+    public UserDetailDTO update(UUID id, UserCreateDTO dto) {
         User user = findById(id);
         updateUser(user, dto);
         return toDetailDTO(userRepository.save(user));
     }
 
     // O'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         User user = findById(id);
         if (user.getPhotoUrl() != null) {
             fileService.deleteFile(user.getPhotoUrl());
@@ -102,7 +104,7 @@ public class UserService {
     }
 
     // Parol o'zgartirish
-    public void changePassword(Long id, ChangePasswordDTO dto) {
+    public void changePassword(UUID id, ChangePasswordDTO dto) {
         User user = findById(id);
 
         String limiterKaliti = "change-password:" + id;
@@ -122,7 +124,7 @@ public class UserService {
     }
 
     // Telefon va email o'zgartirish
-    public UserDetailDTO updateContacts(Long id, UpdateContactsDTO dto) {
+    public UserDetailDTO updateContacts(UUID id, UpdateContactsDTO dto) {
         User user = findById(id);
         user.setTelefon1(dto.getTelefon1());
         user.setTelefon2(dto.getTelefon2());
@@ -132,7 +134,7 @@ public class UserService {
 
     // ===== HELPER METODLAR =====
 
-    private User findById(Long id) {
+    private User findById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Foydalanuvchi topilmadi: " + id));
     }

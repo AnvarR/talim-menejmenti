@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.HisobotSatriDTO;
 import com.edu.talim.dto.KursGuruhHisobotDTO;
 import com.edu.talim.dto.OgohlantirishRequestDTO;
@@ -22,7 +24,7 @@ public class BaholashHisobotlariController {
     // 1) Individual baholar - bitta kursantning shu semestrdagi barcha fanlari
     @GetMapping("/individual")
     public ResponseEntity<List<HisobotSatriDTO>> individualBaholar(
-            @RequestParam Long studentId,
+            @RequestParam UUID studentId,
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr) {
         return ResponseEntity.ok(service.individualBaholar(studentId, oquvYiliId, semestr));

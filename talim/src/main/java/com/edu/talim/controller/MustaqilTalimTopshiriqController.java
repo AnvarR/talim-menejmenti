@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.*;
 import com.edu.talim.entity.enums.TopshiriqHolati;
 import com.edu.talim.service.MustaqilTalimTopshiriqService;
@@ -109,14 +111,14 @@ public class MustaqilTalimTopshiriqController {
     // Kursantga tegishli fan/mavzular ro'yxati (1-rasm)
     @GetMapping("/kursant/fanlar")
     public ResponseEntity<List<KursantFanMavzuDTO>> getFanlarVaMavzular(
-            @RequestParam Long studentId) {
+            @RequestParam UUID studentId) {
         return ResponseEntity.ok(topshiriqService.getFanlarVaMavzular(studentId));
     }
 
     // Kursantga shu mavzu bo'yicha yuborilgan topshiriqlar ro'yxati (2-rasm)
     @GetMapping("/kursant")
     public ResponseEntity<List<KursantTopshiriqDTO>> getMeningTopshiriqlarim(
-            @RequestParam Long studentId,
+            @RequestParam UUID studentId,
             @RequestParam Long darsJurnaliId) {
         return ResponseEntity.ok(topshiriqService.getMeningTopshiriqlarim(studentId, darsJurnaliId));
     }

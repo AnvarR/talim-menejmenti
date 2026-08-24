@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.YakuniyNazorat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,11 +13,11 @@ import java.util.Optional;
 public interface YakuniyNazoratRepository extends JpaRepository<YakuniyNazorat, Long> {
 
     Optional<YakuniyNazorat> findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliId(
-            Long oqituvchiFanTaqsimlashId, Long studentId, Long oquvYiliId);
+            Long oqituvchiFanTaqsimlashId, UUID studentId, Long oquvYiliId);
 
     List<YakuniyNazorat> findByOqituvchiFanTaqsimlashIdAndOquvYiliId(
             Long oqituvchiFanTaqsimlashId, Long oquvYiliId);
 
     // Reyting daftarchasi uchun: shu kursantning barcha yakuniy nazorat yozuvlari
-    List<YakuniyNazorat> findByStudentId(Long studentId);
+    List<YakuniyNazorat> findByStudentId(UUID studentId);
 }

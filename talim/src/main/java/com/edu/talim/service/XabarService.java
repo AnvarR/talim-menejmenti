@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,8 +43,8 @@ public class XabarService {
 
     /** Ikki foydalanuvchi o'rtasidagi suhbat */
     public List<XabarResponseDTO> getConversation(
-            Long userId, String userType,
-            Long otherId, String otherType
+            String userId, String userType,
+            String otherId, String otherType
     ) {
         return xabarRepository.findConversation(userId, userType, otherId, otherType)
                 .stream()
@@ -53,7 +54,7 @@ public class XabarService {
 
     /** Kiruvchi xabarlar ro'yxati */
     public Page<XabarResponseDTO> getInbox(
-            Long receiverId, String receiverType, int page, int size
+            String receiverId, String receiverType, int page, int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         return xabarRepository
@@ -71,7 +72,7 @@ public class XabarService {
     }
 
     /** O'qilmagan xabarlar soni */
-    public long getUnreadCount(Long receiverId, String receiverType) {
+    public long getUnreadCount(String receiverId, String receiverType) {
         return xabarRepository.countByReceiverIdAndReceiverTypeAndOqilgan(
                 receiverId, receiverType, false);
     }
@@ -109,27 +110,28 @@ public class XabarService {
                 .build();
     }
 
+    // id - matn ko'rinishida keladi: "USER" bo'lsa Long (masalan "9"), "STUDENT" bo'lsa UUID matni
     /** F.I.SH ni type ga qarab olish */
-    private String getFio(Long id, String type) {
+    private String getFio(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(id)
+            return userRepository.findById(UUID.fromString(id))
                     .map(u -> u.getFio())
                     .orElse("-");
         } else {
-            return studentRepository.findById(id)
+            return studentRepository.findById(UUID.fromString(id))
                     .map(s -> s.getFio())
                     .orElse("-");
         }
     }
 
     /** Rasmni type ga qarab olish */
-    private String getPhoto(Long id, String type) {
+    private String getPhoto(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(id)
+            return userRepository.findById(UUID.fromString(id))
                     .map(u -> u.getPhotoUrl())
                     .orElse(null);
         } else {
-            return studentRepository.findById(id)
+            return studentRepository.findById(UUID.fromString(id))
                     .map(s -> s.getPhotoUrl())
                     .orElse(null);
         }

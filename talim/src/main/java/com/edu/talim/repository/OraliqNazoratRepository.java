@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.OraliqNazorat;
 import com.edu.talim.entity.enums.Semestr;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +16,7 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
     // Kursantning shu fan, semestr va aniq oraliq (1 yoki 2) uchun nazorati
     Optional<OraliqNazorat> findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
             Long oqituvchiFanTaqsimlashId,
-            Long studentId,
+            UUID studentId,
             Long oquvYiliId,
             Semestr semestr,
             Integer oraliqRaqami
@@ -45,5 +47,5 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
 
     // Reyting daftarchasi uchun: shu kursantning ma'lum semestrdagi barcha yozuvlari
     // (qaysi fan/taqsimlashlarda oraliq nazorati borligini aniqlash uchun)
-    List<OraliqNazorat> findByStudentIdAndSemestr(Long studentId, Semestr semestr);
+    List<OraliqNazorat> findByStudentIdAndSemestr(UUID studentId, Semestr semestr);
 }

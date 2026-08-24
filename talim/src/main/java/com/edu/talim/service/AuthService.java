@@ -41,10 +41,10 @@ public class AuthService {
             kirishUrinishLimiter.muvaffaqiyatli(limiterKaliti);
 
             String role = user.getRole() != null ? user.getRole().name() : null;
-            String token = jwtService.generateToken(user.getId(), "USER", role);
+            String token = jwtService.generateToken(user.getId().toString(), "USER", role);
 
             return LoginResponseDTO.builder()
-                    .id(user.getId())
+                    .id(user.getId().toString())
                     .fio(user.getFio())
                     .role(role)
                     .username(user.getUsername())
@@ -68,10 +68,10 @@ public class AuthService {
         kirishUrinishLimiter.muvaffaqiyatli(limiterKaliti);
 
         String role = student.getRole() != null ? student.getRole().name() : null;
-        String token = jwtService.generateToken(student.getId(), "STUDENT", role);
+        String token = jwtService.generateToken(student.getId().toString(), "STUDENT", role);
 
         return LoginResponseDTO.builder()
-                .id(student.getId())
+                .id(student.getId().toString())
                 .fio(student.getFio())
                 .role(role)
                 .username(student.getUsername())

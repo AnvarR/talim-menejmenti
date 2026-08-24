@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class SavolResponseDTO {
     private Long id;
-    private Long authorId;
+    private String authorId;
     private String authorType;
     private String authorFio;
     private String authorPhoto;

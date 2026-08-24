@@ -29,7 +29,7 @@ public class Javob {
 
     // Javob beruvchi
     @Column(nullable = false)
-    private Long authorId;
+    private String authorId;
 
     @Column(nullable = false, columnDefinition = "varchar(20)")
     private String authorType; // "USER" yoki "STUDENT"

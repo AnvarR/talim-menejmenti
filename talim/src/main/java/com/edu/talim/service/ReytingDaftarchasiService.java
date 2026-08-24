@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.ReytingDaftarchasiDTO;
@@ -39,7 +41,7 @@ public class ReytingDaftarchasiService {
         return (globalSemestr % 2 == 1) ? Semestr.BIRINCHI : Semestr.IKKINCHI;
     }
 
-    public ReytingDaftarchasiDTO getReyting(Long studentId, Integer globalSemestr) {
+    public ReytingDaftarchasiDTO getReyting(UUID studentId, Integer globalSemestr) {
         if (globalSemestr == null || globalSemestr < 1 || globalSemestr > 8) {
             throw new RuntimeException("Semestr raqami 1 dan 8 gacha bo'lishi kerak!");
         }

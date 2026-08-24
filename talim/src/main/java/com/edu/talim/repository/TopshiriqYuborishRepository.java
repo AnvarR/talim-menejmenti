@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.TopshiriqYuborish;
 import com.edu.talim.entity.enums.TopshiriqHolati;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,17 +16,17 @@ public interface TopshiriqYuborishRepository extends JpaRepository<TopshiriqYubo
     List<TopshiriqYuborish> findByTopshiriqId(Long topshiriqId);
 
     // Bitta kursantga shu topshiriq bo'yicha yuborilgan nusxa
-    List<TopshiriqYuborish> findByTopshiriqIdAndStudentId(Long topshiriqId, Long studentId);
+    List<TopshiriqYuborish> findByTopshiriqIdAndStudentId(Long topshiriqId, UUID studentId);
 
     // Bitta mavzuga (darsJurnali) tegishli BARCHA topshiriqlar bo'yicha yuborishlar
     // ("Topshiriq holati" umumiy ro'yxati uchun - turli topshiriq turlari aralash chiqadi)
     List<TopshiriqYuborish> findByTopshiriq_DarsJurnaliId(Long darsJurnaliId);
 
     // Bitta kursantga yuborilgan BARCHA topshiriqlar (kursant tarafidagi ro'yxat uchun)
-    List<TopshiriqYuborish> findByStudentId(Long studentId);
+    List<TopshiriqYuborish> findByStudentId(UUID studentId);
 
     // Bitta kursantga, aniq bir mavzu (darsJurnali) bo'yicha yuborilgan topshiriqlar
-    List<TopshiriqYuborish> findByStudentIdAndTopshiriq_DarsJurnaliId(Long studentId, Long darsJurnaliId);
+    List<TopshiriqYuborish> findByStudentIdAndTopshiriq_DarsJurnaliId(UUID studentId, Long darsJurnaliId);
 
     // Status bo'yicha hisoblash: jami yuborilganlar soni
     long countByTopshiriqId(Long topshiriqId);

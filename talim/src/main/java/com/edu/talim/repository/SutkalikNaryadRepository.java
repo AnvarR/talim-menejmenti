@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.SutkalikNaryad;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +16,10 @@ import java.time.LocalDate;
 public interface SutkalikNaryadRepository extends JpaRepository<SutkalikNaryad, Long> {
 
     // Kursantga tegishli naryad yozuvi bormi tekshirish (o'chirishdan oldin)
-    boolean existsByStudentId(Long studentId);
+    boolean existsByStudentId(UUID studentId);
 
     // Kursant shu kunda naryadda bormi tekshirish (davomat uchun)
-    boolean existsByStudentIdAndQabulQilishSanasi(Long studentId, LocalDate qabulQilishSanasi);
+    boolean existsByStudentIdAndQabulQilishSanasi(UUID studentId, LocalDate qabulQilishSanasi);
 
     // Qabul qilish sanasi bo'yicha filter
     @Query("""

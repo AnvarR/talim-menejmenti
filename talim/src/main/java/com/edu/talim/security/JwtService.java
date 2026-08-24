@@ -26,13 +26,15 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Token yaratish - login muvaffaqiyatli o'tgandan keyin chaqiriladi
-    public String generateToken(Long userId, String userType, String role) {
+    // Token yaratish - login muvaffaqiyatli o'tgandan keyin chaqiriladi.
+    // userId - matn sifatida beriladi, chunki User.id (Long) va Student.id (UUID)
+    // ikkalasi ham bo'lishi mumkin, ammo token ichida ikkalasi ham shunchaki matn
+    public String generateToken(String userId, String userType, String role) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expirationMs);
 
         return Jwts.builder()
-                .subject(String.valueOf(userId))
+                .subject(userId)
                 .claim("userType", userType)   // "USER" yoki "STUDENT"
                 .claim("role", role)
                 .issuedAt(now)

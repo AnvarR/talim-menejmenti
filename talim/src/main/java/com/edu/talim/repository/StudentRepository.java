@@ -13,9 +13,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface StudentRepository extends JpaRepository<Student, Long> {
+public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     // Standart ro'yxat - faqat FAOL kursantlar (chetlatilgan/bitirganlar avtomatik chiqarib tashlanadi)
     @Query("""

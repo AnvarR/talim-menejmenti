@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.ArxivlashRequestDTO;
 import com.edu.talim.dto.ChetlatishRequestDTO;
 import com.edu.talim.dto.KochirishKursantDTO;
@@ -52,7 +54,7 @@ public class KursdanKursgaKochirishController {
 
     // Bitta kursantning butun kurs-o'zgarish tarixi
     @GetMapping("/tarix/{studentId}")
-    public ResponseEntity<List<KochirishTarixiDTO>> getTarix(@PathVariable Long studentId) {
+    public ResponseEntity<List<KochirishTarixiDTO>> getTarix(@PathVariable UUID studentId) {
         return ResponseEntity.ok(service.getTarix(studentId));
     }
 }

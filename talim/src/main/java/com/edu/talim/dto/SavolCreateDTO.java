@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class SavolCreateDTO {
-    private Long authorId;
+    private String authorId;
     private String authorType; // "USER" yoki "STUDENT"
     private String mavzu;
     private String mazmun;

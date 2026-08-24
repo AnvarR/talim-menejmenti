@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.DavomatHolati;
 import lombok.*;
 
@@ -9,7 +11,7 @@ import lombok.*;
 public class AmaliyDavomatResponseDTO {
 
     private Long id;
-    private Long studentId;
+    private UUID studentId;
     private String studentFio;
     private DavomatHolati holat;
     private Integer baho;

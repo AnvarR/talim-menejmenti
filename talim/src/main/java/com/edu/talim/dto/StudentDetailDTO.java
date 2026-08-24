@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 public class StudentDetailDTO {
 
-    private Long id;
+    private UUID id;
     private String photoUrl;
     private String jshshir;
     private String fio;

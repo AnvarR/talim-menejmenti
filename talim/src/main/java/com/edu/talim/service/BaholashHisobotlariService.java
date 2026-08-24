@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.*;
 import com.edu.talim.entity.*;
 import com.edu.talim.entity.enums.DarsTuri;
@@ -24,7 +26,7 @@ public class BaholashHisobotlariService {
     private final XabarService xabarService;
 
     // ============ 1) Individual baholar - bitta kursantning shu semestrdagi barcha fanlari ============
-    public List<HisobotSatriDTO> individualBaholar(Long studentId, Long oquvYiliId, Semestr semestr) {
+    public List<HisobotSatriDTO> individualBaholar(UUID studentId, Long oquvYiliId, Semestr semestr) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
         if (student.getGroup() == null) {
@@ -59,7 +61,7 @@ public class BaholashHisobotlariService {
         ElektronJurnalResponseDTO jurnal = elektronJurnalService.getJurnal(
                 taqsimlash.getId(), DarsTuri.SEMINAR, semestr, oquvYiliId);
 
-        Map<Long, String> raqamlar = raqamlarniOl(
+        Map<UUID, String> raqamlar = raqamlarniOl(
                 jurnal.getKursantlar().stream()
                         .map(ElektronJurnalResponseDTO.KursantJurnalDTO::getStudentId)
                         .collect(Collectors.toList()));
@@ -90,7 +92,7 @@ public class BaholashHisobotlariService {
             List<Double> oraliqlar = new ArrayList<>();
             List<Double> yakuniylar = new ArrayList<>();
             List<Double> semestrlar = new ArrayList<>();
-            Set<Long> guruhStudentIds = new HashSet<>();
+            Set<UUID> guruhStudentIds = new HashSet<>();
 
             for (OqituvchiFanTaqsimlash t : fanlar) {
                 ElektronJurnalResponseDTO jurnal = elektronJurnalService.getJurnal(
@@ -162,7 +164,7 @@ public class BaholashHisobotlariService {
             if (fanlar.isEmpty()) continue;
 
             // Shu guruh kursantlarining reyting daftarchasi raqamlari - guruh uchun BITTA marta olinadi
-            Map<Long, String> raqamlar = raqamlarniOl(
+            Map<UUID, String> raqamlar = raqamlarniOl(
                     studentRepository.findByGroupIdOrderByFioAsc(guruh.getId())
                             .stream().map(Student::getId).collect(Collectors.toList()));
 
@@ -199,20 +201,20 @@ public class BaholashHisobotlariService {
             return 0;
         }
 
-        Map<Long, List<HisobotSatriDTO>> studentBoyicha = pastlar.stream()
+        Map<UUID, List<HisobotSatriDTO>> studentBoyicha = pastlar.stream()
                 .collect(Collectors.groupingBy(HisobotSatriDTO::getStudentId, LinkedHashMap::new, Collectors.toList()));
 
         int yuborildi = 0;
-        for (Map.Entry<Long, List<HisobotSatriDTO>> entry : studentBoyicha.entrySet()) {
+        for (Map.Entry<UUID, List<HisobotSatriDTO>> entry : studentBoyicha.entrySet()) {
             List<HisobotSatriDTO> fanlar = entry.getValue();
             String fanlarMatni = fanlar.stream()
                     .map(f -> f.getFanNomi() + " (" + f.getSemestrBahosi() + ")")
                     .collect(Collectors.joining(", "));
 
             XabarCreateDTO xabar = new XabarCreateDTO();
-            xabar.setSenderId(dto.getSenderId());
+            xabar.setSenderId(String.valueOf(dto.getSenderId()));
             xabar.setSenderType("USER");
-            xabar.setReceiverId(entry.getKey());
+            xabar.setReceiverId(entry.getKey().toString());
             xabar.setReceiverType("STUDENT");
             xabar.setMavzu("O'zlashtirish darajasi bo'yicha ogohlantirish");
             xabar.setMazmun("Hurmatli " + fanlar.get(0).getStudentFio()
@@ -239,7 +241,7 @@ public class BaholashHisobotlariService {
         }
     }
 
-    private HisobotSatriDTO qatorYasash(Long studentId, String studentFio, String reytingDaftarchasiRaqami,
+    private HisobotSatriDTO qatorYasash(UUID studentId, String studentFio, String reytingDaftarchasiRaqami,
                                         String kursNomi, String guruhNomi,
                                         ElektronJurnalService.StudentFanNatijasi natija) {
         Double joriy = ortacha(natija.rkb1(), natija.rkb2());
@@ -264,7 +266,7 @@ public class BaholashHisobotlariService {
     }
 
     private HisobotSatriDTO qatorYasashJurnaldan(ElektronJurnalResponseDTO.KursantJurnalDTO kj,
-                                                 Map<Long, String> raqamlar,
+                                                 Map<UUID, String> raqamlar,
                                                  String kursNomi, String guruhNomi, String fanNomi) {
         Double joriy = ortacha(kj.getRkb1(), kj.getRkb2());
         Double oraliq = kj.getRonSem();
@@ -289,7 +291,7 @@ public class BaholashHisobotlariService {
     }
 
     // Ko'p kursantning reyting daftarchasi raqamlarini BITTA so'rovda olish (N+1 oldini olish)
-    private Map<Long, String> raqamlarniOl(List<Long> studentIds) {
+    private Map<UUID, String> raqamlarniOl(List<UUID> studentIds) {
         if (studentIds.isEmpty()) return Map.of();
         return studentRepository.findAllById(studentIds).stream()
                 .collect(Collectors.toMap(Student::getId, s ->

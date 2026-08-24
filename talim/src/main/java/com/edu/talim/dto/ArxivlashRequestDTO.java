@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.util.List;
@@ -8,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class ArxivlashRequestDTO {
-    private List<Long> studentIds;
+    private List<UUID> studentIds;
     private Long oquvYiliId;
 }

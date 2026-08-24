@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -38,7 +40,7 @@ public class OqituvchiFanTaqsimlashService {
     // ====================== Oraliq/Yakuniyga ruxsat ======================
 
     public Page<OqituvchiFanTaqsimlashResponseDTO> getOraliqYakuniyRuxsatRoyxati(
-            Long fanId, Long oqituvchiId, Long kursId, Long guruhId, int page, int size) {
+            Long fanId, UUID oqituvchiId, Long kursId, Long guruhId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return repository.findOraliqYakuniyRuxsatRoyxati(fanId, oqituvchiId, kursId, guruhId, pageable)
                 .map(this::toResponseDTO);

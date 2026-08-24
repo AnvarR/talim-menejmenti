@@ -9,7 +9,7 @@ import lombok.*;
 public class JavobResponseDTO {
     private Long id;
     private Long savolId;
-    private Long authorId;
+    private String authorId;
     private String authorType;
     private String authorFio;   // javob beruvchining F.I.SH
     private String authorPhoto; // javob beruvchining rasmi

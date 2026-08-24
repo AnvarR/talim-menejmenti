@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -8,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 public class SutkalikNaryadResponseDTO {
     private Long id;
-    private Long studentId;
+    private UUID studentId;
     private String fio;
     private String kurs;
     private String guruh;

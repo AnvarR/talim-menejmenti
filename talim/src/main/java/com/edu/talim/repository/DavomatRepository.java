@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.Davomat;
 import com.edu.talim.entity.enums.DavomatHolati;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +20,7 @@ public interface DavomatRepository extends JpaRepository<Davomat, Long> {
     List<Davomat> findByDarsJurnaliId(Long darsJurnaliId);
 
     // Bitta kursantning bitta darsdagi davomati
-    Optional<Davomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, Long studentId);
+    Optional<Davomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, UUID studentId);
 
     // 7 kundan oshgan va qayta topshirilmagan darslar
     // Ya'ni: dars sanasi bugundan 7 kun oldin bo'lgan va holat N/K/S/Y bo'lgan
@@ -30,7 +32,7 @@ public interface DavomatRepository extends JpaRepository<Davomat, Long> {
         AND d.darsJurnali.sana <= :yettaKunOldin
     """)
     List<Davomat> findBloklashKeraklar(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );
 
@@ -43,7 +45,7 @@ public interface DavomatRepository extends JpaRepository<Davomat, Long> {
         AND d.darsJurnali.sana BETWEEN :yettaKunOldin AND :bugun
     """)
     List<Davomat> findQoldirganDarslar(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("bugun") LocalDate bugun,
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );
@@ -54,7 +56,7 @@ public interface DavomatRepository extends JpaRepository<Davomat, Long> {
         WHERE d.student.id = :studentId
         AND d.bloklanganMi = true
     """)
-    boolean isStudentBloklangan(@Param("studentId") Long studentId);
+    boolean isStudentBloklangan(@Param("studentId") UUID studentId);
 
     // Kursantning bitta dars turida davomatlari (hisobot uchun)
     @Query("""
@@ -64,11 +66,11 @@ public interface DavomatRepository extends JpaRepository<Davomat, Long> {
         AND d.holat IS NOT NULL
     """)
     List<Davomat> findByStudentAndTaqsimlash(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("taqsimlashId") Long taqsimlashId
     );
 
     boolean existsByStudentIdAndDarsJurnaliSanaAndHolatIn(
-            Long studentId, LocalDate sana, List<DavomatHolati> holatlar
+            UUID studentId, LocalDate sana, List<DavomatHolati> holatlar
     );
 }

@@ -314,7 +314,7 @@ public class MustaqilTalimTopshiriqService {
 
     // Kursantga tegishli barcha fan/mavzular ro'yxati, har biriga nechta topshiriq
     // yuborilganini ko'rsatadi (1-rasm)
-    public List<KursantFanMavzuDTO> getFanlarVaMavzular(Long studentId) {
+    public List<KursantFanMavzuDTO> getFanlarVaMavzular(UUID studentId) {
         List<TopshiriqYuborish> yuborishlar = topshiriqYuborishRepository.findByStudentId(studentId);
 
         // Mavzu (darsJurnali) bo'yicha guruhlash
@@ -340,7 +340,7 @@ public class MustaqilTalimTopshiriqService {
     }
 
     // Kursantga shu mavzu bo'yicha yuborilgan barcha topshiriqlar (statusi bilan) (2-rasm)
-    public List<KursantTopshiriqDTO> getMeningTopshiriqlarim(Long studentId, Long darsJurnaliId) {
+    public List<KursantTopshiriqDTO> getMeningTopshiriqlarim(UUID studentId, Long darsJurnaliId) {
         return topshiriqYuborishRepository
                 .findByStudentIdAndTopshiriq_DarsJurnaliId(studentId, darsJurnaliId)
                 .stream()

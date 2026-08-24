@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.AmaliyDavomat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +19,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
     List<AmaliyDavomat> findByDarsJurnaliIdOrderByStudentFioAsc(Long darsJurnaliId);
 
     // Bitta kursantning bitta darsdagi davomati
-    Optional<AmaliyDavomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, Long studentId);
+    Optional<AmaliyDavomat> findByDarsJurnaliIdAndStudentId(Long darsJurnaliId, UUID studentId);
 
     // Kursantning bitta fan taqsimlashdagi barcha davomatlari (R(KB) hisoblash uchun)
     // Diqqat: baho YOKI qaytaTopshirishBaho bo'lgan yozuvlar ham hisobga olinadi,
@@ -31,7 +33,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
         AND (d.baho IS NOT NULL OR d.qaytaTopshirishBaho IS NOT NULL)
     """)
     List<AmaliyDavomat> findBaholangan(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("taqsimlashId") Long taqsimlashId,
             @Param("boshlanish") LocalDate boshlanish,
             @Param("tugash") LocalDate tugash
@@ -47,7 +49,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
         AND d.darsJurnali.sana <= :yettaKunOldin
     """)
     List<AmaliyDavomat> findBloklashKeraklar(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );
 
@@ -63,7 +65,7 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
         AND d.darsJurnali.sana <= :yettaKunOldin
     """)
     List<AmaliyDavomat> findBloklashKeraklarTaqsimlashBoyicha(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("taqsimlashId") Long taqsimlashId,
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );
@@ -74,8 +76,8 @@ public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Lo
         WHERE d.student.id = :studentId
         AND d.bloklanganMi = true
     """)
-    boolean isStudentBloklangan(@Param("studentId") Long studentId);
+    boolean isStudentBloklangan(@Param("studentId") UUID studentId);
 
     // Kursantning barcha bloklangan yozuvlari (qayta topshirgach avtomatik blokdan chiqarish uchun)
-    List<AmaliyDavomat> findByStudentIdAndBloklanganMiTrue(Long studentId);
+    List<AmaliyDavomat> findByStudentIdAndBloklanganMiTrue(UUID studentId);
 }

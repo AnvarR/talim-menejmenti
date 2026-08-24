@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -148,7 +150,7 @@ public class ElektronJurnalService {
 
         // Guruh a'zolari birga (bitta so'rov ichida) ko'chirilgani uchun,
         // ixtiyoriy bitta a'zoning tarixi butun guruh uchun ham to'g'ri
-        Long vakilStudentId = guruhKursantlari.get(0).getId();
+        UUID vakilStudentId = guruhKursantlari.get(0).getId();
 
         List<KursKochirishTarixi> otishlar = kursKochirishTarixiRepository
                 .findByStudentIdOrderBySanaDesc(vakilStudentId)
@@ -235,7 +237,7 @@ public class ElektronJurnalService {
                                                DarsTuri darsTuri,
                                                Semestr semestr,
                                                Long oquvYiliId,
-                                               Long studentId) {
+                                               UUID studentId) {
 
         JurnalKontekst k = tayyorlaKontekst(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId);
 
@@ -412,7 +414,7 @@ public class ElektronJurnalService {
     // Oraliq nazorat bahosini kiritish/yangilash (oraliqRaqami: 1 yoki 2, kesimSanasi — o'qituvchi belgilaydi)
     @Transactional
     public void oraliqNazoratYangilash(Long oqituvchiFanTaqsimlashId,
-                                       Long studentId, Long oquvYiliId,
+                                       UUID studentId, Long oquvYiliId,
                                        Semestr semestr, Integer oraliqRaqami,
                                        LocalDate kesimSanasi, Integer baho) {
         if (baho < 2 || baho > 5) {
@@ -474,7 +476,7 @@ public class ElektronJurnalService {
     // Yakuniy nazorat bahosini kiritish/yangilash
     @Transactional
     public void yakuniyNazoratYangilash(Long oqituvchiFanTaqsimlashId,
-                                        Long studentId, Long oquvYiliId,
+                                        UUID studentId, Long oquvYiliId,
                                         LocalDate sana, Integer baho) {
         if (baho < 2 || baho > 5) {
             throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
@@ -553,7 +555,7 @@ public class ElektronJurnalService {
     // R(KB) — berilgan sana oralig'idagi kunlik baholarning yaxlitlangan o'rtachasi
     // Shu davrda qayta topshirilmagan 2 baho bor-yo'qligini alohida tekshiradi
     // (R(KB) va shu bilan birga R(ON)ni ham to'liq bloklash uchun ishlatiladi)
-    private boolean qaytaTopshirilmaganIkkiBormi(Long studentId, Long taqsimlashId,
+    private boolean qaytaTopshirilmaganIkkiBormi(UUID studentId, Long taqsimlashId,
                                                  LocalDate boshlanish, LocalDate tugash) {
         if (boshlanish == null || tugash == null || boshlanish.isAfter(tugash)) return false;
         List<AmaliyDavomat> baholangan = amaliyDavomatRepository
@@ -562,7 +564,7 @@ public class ElektronJurnalService {
                 .anyMatch(d -> d.getBaho() != null && d.getBaho() == 2 && d.getQaytaTopshirishBaho() == null);
     }
 
-    private Double hisoblaRkb(Long studentId, Long taqsimlashId,
+    private Double hisoblaRkb(UUID studentId, Long taqsimlashId,
                               LocalDate boshlanish, LocalDate tugash) {
         if (boshlanish == null || tugash == null || boshlanish.isAfter(tugash)) return null;
         List<AmaliyDavomat> baholangan = amaliyDavomatRepository
@@ -771,7 +773,7 @@ public class ElektronJurnalService {
     }
 
     // Blok tekshiruvi: 7 kundan oshgan va qayta topshirilmagan (FAQAT shu fan/taqsimlash doirasida)
-    private boolean bloklashniTekshir(Long studentId, Long taqsimlashId, LocalDate sana) {
+    private boolean bloklashniTekshir(UUID studentId, Long taqsimlashId, LocalDate sana) {
         LocalDate yettaKunOldin = sana.minusDays(7);
         List<AmaliyDavomat> bloklashKeraklar = amaliyDavomatRepository
                 .findBloklashKeraklarTaqsimlashBoyicha(studentId, taqsimlashId, yettaKunOldin);

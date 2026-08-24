@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.InstitutdanChiqish;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,5 +31,5 @@ public interface InstitutdanChiqishRepository extends JpaRepository<InstitutdanC
         SELECT c FROM InstitutdanChiqish c
     """)
     Page<InstitutdanChiqish> findAllRecords(Pageable pageable);
-    boolean existsByStudentId(Long studentId);
+    boolean existsByStudentId(UUID studentId);
 }

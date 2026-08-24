@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.Kompleks;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,5 +11,5 @@ public interface KompleksRepository extends JpaRepository<Kompleks, Long> {
 
     List<Kompleks> findByOquvYiliId(Long oquvYiliId);
 
-    List<Kompleks> findByOqituvchiFanTaqsimlash_Oqituvchi_Id(Long oqituvchiId);
+    List<Kompleks> findByOqituvchiFanTaqsimlash_Oqituvchi_Id(UUID oqituvchiId);
 }

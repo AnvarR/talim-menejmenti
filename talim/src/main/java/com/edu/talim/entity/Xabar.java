@@ -25,14 +25,14 @@ public class Xabar {
 
     // Yuboruvchi
     @Column(nullable = false)
-    private Long senderId;
+    private String senderId;
 
     @Column(nullable = false, columnDefinition = "varchar(20)")
     private String senderType; // "USER" yoki "STUDENT"
 
     // Qabul qiluvchi
     @Column(nullable = false)
-    private Long receiverId;
+    private String receiverId;
 
     @Column(nullable = false, columnDefinition = "varchar(20)")
     private String receiverType; // "USER" yoki "STUDENT"

@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public class OqituvchiFanTaqsimlashResponseDTO {
     private String kafedraNomi;
 
     // O'qituvchi ma'lumotlari
-    private Long oqituvchiId;
+    private UUID oqituvchiId;
     private String oqituvchiFio;
 
     // Dars turi

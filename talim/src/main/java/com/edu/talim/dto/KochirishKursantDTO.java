@@ -1,12 +1,14 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class KochirishKursantDTO {
-    private Long studentId;
+    private UUID studentId;
     private String fio;
     private String joriyKursNomi;   // masalan "2-kurs"
     private String guruhNomi;

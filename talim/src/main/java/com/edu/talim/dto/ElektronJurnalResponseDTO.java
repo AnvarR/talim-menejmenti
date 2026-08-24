@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.Semestr;
 import lombok.*;
@@ -32,7 +34,7 @@ public class ElektronJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class KursantJurnalDTO {
-        private Long studentId;
+        private UUID studentId;
         private String studentFio;
 
         // Har bir dars uchun davomat/baho

@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.Kasal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +44,7 @@ public interface KasalRepository extends JpaRepository<Kasal, Long> {
         AND k.tugashSanasi >= :sana
     """)
     boolean existsActiveKasal(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("sana") LocalDate sana
     );
 }

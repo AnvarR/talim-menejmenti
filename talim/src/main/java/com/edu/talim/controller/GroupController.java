@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.GroupResponseDTO;
 import com.edu.talim.dto.StudentListDTO;
 import com.edu.talim.entity.Group;
@@ -69,7 +71,7 @@ public class GroupController {
     @PutMapping("/{guruhId}/kursant-biriktirish/{studentId}")
     public ResponseEntity<Void> kursantBiriktirish(
             @PathVariable Long guruhId,
-            @PathVariable Long studentId,
+            @PathVariable UUID studentId,
             @RequestParam(required = false) String reytingDaftarchasiRaqami) {
         groupService.kursantBiriktirish(guruhId, studentId, reytingDaftarchasiRaqami);
         return ResponseEntity.ok().build();
@@ -79,7 +81,7 @@ public class GroupController {
     @DeleteMapping("/{guruhId}/kursant-chiqarish/{studentId}")
     public ResponseEntity<Void> kursantChiqarish(
             @PathVariable Long guruhId,
-            @PathVariable Long studentId) {
+            @PathVariable UUID studentId) {
         groupService.kursantChiqarish(guruhId, studentId);
         return ResponseEntity.noContent().build();
     }

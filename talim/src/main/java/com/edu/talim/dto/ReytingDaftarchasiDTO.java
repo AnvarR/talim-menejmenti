@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 @Builder
 public class ReytingDaftarchasiDTO {
 
-    private Long studentId;
+    private UUID studentId;
     private String studentFio;
     private Integer globalSemestr; // 1..8
     private Integer kursRaqami;

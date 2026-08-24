@@ -26,9 +26,9 @@ public class XabarController {
     /** Ikki foydalanuvchi o'rtasidagi suhbat */
     @GetMapping("/conversation")
     public ResponseEntity<List<XabarResponseDTO>> getConversation(
-            @RequestParam Long userId,
+            @RequestParam String userId,
             @RequestParam String userType,
-            @RequestParam Long otherId,
+            @RequestParam String otherId,
             @RequestParam String otherType
     ) {
         return ResponseEntity.ok(xabarService.getConversation(userId, userType, otherId, otherType));
@@ -37,7 +37,7 @@ public class XabarController {
     /** Kiruvchi xabarlar */
     @GetMapping("/inbox")
     public ResponseEntity<Page<XabarResponseDTO>> getInbox(
-            @RequestParam Long receiverId,
+            @RequestParam String receiverId,
             @RequestParam String receiverType,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
@@ -55,7 +55,7 @@ public class XabarController {
     /** O'qilmagan xabarlar soni */
     @GetMapping("/unread-count")
     public ResponseEntity<Long> getUnreadCount(
-            @RequestParam Long receiverId,
+            @RequestParam String receiverId,
             @RequestParam String receiverType
     ) {
         return ResponseEntity.ok(xabarService.getUnreadCount(receiverId, receiverType));

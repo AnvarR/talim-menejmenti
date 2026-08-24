@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.OqituvchiFanTaqsimlashCreateDTO;
 import com.edu.talim.dto.OqituvchiFanTaqsimlashResponseDTO;
 import com.edu.talim.service.OqituvchiFanTaqsimlashService;
@@ -55,7 +57,7 @@ public class OqituvchiFanTaqsimlashController {
     @GetMapping("/oraliq-yakuniy-ruxsat")
     public ResponseEntity<Page<OqituvchiFanTaqsimlashResponseDTO>> getOraliqYakuniyRuxsatRoyxati(
             @RequestParam(required = false) Long fanId,
-            @RequestParam(required = false) Long oqituvchiId,
+            @RequestParam(required = false) UUID oqituvchiId,
             @RequestParam(required = false) Long kursId,
             @RequestParam(required = false) Long guruhId,
             @RequestParam(defaultValue = "0") int page,

@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.Semestr;
 import lombok.*;
 
@@ -37,7 +39,7 @@ public class KursIshiJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class KursantKursIshiDTO {
-        private Long studentId;
+        private UUID studentId;
         private String studentFio;
 
         // Har bir kursIshlari ustuniga mos baho (bir xil tartibda)

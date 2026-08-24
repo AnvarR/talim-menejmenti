@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.MustaqilTalimJurnalResponseDTO;
@@ -136,7 +138,7 @@ public class MustaqilTalimJurnalService {
     // mtTaqsimlashCandidateIds - bir xil fanTaqsimlash+guruhga tegishli BARCHA "birodar" taqsimlashlar ID'lari
     // (faqat MUSTAQIL_TALIM turi emas) - chunki frontend topshiriqni ba'zan noto'g'ri darsTuridagi
     // taqsimlashga yozib qo'yishi mumkin, shuning uchun barcha nomzodlar orasidan qidiramiz.
-    public Double[] hisoblaRmt1Rmt2(List<Long> mtTaqsimlashCandidateIds, Long studentId, Semestr semestr, Long oquvYiliId,
+    public Double[] hisoblaRmt1Rmt2(List<Long> mtTaqsimlashCandidateIds, UUID studentId, Semestr semestr, Long oquvYiliId,
                                     LocalDate kesim1Sanasi, LocalDate kesim2Sanasi) {
         if (mtTaqsimlashCandidateIds == null || mtTaqsimlashCandidateIds.isEmpty()) return new Double[]{null, null};
 
@@ -167,7 +169,7 @@ public class MustaqilTalimJurnalService {
     }
 
     // Kursantning shu fan/mavzular bo'yicha topshiriq -> baho map'i
-    private Map<Long, Integer> topshiriqBahoMap(List<MustaqilTalimTopshiriq> topshiriqlar, Long studentId) {
+    private Map<Long, Integer> topshiriqBahoMap(List<MustaqilTalimTopshiriq> topshiriqlar, UUID studentId) {
         Map<Long, Integer> topshiriqBaho = new HashMap<>();
         for (MustaqilTalimTopshiriq t : topshiriqlar) {
             Integer baho = topshiriqYuborishRepository

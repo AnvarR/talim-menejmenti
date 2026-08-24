@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.Semestr;
 import lombok.*;
 
@@ -38,7 +40,7 @@ public class MustaqilTalimJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class KursantMTJurnalDTO {
-        private Long studentId;
+        private UUID studentId;
         private String studentFio;
 
         // Har bir topshiriq ustuniga mos baho (topshiriqlar ro'yxati bilan bir xil tartibda, yo'q bo'lsa null)

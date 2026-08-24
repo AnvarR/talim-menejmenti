@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.time.LocalDate;
@@ -34,7 +36,7 @@ public class AmaliyotJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class KursantAmaliyotDTO {
-        private Long studentId;
+        private UUID studentId;
         private String studentFio;
 
         // Har bir amaliyotlar ustuniga mos baho (bir xil tartibda)

@@ -1,10 +1,12 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data
 public class InstitutdanChiqishCreateDTO {
-    private Long studentId;
+    private UUID studentId;
     private String chiqishSababi;
     private String izoh;
     private String chiqganSana;

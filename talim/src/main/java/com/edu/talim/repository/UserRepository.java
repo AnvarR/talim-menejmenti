@@ -7,9 +7,10 @@ import com.edu.talim.entity.enums.Role;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByJshshir(String jshshir);
     Optional<User> findByUsername(String username);
     // Kafedra ID si va roli bo'yicha xodimni topish

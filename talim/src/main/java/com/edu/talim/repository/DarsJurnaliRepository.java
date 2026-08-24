@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.DarsJurnali;
 import com.edu.talim.entity.enums.DarsTuri;
 import com.edu.talim.entity.enums.Semestr;
@@ -37,7 +39,7 @@ public interface DarsJurnaliRepository extends JpaRepository<DarsJurnali, Long> 
         AND d.darsJurnali.sana >= :yettaKunOldin
     """)
     List<com.edu.talim.entity.Davomat> findQaytaTopshirishKeraklar(
-            @Param("studentId") Long studentId,
+            @Param("studentId") UUID studentId,
             @Param("bugun") LocalDate bugun,
             @Param("yettaKunOldin") LocalDate yettaKunOldin
     );

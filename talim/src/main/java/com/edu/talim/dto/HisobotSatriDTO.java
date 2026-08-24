@@ -1,12 +1,14 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class HisobotSatriDTO {
-    private Long studentId;
+    private UUID studentId;
     private String studentFio;
     private String reytingDaftarchasiRaqami;
     private String kursNomi;

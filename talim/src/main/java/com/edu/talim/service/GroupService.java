@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -115,7 +117,7 @@ public class GroupService {
 
     // Kursantni guruhga biriktirish
     @Transactional
-    public void kursantBiriktirish(Long guruhId, Long studentId, String reytingDaftarchasiRaqami) {
+    public void kursantBiriktirish(Long guruhId, UUID studentId, String reytingDaftarchasiRaqami) {
         Group group = groupRepository.findById(guruhId)
                 .orElseThrow(() -> new NotFoundException("Guruh topilmadi: " + guruhId));
 
@@ -141,7 +143,7 @@ public class GroupService {
 
     // Kursantni guruhdan chiqarish
     @Transactional
-    public void kursantChiqarish(Long guruhId, Long studentId) {
+    public void kursantChiqarish(Long guruhId, UUID studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 

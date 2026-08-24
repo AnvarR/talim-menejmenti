@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.AmaliyDavomatResponseDTO;
 import com.edu.talim.dto.DarsJurnaliResponseDTO;
 import com.edu.talim.dto.ElektronJurnalResponseDTO;
@@ -75,7 +77,7 @@ public class SeminarJurnalController {
     @PutMapping("/oraliq-nazorat")
     public ResponseEntity<Void> oraliqNazoratYangilash(
             @RequestParam Long oqituvchiFanTaqsimlashId,
-            @RequestParam Long studentId,
+            @RequestParam UUID studentId,
             @RequestParam Long oquvYiliId,
             @RequestParam Semestr semestr,
             @RequestParam Integer oraliqRaqami,
@@ -91,9 +93,9 @@ public class SeminarJurnalController {
     @PutMapping("/yakuniy-nazorat")
     public ResponseEntity<Void> yakuniyNazoratYangilash(
             @RequestParam Long oqituvchiFanTaqsimlashId,
-            @RequestParam Long studentId,
+            @RequestParam UUID studentId,
             @RequestParam Long oquvYiliId,
-            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate sana,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana,
             @RequestParam Integer baho) {
         elektronJurnalService.yakuniyNazoratYangilash(
                 oqituvchiFanTaqsimlashId, studentId, oquvYiliId, sana, baho);

@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +11,7 @@ public class KasalResponseDTO {
     private Long id;
 
     // Kursant ma'lumotlari
-    private Long studentId;
+    private UUID studentId;
     private String kurs;
     private String guruh;
     private String fio;

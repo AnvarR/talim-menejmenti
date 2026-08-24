@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.StudentCreateDTO;
 import com.edu.talim.dto.StudentDetailDTO;
 import com.edu.talim.dto.StudentListDTO;
@@ -37,7 +39,7 @@ public class StudentController {
 
     // Bitta student
     @GetMapping("/{id}")
-    public ResponseEntity<StudentDetailDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<StudentDetailDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(studentService.getById(id));
     }
 
@@ -50,7 +52,7 @@ public class StudentController {
     // Rasm yuklash
     @PostMapping("/{id}/photo")
     public ResponseEntity<String> uploadPhoto(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam("file") MultipartFile file
     ) {
         return ResponseEntity.ok(studentService.uploadPhoto(id, file));
@@ -59,7 +61,7 @@ public class StudentController {
     // Tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<StudentDetailDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody StudentCreateDTO dto
     ) {
         return ResponseEntity.ok(studentService.update(id, dto));
@@ -67,7 +69,7 @@ public class StudentController {
 
     // O'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
     }

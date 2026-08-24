@@ -129,20 +129,20 @@ public class SavolService {
     }
 
     // authorType ga qarab F.I.SH olish: USER=xodim, STUDENT=kursant
-    private String getFio(Long id, String type) {
+    private String getFio(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(id).map(u -> u.getFio()).orElse("-");
+            return userRepository.findById(java.util.UUID.fromString(id)).map(u -> u.getFio()).orElse("-");
         } else {
-            return studentRepository.findById(id).map(s -> s.getFio()).orElse("-");
+            return studentRepository.findById(java.util.UUID.fromString(id)).map(s -> s.getFio()).orElse("-");
         }
     }
 
     // authorType ga qarab rasm URL olish
-    private String getPhoto(Long id, String type) {
+    private String getPhoto(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(id).map(u -> u.getPhotoUrl()).orElse(null);
+            return userRepository.findById(java.util.UUID.fromString(id)).map(u -> u.getPhotoUrl()).orElse(null);
         } else {
-            return studentRepository.findById(id).map(s -> s.getPhotoUrl()).orElse(null);
+            return studentRepository.findById(java.util.UUID.fromString(id)).map(s -> s.getPhotoUrl()).orElse(null);
         }
     }
 }

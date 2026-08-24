@@ -26,9 +26,9 @@ public interface XabarRepository extends JpaRepository<Xabar, Long> {
         ORDER BY x.createdAt ASC
     """)
     List<Xabar> findConversation(
-            @Param("userId") Long userId,
+            @Param("userId") String userId,
             @Param("userType") String userType,
-            @Param("otherId") Long otherId,
+            @Param("otherId") String otherId,
             @Param("otherType") String otherType
     );
 
@@ -36,13 +36,13 @@ public interface XabarRepository extends JpaRepository<Xabar, Long> {
      * Foydalanuvchining barcha kiruvchi xabarlarini qaytaradi.
      */
     Page<Xabar> findByReceiverIdAndReceiverTypeOrderByCreatedAtDesc(
-            Long receiverId, String receiverType, Pageable pageable
+            String receiverId, String receiverType, Pageable pageable
     );
 
     /**
      * O'qilmagan xabarlar sonini qaytaradi.
      */
     long countByReceiverIdAndReceiverTypeAndOqilgan(
-            Long receiverId, String receiverType, Boolean oqilgan
+            String receiverId, String receiverType, Boolean oqilgan
     );
 }

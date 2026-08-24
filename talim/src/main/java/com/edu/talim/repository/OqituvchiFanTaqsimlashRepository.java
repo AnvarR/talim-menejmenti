@@ -1,5 +1,7 @@
 package com.edu.talim.repository;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.OqituvchiFanTaqsimlash;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +32,7 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
     """)
     Page<OqituvchiFanTaqsimlash> findOraliqYakuniyRuxsatRoyxati(
             @Param("fanId") Long fanId,
-            @Param("oqituvchiId") Long oqituvchiId,
+            @Param("oqituvchiId") UUID oqituvchiId,
             @Param("kursId") Long kursId,
             @Param("guruhId") Long guruhId,
             Pageable pageable
@@ -51,7 +53,7 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
     """)
     List<OqituvchiFanTaqsimlash> findGuruhlariUstmaUshtaTushganlar(
             @Param("fanTaqsimlashId") Long fanTaqsimlashId,
-            @Param("oqituvchiId") Long oqituvchiId,
+            @Param("oqituvchiId") UUID oqituvchiId,
             @Param("darsTuri") com.edu.talim.entity.enums.DarsTuri darsTuri,
             @Param("kursId") Long kursId,
             @Param("guruhIds") List<Long> guruhIds,
@@ -62,7 +64,7 @@ public interface OqituvchiFanTaqsimlashRepository extends JpaRepository<Oqituvch
     // (masalan Mustaqil ta'lim uchun Seminar/Amaliyning oraliq kesim sanalarini topish uchun)
     List<OqituvchiFanTaqsimlash> findByFanTaqsimlashIdAndOqituvchiIdAndKursId(
             Long fanTaqsimlashId,
-            Long oqituvchiId,
+            UUID oqituvchiId,
             Long kursId
     );
 

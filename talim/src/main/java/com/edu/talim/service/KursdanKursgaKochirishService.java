@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 import com.edu.talim.exception.NotFoundException;
 
@@ -49,8 +51,8 @@ public class KursdanKursgaKochirishService {
 
         List<Student> kursantlar = studentRepository.findKochirishUchunKursantlar(kursId, guruhId);
 
-        List<Long> studentIds = kursantlar.stream().map(Student::getId).collect(Collectors.toList());
-        Set<Long> kochirilganlar = (oquvYiliId == null || studentIds.isEmpty())
+        List<UUID> studentIds = kursantlar.stream().map(Student::getId).collect(Collectors.toList());
+        Set<UUID> kochirilganlar = (oquvYiliId == null || studentIds.isEmpty())
                 ? Set.of()
                 : tarixRepository.findKochirilganStudentIdlar(studentIds, oquvYiliId, KochirishTuri.KOCHIRISH);
 
@@ -84,7 +86,7 @@ public class KursdanKursgaKochirishService {
         Map<Long, Group> tegishliGuruhlar = new LinkedHashMap<>();
         Map<Long, Course> guruhningYangiKursi = new LinkedHashMap<>();
 
-        for (Long studentId : dto.getStudentIds()) {
+        for (UUID studentId : dto.getStudentIds()) {
             Student student = studentRepository.findById(studentId)
                     .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 
@@ -167,7 +169,7 @@ public class KursdanKursgaKochirishService {
         OquvYili oquvYili = oquvYiliRepository.findById(dto.getOquvYiliId())
                 .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
-        for (Long studentId : dto.getStudentIds()) {
+        for (UUID studentId : dto.getStudentIds()) {
             Student student = studentRepository.findById(studentId)
                     .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 
@@ -201,7 +203,7 @@ public class KursdanKursgaKochirishService {
         OquvYili oquvYili = oquvYiliRepository.findById(dto.getOquvYiliId())
                 .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi"));
 
-        for (Long studentId : dto.getStudentIds()) {
+        for (UUID studentId : dto.getStudentIds()) {
             Student student = studentRepository.findById(studentId)
                     .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
 
@@ -230,7 +232,7 @@ public class KursdanKursgaKochirishService {
     }
 
     // Bitta kursantning butun kurs-o'zgarish tarixi (eng yangisidan boshlab)
-    public List<KochirishTarixiDTO> getTarix(Long studentId) {
+    public List<KochirishTarixiDTO> getTarix(UUID studentId) {
         return tarixRepository.findByStudentIdOrderBySanaDesc(studentId)
                 .stream()
                 .map(t -> KochirishTarixiDTO.builder()
