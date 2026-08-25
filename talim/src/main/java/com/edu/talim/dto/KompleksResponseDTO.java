@@ -18,7 +18,7 @@ public class KompleksResponseDTO {
     private String fanNomi;
     private String oqituvchiFISH;
     private String kursNomi;
-    private Long oquvYiliId;
+    private UUID oquvYiliId;
     private String oquvYiliNomi;
     private String materialNomi;
     private MaterialKategoriyasi materialKategoriyasi;

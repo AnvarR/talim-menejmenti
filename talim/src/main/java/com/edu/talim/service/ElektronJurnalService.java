@@ -72,7 +72,7 @@ public class ElektronJurnalService {
     private JurnalKontekst tayyorlaKontekst(UUID oqituvchiFanTaqsimlashId,
                                             DarsTuri darsTuri,
                                             Semestr semestr,
-                                            Long oquvYiliId) {
+                                            UUID oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
@@ -176,7 +176,7 @@ public class ElektronJurnalService {
     public ElektronJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId,
                                                DarsTuri darsTuri,
                                                Semestr semestr,
-                                               Long oquvYiliId) {
+                                               UUID oquvYiliId) {
 
         JurnalKontekst k = tayyorlaKontekst(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId);
 
@@ -236,7 +236,7 @@ public class ElektronJurnalService {
     public StudentFanNatijasi getStudentNatija(UUID oqituvchiFanTaqsimlashId,
                                                DarsTuri darsTuri,
                                                Semestr semestr,
-                                               Long oquvYiliId,
+                                               UUID oquvYiliId,
                                                UUID studentId) {
 
         JurnalKontekst k = tayyorlaKontekst(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId);
@@ -414,7 +414,7 @@ public class ElektronJurnalService {
     // Oraliq nazorat bahosini kiritish/yangilash (oraliqRaqami: 1 yoki 2, kesimSanasi — o'qituvchi belgilaydi)
     @Transactional
     public void oraliqNazoratYangilash(UUID oqituvchiFanTaqsimlashId,
-                                       UUID studentId, Long oquvYiliId,
+                                       UUID studentId, UUID oquvYiliId,
                                        Semestr semestr, Integer oraliqRaqami,
                                        LocalDate kesimSanasi, Integer baho) {
         if (baho < 2 || baho > 5) {
@@ -476,7 +476,7 @@ public class ElektronJurnalService {
     // Yakuniy nazorat bahosini kiritish/yangilash
     @Transactional
     public void yakuniyNazoratYangilash(UUID oqituvchiFanTaqsimlashId,
-                                        UUID studentId, Long oquvYiliId,
+                                        UUID studentId, UUID oquvYiliId,
                                         LocalDate sana, Integer baho) {
         if (baho < 2 || baho > 5) {
             throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
@@ -595,7 +595,7 @@ public class ElektronJurnalService {
             LocalDate oquvYiliBoshlanish,
             List<UUID> mtTaqsimlashCandidateIds,
             Semestr semestr,
-            Long oquvYiliId) {
+            UUID oquvYiliId) {
 
         // Kursantning davomatlari (har bir dars uchun)
         List<AmaliyDavomatResponseDTO> davomatlar = darslar.stream()

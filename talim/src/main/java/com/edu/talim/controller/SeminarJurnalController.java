@@ -29,7 +29,7 @@ public class SeminarJurnalController {
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
-            @RequestParam Long oquvYiliId) {
+            @RequestParam UUID oquvYiliId) {
         return ResponseEntity.ok(
                 elektronJurnalService.getJurnal(
                         oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId));
@@ -78,7 +78,7 @@ public class SeminarJurnalController {
     public ResponseEntity<Void> oraliqNazoratYangilash(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam UUID studentId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam Semestr semestr,
             @RequestParam Integer oraliqRaqami,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate kesimSanasi,
@@ -94,7 +94,7 @@ public class SeminarJurnalController {
     public ResponseEntity<Void> yakuniyNazoratYangilash(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam UUID studentId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sana,
             @RequestParam Integer baho) {
         elektronJurnalService.yakuniyNazoratYangilash(

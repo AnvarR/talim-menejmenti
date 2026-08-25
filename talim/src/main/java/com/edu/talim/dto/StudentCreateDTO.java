@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -50,5 +52,5 @@ public class StudentCreateDTO {
     @NotBlank(message = "Turi (KURSANT/TINGLOVCHI) kiritilishi shart")
     private String type;                // "KURSANT" yoki "TINGLOVCHI"
 
-    private Long oquvYiliId;            // Ro'yxatga olingan o'quv yili
+    private UUID oquvYiliId;            // Ro'yxatga olingan o'quv yili
 }

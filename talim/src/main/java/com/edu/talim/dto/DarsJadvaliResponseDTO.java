@@ -13,7 +13,7 @@ public class DarsJadvaliResponseDTO {
     private Long id;
     private UUID kursId;
     private String kursNomi;
-    private Long oquvYiliId;
+    private UUID oquvYiliId;
     private String oquvYiliNomi;
     private HaftaKuni haftaKuni;
     private String faylNomi;

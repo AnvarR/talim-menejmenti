@@ -49,7 +49,7 @@ public class DarsJurnaliService {
 
     // O'qituvchiga tegishli darslar ro'yxati (semestr bo'yicha filtrlangan)
     public List<DarsJurnaliResponseDTO> getAll(UUID oqituvchiFanTaqsimlashId,
-                                               DarsTuri darsTuri, Semestr semestr, Long oquvYiliId) {
+                                               DarsTuri darsTuri, Semestr semestr, UUID oquvYiliId) {
         return darsJurnaliRepository
                 .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
                         oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId, semestr)
@@ -154,7 +154,7 @@ public class DarsJurnaliService {
 
     // Faqat mashg'ulot mavzulari ro'yxati (yengil, boshqa joylarda qayta ishlatish uchun)
     public List<MavzuDTO> getMavzular(UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri,
-                                      Semestr semestr, Long oquvYiliId) {
+                                      Semestr semestr, UUID oquvYiliId) {
         return darsJurnaliRepository
                 .findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
                         oqituvchiFanTaqsimlashId, darsTuri, oquvYiliId, semestr)

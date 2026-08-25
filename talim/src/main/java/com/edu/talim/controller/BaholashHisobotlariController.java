@@ -25,7 +25,7 @@ public class BaholashHisobotlariController {
     @GetMapping("/individual")
     public ResponseEntity<List<HisobotSatriDTO>> individualBaholar(
             @RequestParam UUID studentId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam Semestr semestr) {
         return ResponseEntity.ok(service.individualBaholar(studentId, oquvYiliId, semestr));
     }
@@ -36,7 +36,7 @@ public class BaholashHisobotlariController {
             @RequestParam UUID fanId,
             @RequestParam UUID kursId,
             @RequestParam UUID guruhId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam Semestr semestr) {
         return ResponseEntity.ok(service.fanBoyicha(fanId, kursId, guruhId, oquvYiliId, semestr));
     }
@@ -44,7 +44,7 @@ public class BaholashHisobotlariController {
     // 3) Kurs/Guruh bo'yicha - guruhlar kesimida umumiy hisobot
     @GetMapping("/kurs-guruh-boyicha")
     public ResponseEntity<KursGuruhHisobotDTO> kursGuruhBoyicha(
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam Semestr semestr,
             @RequestParam(required = false) UUID kursId,
             @RequestParam(required = false) UUID guruhId) {
@@ -54,7 +54,7 @@ public class BaholashHisobotlariController {
     // 4) Past o'zlashtiruvchilar
     @GetMapping("/past-ozlashtiruvchilar")
     public ResponseEntity<List<HisobotSatriDTO>> pastOzlashtiruvchilar(
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam Semestr semestr,
             @RequestParam(required = false) UUID kursId,
             @RequestParam(required = false) UUID guruhId,

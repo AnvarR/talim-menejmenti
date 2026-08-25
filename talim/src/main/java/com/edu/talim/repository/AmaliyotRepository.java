@@ -12,5 +12,5 @@ import java.util.List;
 public interface AmaliyotRepository extends JpaRepository<Amaliyot, Long> {
 
     List<Amaliyot> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdOrderByTugashSanasiAsc(
-            UUID oqituvchiFanTaqsimlashId, Long oquvYiliId);
+            UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId);
 }

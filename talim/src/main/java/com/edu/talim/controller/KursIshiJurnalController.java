@@ -24,7 +24,7 @@ public class KursIshiJurnalController {
     public ResponseEntity<KursIshiJurnalResponseDTO> getJurnal(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Semestr semestr,
-            @RequestParam Long oquvYiliId) {
+            @RequestParam UUID oquvYiliId) {
         return ResponseEntity.ok(jurnalService.getJurnal(oqituvchiFanTaqsimlashId, semestr, oquvYiliId));
     }
 
@@ -32,7 +32,7 @@ public class KursIshiJurnalController {
     @PostMapping
     public ResponseEntity<Void> yaratish(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam Semestr semestr,
             @RequestParam String mavzuNomi,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate muddat) {

@@ -17,7 +17,7 @@ public interface KursKochirishTarixiRepository extends JpaRepository<KursKochiri
 
     // Shu kursant shu o'quv yilida allaqachon shu turdagi hodisani boshidan kechirganmi?
     // (masalan: bir xil o'quv yilida ikki marta "keyingi kursga ko'chirilmasin" uchun)
-    boolean existsByStudentIdAndOquvYiliIdAndTuri(UUID studentId, Long oquvYiliId, KochirishTuri turi);
+    boolean existsByStudentIdAndOquvYiliIdAndTuri(UUID studentId, UUID oquvYiliId, KochirishTuri turi);
 
     // Ko'p kursantlar uchun "kim allaqachon ko'chirilgan" ni bitta so'rovda bilish (N+1 oldini olish)
     @Query("""
@@ -25,7 +25,7 @@ public interface KursKochirishTarixiRepository extends JpaRepository<KursKochiri
         WHERE k.student.id IN :studentIds AND k.oquvYili.id = :oquvYiliId AND k.turi = :turi
     """)
     Set<UUID> findKochirilganStudentIdlar(@Param("studentIds") List<UUID> studentIds,
-                                          @Param("oquvYiliId") Long oquvYiliId,
+                                          @Param("oquvYiliId") UUID oquvYiliId,
                                           @Param("turi") KochirishTuri turi);
 
     // Bitta kursantning butun tarixi (eng yangisidan boshlab)

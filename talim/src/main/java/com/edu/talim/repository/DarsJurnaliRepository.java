@@ -19,11 +19,11 @@ public interface DarsJurnaliRepository extends JpaRepository<DarsJurnali, UUID> 
 
     // O'qituvchi fan taqsimlash, dars turi va o'quv yili bo'yicha darslar
     List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliId(
-            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId);
+            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, UUID oquvYiliId);
 
     // Semestr bo'yicha ham filtrlangan darslar
     List<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndOquvYiliIdAndSemestr(
-            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, Long oquvYiliId, Semestr semestr);
+            UUID oqituvchiFanTaqsimlashId, DarsTuri darsTuri, UUID oquvYiliId, Semestr semestr);
 
     // Bir xil sana va taqsimlashda dars bormi tekshirish
     Optional<DarsJurnali> findByOqituvchiFanTaqsimlashIdAndDarsTuriAndSana(

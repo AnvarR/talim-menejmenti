@@ -13,5 +13,5 @@ import java.util.List;
 public interface KursIshiRepository extends JpaRepository<KursIshi, Long> {
 
     List<KursIshi> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrOrderByMuddatAsc(
-            UUID oqituvchiFanTaqsimlashId, Long oquvYiliId, Semestr semestr);
+            UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId, Semestr semestr);
 }

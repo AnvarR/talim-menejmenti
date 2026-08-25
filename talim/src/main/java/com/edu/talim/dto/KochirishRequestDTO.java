@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 public class KochirishRequestDTO {
     private List<UUID> studentIds;
-    private Long oquvYiliId;
+    private UUID oquvYiliId;
 }

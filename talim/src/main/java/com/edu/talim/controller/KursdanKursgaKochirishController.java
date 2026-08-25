@@ -27,7 +27,7 @@ public class KursdanKursgaKochirishController {
     public ResponseEntity<List<KochirishKursantDTO>> getKursantlar(
             @RequestParam UUID kursId,
             @RequestParam(required = false) UUID guruhId,
-            @RequestParam(required = false) Long oquvYiliId) {
+            @RequestParam(required = false) UUID oquvYiliId) {
         return ResponseEntity.ok(service.getKursantlar(kursId, guruhId, oquvYiliId));
     }
 

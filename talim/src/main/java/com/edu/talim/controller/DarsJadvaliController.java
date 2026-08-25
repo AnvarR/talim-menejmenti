@@ -28,7 +28,7 @@ public class DarsJadvaliController {
     @GetMapping
     public ResponseEntity<List<DarsJadvaliResponseDTO>> getAll(
             @RequestParam(required = false) UUID kursId,
-            @RequestParam(required = false) Long oquvYiliId,
+            @RequestParam(required = false) UUID oquvYiliId,
             @RequestParam(required = false) HaftaKuni haftaKuni) {
         return ResponseEntity.ok(darsJadvaliService.getAll(kursId, oquvYiliId, haftaKuni));
     }
@@ -36,7 +36,7 @@ public class DarsJadvaliController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<DarsJadvaliResponseDTO> create(
             @RequestParam UUID kursId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam HaftaKuni haftaKuni,
             @RequestParam MultipartFile fayl) throws IOException {
         return ResponseEntity.ok(

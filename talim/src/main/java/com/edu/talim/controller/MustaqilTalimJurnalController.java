@@ -20,7 +20,7 @@ public class MustaqilTalimJurnalController {
     public ResponseEntity<MustaqilTalimJurnalResponseDTO> getJurnal(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam Semestr semestr,
-            @RequestParam Long oquvYiliId) {
+            @RequestParam UUID oquvYiliId) {
         return ResponseEntity.ok(jurnalService.getJurnal(oqituvchiFanTaqsimlashId, semestr, oquvYiliId));
     }
 }

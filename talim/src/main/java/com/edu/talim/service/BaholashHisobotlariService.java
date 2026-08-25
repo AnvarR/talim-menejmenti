@@ -26,7 +26,7 @@ public class BaholashHisobotlariService {
     private final XabarService xabarService;
 
     // ============ 1) Individual baholar - bitta kursantning shu semestrdagi barcha fanlari ============
-    public List<HisobotSatriDTO> individualBaholar(UUID studentId, Long oquvYiliId, Semestr semestr) {
+    public List<HisobotSatriDTO> individualBaholar(UUID studentId, UUID oquvYiliId, Semestr semestr) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException("Kursant topilmadi: " + studentId));
         if (student.getGroup() == null) {
@@ -50,7 +50,7 @@ public class BaholashHisobotlariService {
     }
 
     // ============ 2) Fan bo'yicha - bitta fandan butun guruhning hisoboti ============
-    public List<HisobotSatriDTO> fanBoyicha(UUID fanId, UUID kursId, UUID guruhId, Long oquvYiliId, Semestr semestr) {
+    public List<HisobotSatriDTO> fanBoyicha(UUID fanId, UUID kursId, UUID guruhId, UUID oquvYiliId, Semestr semestr) {
         var sahifa = taqsimlashRepository.findOraliqYakuniyRuxsatRoyxati(
                 fanId, null, kursId, guruhId, Pageable.unpaged());
         if (sahifa.isEmpty()) {
@@ -72,7 +72,7 @@ public class BaholashHisobotlariService {
     }
 
     // ============ 3) Kurs/Guruh bo'yicha - guruhlar kesimida umumiy hisobot ============
-    public KursGuruhHisobotDTO kursGuruhBoyicha(Long oquvYiliId, Semestr semestr, UUID kursId, UUID guruhId) {
+    public KursGuruhHisobotDTO kursGuruhBoyicha(UUID oquvYiliId, Semestr semestr, UUID kursId, UUID guruhId) {
         if (oquvYiliId == null || semestr == null) {
             throw new RuntimeException("O'quv yili va semestr tanlanishi shart!");
         }
@@ -153,7 +153,7 @@ public class BaholashHisobotlariService {
     }
 
     // ============ 4) Past o'zlashtiruvchilar - o'zlashtirishi <3.5 bo'lgan barcha (kursant,fan) juftliklar ============
-    public List<HisobotSatriDTO> pastOzlashtiruvchilar(Long oquvYiliId, Semestr semestr,
+    public List<HisobotSatriDTO> pastOzlashtiruvchilar(UUID oquvYiliId, Semestr semestr,
                                                        UUID kursId, UUID guruhId, UUID fanId) {
         List<Group> guruhlar = aniqlaGuruhlar(kursId, guruhId);
         List<HisobotSatriDTO> natija = new ArrayList<>();

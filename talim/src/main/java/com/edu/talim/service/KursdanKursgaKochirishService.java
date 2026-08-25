@@ -45,7 +45,7 @@ public class KursdanKursgaKochirishService {
 
     // Berilgan kurs (va ixtiyoriy guruh) bo'yicha FAOL kursantlar ro'yxati,
     // har biriga shu o'quv yilida allaqachon ko'chirilgan-ko'chirilmaganligi (holati) qo'shib beriladi
-    public List<KochirishKursantDTO> getKursantlar(UUID kursId, UUID guruhId, Long oquvYiliId) {
+    public List<KochirishKursantDTO> getKursantlar(UUID kursId, UUID guruhId, UUID oquvYiliId) {
         courseRepository.findById(kursId)
                 .orElseThrow(() -> new NotFoundException("Kurs topilmadi: " + kursId));
 

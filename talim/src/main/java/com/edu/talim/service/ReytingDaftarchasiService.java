@@ -54,7 +54,7 @@ public class ReytingDaftarchasiService {
 
         // Har bir "yozuv" - {taqsimlashId, oquvYiliId} juftligi. Fan bo'yicha SEMINAR
         // turidagi taqsimlash orqali aniqlanadi, chunki R(ON)/R(YN)/R(SEM) aynan shu yerda hisoblanadi.
-        record TaqsimlashYil(UUID taqsimlashId, Long oquvYiliId) {}
+        record TaqsimlashYil(UUID taqsimlashId, UUID oquvYiliId) {}
 
         Map<UUID, TaqsimlashYil> taqsimlashlar = new LinkedHashMap<>();
 

@@ -32,7 +32,7 @@ public class KursIshiJurnalService {
     // Yangi kurs ishi yaratish (mavzu + umumiy muddat). Guruhdagi barcha kursantlar
     // uchun avtomatik ravishda bahosiz (baho=null) yozuvlar yaratiladi
     @Transactional
-    public void yaratish(UUID oqituvchiFanTaqsimlashId, Long oquvYiliId, Semestr semestr,
+    public void yaratish(UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId, Semestr semestr,
                          String mavzuNomi, LocalDate muddat) {
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
@@ -120,7 +120,7 @@ public class KursIshiJurnalService {
     // ====================== Jurnalni ko'rish ======================
 
     public KursIshiJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId,
-                                               Semestr semestr, Long oquvYiliId) {
+                                               Semestr semestr, UUID oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)

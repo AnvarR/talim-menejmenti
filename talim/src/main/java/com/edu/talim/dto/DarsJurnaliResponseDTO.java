@@ -20,7 +20,7 @@ public class DarsJurnaliResponseDTO {
     private String oqituvchiFio;
     private String kursNomi;
     private String guruhNomi;
-    private Long oquvYiliId;
+    private UUID oquvYiliId;
     private String oquvYiliNomi;
     private DarsTuri darsTuri;
     private Semestr semestr;

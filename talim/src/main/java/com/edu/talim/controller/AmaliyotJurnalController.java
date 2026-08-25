@@ -22,7 +22,7 @@ public class AmaliyotJurnalController {
     @GetMapping
     public ResponseEntity<AmaliyotJurnalResponseDTO> getJurnal(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
-            @RequestParam Long oquvYiliId) {
+            @RequestParam UUID oquvYiliId) {
         return ResponseEntity.ok(jurnalService.getJurnal(oqituvchiFanTaqsimlashId, oquvYiliId));
     }
 
@@ -30,7 +30,7 @@ public class AmaliyotJurnalController {
     @PostMapping
     public ResponseEntity<Void> yaratish(
             @RequestParam UUID oqituvchiFanTaqsimlashId,
-            @RequestParam Long oquvYiliId,
+            @RequestParam UUID oquvYiliId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tugashSanasi) {
         jurnalService.yaratish(oqituvchiFanTaqsimlashId, oquvYiliId, tugashSanasi);
         return ResponseEntity.ok().build();

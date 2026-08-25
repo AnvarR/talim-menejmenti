@@ -11,11 +11,11 @@ import java.util.Optional;
 
 public interface DarsJadvaliRepository extends JpaRepository<DarsJadvali, Long> {
 
-    List<DarsJadvali> findByKursIdAndOquvYiliId(UUID kursId, Long oquvYiliId);
+    List<DarsJadvali> findByKursIdAndOquvYiliId(UUID kursId, UUID oquvYiliId);
 
     Optional<DarsJadvali> findByKursIdAndOquvYiliIdAndHaftaKuni(
-            UUID kursId, Long oquvYiliId, HaftaKuni haftaKuni);
+            UUID kursId, UUID oquvYiliId, HaftaKuni haftaKuni);
 
     boolean existsByKursIdAndOquvYiliIdAndHaftaKuni(
-            UUID kursId, Long oquvYiliId, HaftaKuni haftaKuni);
+            UUID kursId, UUID oquvYiliId, HaftaKuni haftaKuni);
 }

@@ -29,7 +29,7 @@ public class AmaliyotJurnalService {
     // ====================== Yaratish/tahrirlash/o'chirish ======================
 
     @Transactional
-    public void yaratish(UUID oqituvchiFanTaqsimlashId, Long oquvYiliId, LocalDate tugashSanasi) {
+    public void yaratish(UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId, LocalDate tugashSanasi) {
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
                 .orElseThrow(() -> new NotFoundException("Fan taqsimlash topilmadi"));
@@ -109,7 +109,7 @@ public class AmaliyotJurnalService {
 
     // ====================== Jurnalni ko'rish ======================
 
-    public AmaliyotJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId, Long oquvYiliId) {
+    public AmaliyotJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)

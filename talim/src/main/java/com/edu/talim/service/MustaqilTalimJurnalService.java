@@ -33,7 +33,7 @@ public class MustaqilTalimJurnalService {
     private final StudentRepository studentRepository;
 
     public MustaqilTalimJurnalResponseDTO getJurnal(UUID oqituvchiFanTaqsimlashId,
-                                                    Semestr semestr, Long oquvYiliId) {
+                                                    Semestr semestr, UUID oquvYiliId) {
 
         OqituvchiFanTaqsimlash taqsimlash = oqituvchiFanTaqsimlashRepository
                 .findById(oqituvchiFanTaqsimlashId)
@@ -138,7 +138,7 @@ public class MustaqilTalimJurnalService {
     // mtTaqsimlashCandidateIds - bir xil fanTaqsimlash+guruhga tegishli BARCHA "birodar" taqsimlashlar ID'lari
     // (faqat MUSTAQIL_TALIM turi emas) - chunki frontend topshiriqni ba'zan noto'g'ri darsTuridagi
     // taqsimlashga yozib qo'yishi mumkin, shuning uchun barcha nomzodlar orasidan qidiramiz.
-    public Double[] hisoblaRmt1Rmt2(List<UUID> mtTaqsimlashCandidateIds, UUID studentId, Semestr semestr, Long oquvYiliId,
+    public Double[] hisoblaRmt1Rmt2(List<UUID> mtTaqsimlashCandidateIds, UUID studentId, Semestr semestr, UUID oquvYiliId,
                                     LocalDate kesim1Sanasi, LocalDate kesim2Sanasi) {
         if (mtTaqsimlashCandidateIds == null || mtTaqsimlashCandidateIds.isEmpty()) return new Double[]{null, null};
 

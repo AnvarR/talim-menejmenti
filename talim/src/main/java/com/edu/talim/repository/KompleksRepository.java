@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface KompleksRepository extends JpaRepository<Kompleks, Long> {
 
-    List<Kompleks> findByOquvYiliId(Long oquvYiliId);
+    List<Kompleks> findByOquvYiliId(UUID oquvYiliId);
 
     List<Kompleks> findByOqituvchiFanTaqsimlash_Oqituvchi_Id(UUID oqituvchiId);
 }

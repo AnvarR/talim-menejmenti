@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class OgohlantirishRequestDTO {
     private Long senderId;      // ogohlantirishni yuborayotgan xodim (fakultet boshlig'i) ID si
-    private Long oquvYiliId;
+    private UUID oquvYiliId;
     private Semestr semestr;
     private UUID kursId;        // ixtiyoriy
     private UUID guruhId;       // ixtiyoriy

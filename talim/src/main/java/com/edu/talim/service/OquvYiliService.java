@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -59,7 +61,7 @@ public class OquvYiliService {
     }
 
     @Transactional
-    public OquvYiliDTO faolQilish(Long id) {
+    public OquvYiliDTO faolQilish(UUID id) {
         // Avval barcha yillarni faolsizlashtirish
         oquvYiliRepository.findByFaolTrue().ifPresent(y -> {
             y.setFaol(false);
@@ -74,7 +76,7 @@ public class OquvYiliService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         OquvYili oquvYili = oquvYiliRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
         if (oquvYili.getFaol()) {
@@ -89,7 +91,7 @@ public class OquvYiliService {
     // - Faol (joriy) o'quv yili - har doim tahrirlash mumkin
     // - Faol bo'lmagan o'quv yil - faqat 1-sentabrdan TAHRIR_OCHIQ_KUN kun ichida
     //   (joriy faol yilning boshlanishYili asosida), YOKI fakultet boshlig'i qo'shimcha ruxsat bergan bo'lsa
-    public boolean tahririshMumkinmi(Long oquvYiliId) {
+    public boolean tahririshMumkinmi(UUID oquvYiliId) {
         OquvYili oquvYili = oquvYiliRepository.findById(oquvYiliId)
                 .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + oquvYiliId));
 
@@ -111,7 +113,7 @@ public class OquvYiliService {
     }
 
     // Boshqa servislar chaqiradigan tekshiruv - ruxsat yo'q bo'lsa xatolik beradi
-    public void tahririshniTekshir(Long oquvYiliId) {
+    public void tahririshniTekshir(UUID oquvYiliId) {
         if (!tahririshMumkinmi(oquvYiliId)) {
             throw new RuntimeException(
                     "Bu o'quv yili ma'lumotlarini tahrirlash muddati tugagan! "
@@ -121,7 +123,7 @@ public class OquvYiliService {
 
     // Fakultet boshlig'i/o'rinbosari - eski o'quv yilini butunlay qayta ochadi
     @Transactional
-    public OquvYiliDTO tahrirgaRuxsatBerish(Long id) {
+    public OquvYiliDTO tahrirgaRuxsatBerish(UUID id) {
         OquvYili oquvYili = oquvYiliRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
         oquvYili.setQoshimchaTahrirRuxsati(true);
@@ -130,7 +132,7 @@ public class OquvYiliService {
 
     // Berilgan ruxsatni qaytarib yopish
     @Transactional
-    public OquvYiliDTO tahrirRuxsatiniYopish(Long id) {
+    public OquvYiliDTO tahrirRuxsatiniYopish(UUID id) {
         OquvYili oquvYili = oquvYiliRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("O'quv yili topilmadi: " + id));
         oquvYili.setQoshimchaTahrirRuxsati(false);

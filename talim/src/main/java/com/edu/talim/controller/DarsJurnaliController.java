@@ -33,7 +33,7 @@ public class DarsJurnaliController {
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
-            @RequestParam Long oquvYiliId) {
+            @RequestParam UUID oquvYiliId) {
         return ResponseEntity.ok(
                 darsJurnaliService.getAll(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId));
     }
@@ -85,7 +85,7 @@ public class DarsJurnaliController {
             @RequestParam UUID oqituvchiFanTaqsimlashId,
             @RequestParam DarsTuri darsTuri,
             @RequestParam Semestr semestr,
-            @RequestParam Long oquvYiliId) {
+            @RequestParam UUID oquvYiliId) {
         return ResponseEntity.ok(
                 darsJurnaliService.getMavzular(oqituvchiFanTaqsimlashId, darsTuri, semestr, oquvYiliId));
     }

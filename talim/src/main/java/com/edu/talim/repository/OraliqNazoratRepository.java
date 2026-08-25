@@ -17,7 +17,7 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
     Optional<OraliqNazorat> findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
             UUID oqituvchiFanTaqsimlashId,
             UUID studentId,
-            Long oquvYiliId,
+            UUID oquvYiliId,
             Semestr semestr,
             Integer oraliqRaqami
     );
@@ -25,7 +25,7 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
     // Barcha kursantlarning shu semestr va aniq oraliq (1 yoki 2) uchun baholari (jadval uchun)
     List<OraliqNazorat> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrAndOraliqRaqami(
             UUID oqituvchiFanTaqsimlashId,
-            Long oquvYiliId,
+            UUID oquvYiliId,
             Semestr semestr,
             Integer oraliqRaqami
     );
@@ -33,7 +33,7 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
     // Barcha kursantlarning shu semestrdagi ikkala oraliq bahosi (R(ON.SEM) hisoblash uchun)
     List<OraliqNazorat> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestr(
             UUID oqituvchiFanTaqsimlashId,
-            Long oquvYiliId,
+            UUID oquvYiliId,
             Semestr semestr
     );
 
@@ -42,7 +42,7 @@ public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Lo
     // (masalan 2-semestr 1-oraliqining boshlanish nuqtasi = 1-semestr 2-oraliqining kesim sanasi).
     List<OraliqNazorat> findByOqituvchiFanTaqsimlashIdAndOquvYiliId(
             UUID oqituvchiFanTaqsimlashId,
-            Long oquvYiliId
+            UUID oquvYiliId
     );
 
     // Reyting daftarchasi uchun: shu kursantning ma'lum semestrdagi barcha yozuvlari
