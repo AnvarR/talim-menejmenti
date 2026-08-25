@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AmaliyotRepository extends JpaRepository<Amaliyot, Long> {
+public interface AmaliyotRepository extends JpaRepository<Amaliyot, UUID> {
 
     List<Amaliyot> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdOrderByTugashSanasiAsc(
             UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId);

@@ -65,7 +65,7 @@ public class AmaliyotJurnalService {
     }
 
     @Transactional
-    public void tahrirlash(Long amaliyotId, LocalDate tugashSanasi) {
+    public void tahrirlash(UUID amaliyotId, LocalDate tugashSanasi) {
         Amaliyot amaliyot = amaliyotRepository.findById(amaliyotId)
                 .orElseThrow(() -> new NotFoundException("Amaliyot topilmadi: " + amaliyotId));
 
@@ -77,7 +77,7 @@ public class AmaliyotJurnalService {
     }
 
     @Transactional
-    public void ochirish(Long amaliyotId) {
+    public void ochirish(UUID amaliyotId) {
         Amaliyot amaliyot = amaliyotRepository.findById(amaliyotId)
                 .orElseThrow(() -> new NotFoundException("Amaliyot topilmadi: " + amaliyotId));
         oquvYiliService.tahririshniTekshir(amaliyot.getOquvYili().getId());
@@ -87,7 +87,7 @@ public class AmaliyotJurnalService {
     // ====================== Baholash ======================
 
     @Transactional
-    public void bahoQoyish(Long amaliyotBahoId, Integer baho) {
+    public void bahoQoyish(UUID amaliyotBahoId, Integer baho) {
         if (baho == null || baho < 2 || baho > 5) {
             throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
         }

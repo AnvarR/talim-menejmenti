@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.SavolCreateDTO;
 import com.edu.talim.dto.SavolResponseDTO;
 import com.edu.talim.dto.SavolStatistikaDTO;
@@ -34,7 +36,7 @@ public class SavolController {
 
     // Bitta savol (korishlarSoni +1)
     @GetMapping("/{id}")
-    public ResponseEntity<SavolResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<SavolResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(savolService.getById(id));
     }
 
@@ -47,7 +49,7 @@ public class SavolController {
     // Savolga fayl yuklash — max 5 MB
     @PostMapping(value = "/{id}/fayl", consumes = "multipart/form-data")
     public ResponseEntity<SavolResponseDTO> uploadFayl(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam("fayl") MultipartFile fayl
     ) {
         return ResponseEntity.ok(savolService.uploadFayl(id, fayl));
@@ -55,7 +57,7 @@ public class SavolController {
 
     // Savolni o'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         savolService.delete(id);
         return ResponseEntity.noContent().build();
     }

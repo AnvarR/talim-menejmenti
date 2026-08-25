@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AmaliyotBahoRepository extends JpaRepository<AmaliyotBaho, Long> {
+public interface AmaliyotBahoRepository extends JpaRepository<AmaliyotBaho, UUID> {
 
-    List<AmaliyotBaho> findByAmaliyotId(Long amaliyotId);
+    List<AmaliyotBaho> findByAmaliyotId(UUID amaliyotId);
 
-    Optional<AmaliyotBaho> findByAmaliyotIdAndStudentId(Long amaliyotId, UUID studentId);
+    Optional<AmaliyotBaho> findByAmaliyotIdAndStudentId(UUID amaliyotId, UUID studentId);
 }

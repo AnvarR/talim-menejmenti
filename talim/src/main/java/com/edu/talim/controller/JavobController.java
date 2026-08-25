@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.JavobCreateDTO;
 import com.edu.talim.dto.JavobResponseDTO;
 import com.edu.talim.service.JavobService;
@@ -18,7 +20,7 @@ public class JavobController {
 
     /** Bitta savolga tegishli barcha javoblar */
     @GetMapping("/savol/{savolId}")
-    public ResponseEntity<List<JavobResponseDTO>> getBySavolId(@PathVariable Long savolId) {
+    public ResponseEntity<List<JavobResponseDTO>> getBySavolId(@PathVariable UUID savolId) {
         return ResponseEntity.ok(javobService.getBySavolId(savolId));
     }
 
@@ -30,7 +32,7 @@ public class JavobController {
 
     /** Javobni o'chirish */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         javobService.delete(id);
         return ResponseEntity.noContent().build();
     }

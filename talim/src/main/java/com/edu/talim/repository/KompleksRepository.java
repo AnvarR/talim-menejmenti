@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface KompleksRepository extends JpaRepository<Kompleks, Long> {
+public interface KompleksRepository extends JpaRepository<Kompleks, UUID> {
 
     List<Kompleks> findByOquvYiliId(UUID oquvYiliId);
 

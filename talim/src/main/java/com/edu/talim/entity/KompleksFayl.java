@@ -2,6 +2,7 @@ package com.edu.talim.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "kompleks_fayllar")
@@ -11,8 +12,8 @@ import lombok.*;
 public class KompleksFayl {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kompleks_id", nullable = false)

@@ -28,7 +28,7 @@ public class AmaliyotJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class AmaliyotUstunDTO {
-        private Long amaliyotId;
+        private UUID amaliyotId;
         private LocalDate tugashSanasi;
     }
 
@@ -47,7 +47,7 @@ public class AmaliyotJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class BahoDTO {
-        private Long amaliyotBahoId;
+        private UUID amaliyotBahoId;
         private Integer baho;
         private Integer qaytaTopshirishBaho;
     }

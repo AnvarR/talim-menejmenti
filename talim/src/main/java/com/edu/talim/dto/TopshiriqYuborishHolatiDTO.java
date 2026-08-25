@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @Builder
 public class TopshiriqYuborishHolatiDTO {
 
-    private Long topshiriqYuborishId;
+    private UUID topshiriqYuborishId;
     private UUID studentId;
     private String studentFio;
     private String guruhNomi;
 
     private String topshiriqTuri;
-    private Long topshiriqId;
+    private UUID topshiriqId;
     private String mavzuNomi;
 
     private TopshiriqHolati holati;

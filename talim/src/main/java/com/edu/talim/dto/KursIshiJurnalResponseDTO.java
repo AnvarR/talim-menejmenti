@@ -30,7 +30,7 @@ public class KursIshiJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class KursIshiUstunDTO {
-        private Long kursIshiId;
+        private UUID kursIshiId;
         private String mavzuNomi;
         private LocalDate muddat;
     }
@@ -50,7 +50,7 @@ public class KursIshiJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class BahoDTO {
-        private Long kursIshiBahoId;
+        private UUID kursIshiBahoId;
         private Integer baho;
         private Integer qaytaTopshirishBaho;
     }

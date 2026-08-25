@@ -31,7 +31,7 @@ public class MustaqilTalimTopshiriqController {
 
     // Bitta topshiriq (tahrirlash oynasi uchun)
     @GetMapping("/{id}")
-    public ResponseEntity<MustaqilTalimTopshiriqResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<MustaqilTalimTopshiriqResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(topshiriqService.getById(id));
     }
 
@@ -55,7 +55,7 @@ public class MustaqilTalimTopshiriqController {
     // Topshiriqni yangilash
     @PutMapping("/{id}")
     public ResponseEntity<MustaqilTalimTopshiriqResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam(required = false) String topshiriqTuri,
             @RequestParam(required = false) String nomi,
             @RequestParam(required = false) String izoh,
@@ -68,7 +68,7 @@ public class MustaqilTalimTopshiriqController {
 
     // Topshiriqni o'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         topshiriqService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -76,14 +76,14 @@ public class MustaqilTalimTopshiriqController {
     // Topshiriqqa qo'shimcha fayl(lar) qo'shish
     @PostMapping(value = "/{id}/fayl", consumes = "multipart/form-data")
     public ResponseEntity<MustaqilTalimTopshiriqResponseDTO> faylQoshish(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam List<MultipartFile> fayllar) throws IOException {
         return ResponseEntity.ok(topshiriqService.faylQoshish(id, fayllar));
     }
 
     // Faylni o'chirish
     @DeleteMapping("/fayl/{faylId}")
-    public ResponseEntity<Void> faylOchirish(@PathVariable Long faylId) {
+    public ResponseEntity<Void> faylOchirish(@PathVariable UUID faylId) {
         topshiriqService.faylOchirish(faylId);
         return ResponseEntity.noContent().build();
     }
@@ -126,14 +126,14 @@ public class MustaqilTalimTopshiriqController {
     // Bitta kursantning shu topshiriq bo'yicha javoblari (urinishlari)
     @GetMapping("/yuborish/{topshiriqYuborishId}/javoblar")
     public ResponseEntity<List<TopshiriqJavobResponseDTO>> getJavoblar(
-            @PathVariable Long topshiriqYuborishId) {
+            @PathVariable UUID topshiriqYuborishId) {
         return ResponseEntity.ok(topshiriqService.getJavoblar(topshiriqYuborishId));
     }
 
     // Kursant tomonidan javob berish (izoh + fayl)
     @PostMapping(value = "/yuborish/{topshiriqYuborishId}/javob", consumes = "multipart/form-data")
     public ResponseEntity<TopshiriqJavobResponseDTO> javobBerish(
-            @PathVariable Long topshiriqYuborishId,
+            @PathVariable UUID topshiriqYuborishId,
             @RequestParam(required = false) String izoh,
             @RequestParam(required = false) MultipartFile fayl) throws IOException {
         return ResponseEntity.ok(topshiriqService.javobBerish(topshiriqYuborishId, izoh, fayl));
@@ -142,7 +142,7 @@ public class MustaqilTalimTopshiriqController {
     // O'qituvchi tomonidan baholamasdan qaytarish
     @PostMapping("/javob/{javobId}/qaytarish")
     public ResponseEntity<TopshiriqJavobResponseDTO> qaytarish(
-            @PathVariable Long javobId,
+            @PathVariable UUID javobId,
             @RequestParam(required = false) String sabab) {
         return ResponseEntity.ok(topshiriqService.qaytarish(javobId, sabab));
     }
@@ -150,7 +150,7 @@ public class MustaqilTalimTopshiriqController {
     // O'qituvchi tomonidan baholash
     @PutMapping("/javob/{javobId}/baholash")
     public ResponseEntity<TopshiriqJavobResponseDTO> baholash(
-            @PathVariable Long javobId,
+            @PathVariable UUID javobId,
             @RequestBody BaholashRequestDTO dto) {
         return ResponseEntity.ok(topshiriqService.baholash(javobId, dto));
     }

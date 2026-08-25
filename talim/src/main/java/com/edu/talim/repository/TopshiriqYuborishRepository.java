@@ -10,13 +10,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TopshiriqYuborishRepository extends JpaRepository<TopshiriqYuborish, Long> {
+public interface TopshiriqYuborishRepository extends JpaRepository<TopshiriqYuborish, UUID> {
 
     // Bitta topshiriqqa tegishli barcha yuborishlar (kursantlar ro'yxati, muddat belgilash uchun)
-    List<TopshiriqYuborish> findByTopshiriqId(Long topshiriqId);
+    List<TopshiriqYuborish> findByTopshiriqId(UUID topshiriqId);
 
     // Bitta kursantga shu topshiriq bo'yicha yuborilgan nusxa
-    List<TopshiriqYuborish> findByTopshiriqIdAndStudentId(Long topshiriqId, UUID studentId);
+    List<TopshiriqYuborish> findByTopshiriqIdAndStudentId(UUID topshiriqId, UUID studentId);
 
     // Bitta mavzuga (darsJurnali) tegishli BARCHA topshiriqlar bo'yicha yuborishlar
     // ("Topshiriq holati" umumiy ro'yxati uchun - turli topshiriq turlari aralash chiqadi)
@@ -29,11 +29,11 @@ public interface TopshiriqYuborishRepository extends JpaRepository<TopshiriqYubo
     List<TopshiriqYuborish> findByStudentIdAndTopshiriq_DarsJurnaliId(UUID studentId, UUID darsJurnaliId);
 
     // Status bo'yicha hisoblash: jami yuborilganlar soni
-    long countByTopshiriqId(Long topshiriqId);
+    long countByTopshiriqId(UUID topshiriqId);
 
     // Hali javob bermaganlar (holati=BERILDI) dan farqli, ya'ni javob yuborganlar soni
-    long countByTopshiriqIdAndHolatiNot(Long topshiriqId, TopshiriqHolati holati);
+    long countByTopshiriqIdAndHolatiNot(UUID topshiriqId, TopshiriqHolati holati);
 
     // Aniq bitta holatdagilar soni (masalan BAHOLANDI)
-    long countByTopshiriqIdAndHolati(Long topshiriqId, TopshiriqHolati holati);
+    long countByTopshiriqIdAndHolati(UUID topshiriqId, TopshiriqHolati holati);
 }

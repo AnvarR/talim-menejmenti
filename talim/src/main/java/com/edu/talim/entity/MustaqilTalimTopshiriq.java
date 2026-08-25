@@ -6,6 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "mustaqil_talim_topshiriqlar")
@@ -15,8 +16,8 @@ import java.util.List;
 public class MustaqilTalimTopshiriq {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // Qaysi o'qituvchi/fan/kurs/guruhga tegishli
     @ManyToOne(fetch = FetchType.LAZY)

@@ -49,7 +49,7 @@ public class MustaqilTalimTopshiriqService {
                 .collect(Collectors.toList());
     }
 
-    public MustaqilTalimTopshiriqResponseDTO getById(Long id) {
+    public MustaqilTalimTopshiriqResponseDTO getById(UUID id) {
         return toDTO(findById(id));
     }
 
@@ -108,7 +108,7 @@ public class MustaqilTalimTopshiriqService {
     }
 
     @Transactional
-    public MustaqilTalimTopshiriqResponseDTO update(Long id, String topshiriqTuri, String nomi, String izoh,
+    public MustaqilTalimTopshiriqResponseDTO update(UUID id, String topshiriqTuri, String nomi, String izoh,
                                                     LocalDateTime boshlanishSanasi, LocalDateTime yakunlanishSanasi,
                                                     Integer urinishlarSoni) {
         MustaqilTalimTopshiriq topshiriq = findById(id);
@@ -124,7 +124,7 @@ public class MustaqilTalimTopshiriqService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         MustaqilTalimTopshiriq topshiriq = findById(id);
 
         // Fayllarni diskdan o'chirish
@@ -134,14 +134,14 @@ public class MustaqilTalimTopshiriqService {
     }
 
     @Transactional
-    public MustaqilTalimTopshiriqResponseDTO faylQoshish(Long id, List<MultipartFile> fayllar) throws IOException {
+    public MustaqilTalimTopshiriqResponseDTO faylQoshish(UUID id, List<MultipartFile> fayllar) throws IOException {
         MustaqilTalimTopshiriq topshiriq = findById(id);
         saqlaFayllar(topshiriq, fayllar);
         return toDTO(findById(id));
     }
 
     @Transactional
-    public void faylOchirish(Long faylId) {
+    public void faylOchirish(UUID faylId) {
         TopshiriqFayl fayl = topshiriqFaylRepository.findById(faylId)
                 .orElseThrow(() -> new NotFoundException("Fayl topilmadi"));
         faylniDiskdanOchirish(fayl.getFaylYoli());
@@ -217,7 +217,7 @@ public class MustaqilTalimTopshiriqService {
 
     // ====================== Javoblar va baholash ======================
 
-    public List<TopshiriqJavobResponseDTO> getJavoblar(Long topshiriqYuborishId) {
+    public List<TopshiriqJavobResponseDTO> getJavoblar(UUID topshiriqYuborishId) {
         return topshiriqJavobRepository
                 .findByTopshiriqYuborishIdOrderByBerilganSanaDesc(topshiriqYuborishId)
                 .stream()
@@ -227,7 +227,7 @@ public class MustaqilTalimTopshiriqService {
 
     // Kursant tomonidan javob berish (izoh + fayl)
     @Transactional
-    public TopshiriqJavobResponseDTO javobBerish(Long topshiriqYuborishId, String izoh,
+    public TopshiriqJavobResponseDTO javobBerish(UUID topshiriqYuborishId, String izoh,
                                                  MultipartFile fayl) throws IOException {
         TopshiriqYuborish yuborish = topshiriqYuborishRepository.findById(topshiriqYuborishId)
                 .orElseThrow(() -> new NotFoundException("Topshiriq topilmadi"));
@@ -270,7 +270,7 @@ public class MustaqilTalimTopshiriqService {
 
     // O'qituvchi tomonidan baholash
     @Transactional
-    public TopshiriqJavobResponseDTO baholash(Long javobId, BaholashRequestDTO dto) {
+    public TopshiriqJavobResponseDTO baholash(UUID javobId, BaholashRequestDTO dto) {
         TopshiriqJavob javob = topshiriqJavobRepository.findById(javobId)
                 .orElseThrow(() -> new NotFoundException("Javob topilmadi"));
 
@@ -295,7 +295,7 @@ public class MustaqilTalimTopshiriqService {
 
     // O'qituvchi tomonidan baholamasdan qaytarish (kursant qayta topshirishi kerak)
     @Transactional
-    public TopshiriqJavobResponseDTO qaytarish(Long javobId, String sabab) {
+    public TopshiriqJavobResponseDTO qaytarish(UUID javobId, String sabab) {
         TopshiriqJavob javob = topshiriqJavobRepository.findById(javobId)
                 .orElseThrow(() -> new NotFoundException("Javob topilmadi"));
 
@@ -371,7 +371,7 @@ public class MustaqilTalimTopshiriqService {
 
     // ====================== Yordamchi metodlar ======================
 
-    private MustaqilTalimTopshiriq findById(Long id) {
+    private MustaqilTalimTopshiriq findById(UUID id) {
         return topshiriqRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Topshiriq topilmadi: " + id));
     }

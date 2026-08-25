@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface KursIshiBahoRepository extends JpaRepository<KursIshiBaho, Long> {
+public interface KursIshiBahoRepository extends JpaRepository<KursIshiBaho, UUID> {
 
-    List<KursIshiBaho> findByKursIshiId(Long kursIshiId);
+    List<KursIshiBaho> findByKursIshiId(UUID kursIshiId);
 
-    Optional<KursIshiBaho> findByKursIshiIdAndStudentId(Long kursIshiId, UUID studentId);
+    Optional<KursIshiBaho> findByKursIshiIdAndStudentId(UUID kursIshiId, UUID studentId);
 }

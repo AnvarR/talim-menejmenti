@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -9,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TopshiriqJavobResponseDTO {
 
-    private Long id;
+    private UUID id;
     private String izoh;
     private String faylNomi;
     private String faylUrl;

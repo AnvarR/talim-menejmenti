@@ -43,7 +43,7 @@ public class KursIshiJurnalController {
     // Kurs ishi mavzusi/muddatini tahrirlash
     @PutMapping("/{kursIshiId}")
     public ResponseEntity<Void> tahrirlash(
-            @PathVariable Long kursIshiId,
+            @PathVariable UUID kursIshiId,
             @RequestParam(required = false) String mavzuNomi,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate muddat) {
         jurnalService.tahrirlash(kursIshiId, mavzuNomi, muddat);
@@ -52,7 +52,7 @@ public class KursIshiJurnalController {
 
     // Kurs ishini o'chirish
     @DeleteMapping("/{kursIshiId}")
-    public ResponseEntity<Void> ochirish(@PathVariable Long kursIshiId) {
+    public ResponseEntity<Void> ochirish(@PathVariable UUID kursIshiId) {
         jurnalService.ochirish(kursIshiId);
         return ResponseEntity.noContent().build();
     }
@@ -60,7 +60,7 @@ public class KursIshiJurnalController {
     // Baho qo'yish (davomat/holat tushunchasisiz)
     @PutMapping("/baho/{kursIshiBahoId}")
     public ResponseEntity<Void> bahoQoyish(
-            @PathVariable Long kursIshiBahoId,
+            @PathVariable UUID kursIshiBahoId,
             @RequestParam Integer baho) {
         jurnalService.bahoQoyish(kursIshiBahoId, baho);
         return ResponseEntity.ok().build();

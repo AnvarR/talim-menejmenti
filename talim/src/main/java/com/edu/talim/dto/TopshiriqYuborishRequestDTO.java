@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class TopshiriqYuborishRequestDTO {
 
-    private Long topshiriqId;
+    private UUID topshiriqId;
     private List<Item> kursantlar;
 
     @Getter @Setter

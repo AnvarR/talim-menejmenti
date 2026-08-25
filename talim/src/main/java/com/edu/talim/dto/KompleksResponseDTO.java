@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class KompleksResponseDTO {
 
-    private Long id;
+    private UUID id;
     private UUID oqituvchiFanTaqsimlashId;
     private String fanNomi;
     private String oqituvchiFISH;

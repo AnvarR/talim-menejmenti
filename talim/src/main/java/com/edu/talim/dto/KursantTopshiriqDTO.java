@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.TopshiriqHolati;
 import lombok.*;
 
@@ -10,8 +12,8 @@ import java.time.LocalDateTime;
 @Builder
 public class KursantTopshiriqDTO {
 
-    private Long topshiriqYuborishId;
-    private Long topshiriqId;
+    private UUID topshiriqYuborishId;
+    private UUID topshiriqId;
 
     private String nomi;
     private String topshiriqTuri;

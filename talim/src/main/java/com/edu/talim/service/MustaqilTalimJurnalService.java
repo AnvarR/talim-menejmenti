@@ -151,7 +151,7 @@ public class MustaqilTalimJurnalService {
 
         if (topshiriqlar.isEmpty()) return new Double[]{null, null};
 
-        Map<Long, Integer> topshiriqBaho = topshiriqBahoMap(topshiriqlar, studentId);
+        Map<UUID, Integer> topshiriqBaho = topshiriqBahoMap(topshiriqlar, studentId);
 
         LocalDate oquvYiliBoshlanish = LocalDate.of(
                 topshiriqlar.get(0).getDarsJurnali().getOquvYili().getBoshlanishYil(), 9, 1);
@@ -169,8 +169,8 @@ public class MustaqilTalimJurnalService {
     }
 
     // Kursantning shu fan/mavzular bo'yicha topshiriq -> baho map'i
-    private Map<Long, Integer> topshiriqBahoMap(List<MustaqilTalimTopshiriq> topshiriqlar, UUID studentId) {
-        Map<Long, Integer> topshiriqBaho = new HashMap<>();
+    private Map<UUID, Integer> topshiriqBahoMap(List<MustaqilTalimTopshiriq> topshiriqlar, UUID studentId) {
+        Map<UUID, Integer> topshiriqBaho = new HashMap<>();
         for (MustaqilTalimTopshiriq t : topshiriqlar) {
             Integer baho = topshiriqYuborishRepository
                     .findByTopshiriqIdAndStudentId(t.getId(), studentId)
@@ -200,7 +200,7 @@ public class MustaqilTalimJurnalService {
             LocalDate oquvYiliBoshlanish) {
 
         // Har bir topshiriq uchun kursantning bahosi (topshiriq -> baho map)
-        Map<Long, Integer> topshiriqBaho = new HashMap<>();
+        Map<UUID, Integer> topshiriqBaho = new HashMap<>();
         for (MustaqilTalimTopshiriq t : topshiriqlar) {
             Integer baho = topshiriqYuborishRepository
                     .findByTopshiriqIdAndStudentId(t.getId(), student.getId())
@@ -272,7 +272,7 @@ public class MustaqilTalimJurnalService {
     }
 
     // R(MT) — berilgan sana oralig'idagi topshiriq baholarining yaxlitlangan o'rtachasi
-    private Double hisoblaRmt(List<MustaqilTalimTopshiriq> topshiriqlar, Map<Long, Integer> topshiriqBaho,
+    private Double hisoblaRmt(List<MustaqilTalimTopshiriq> topshiriqlar, Map<UUID, Integer> topshiriqBaho,
                               LocalDate boshlanish, LocalDate tugash) {
         if (boshlanish == null || tugash == null) return null;
 

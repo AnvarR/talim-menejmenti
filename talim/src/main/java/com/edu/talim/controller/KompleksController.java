@@ -27,7 +27,7 @@ public class KompleksController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<KompleksResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<KompleksResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(kompleksService.getById(id));
     }
 
@@ -43,7 +43,7 @@ public class KompleksController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<KompleksResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestParam String materialNomi,
             @RequestParam MaterialKategoriyasi materialKategoriyasi,
             @RequestParam(required = false) List<MultipartFile> yangiFayllar) throws IOException {
@@ -52,14 +52,14 @@ public class KompleksController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         kompleksService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{kompleksId}/fayl/{faylId}")
     public ResponseEntity<Void> faylniOchirish(
-            @PathVariable Long kompleksId, @PathVariable Long faylId) {
+            @PathVariable UUID kompleksId, @PathVariable UUID faylId) {
         kompleksService.faylniOchirish(kompleksId, faylId);
         return ResponseEntity.noContent().build();
     }

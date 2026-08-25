@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class MustaqilTalimTopshiriqResponseDTO {
 
-    private Long id;
+    private UUID id;
     private UUID darsJurnaliId;
     private String mavzuNomi;
 
@@ -39,7 +39,7 @@ public class MustaqilTalimTopshiriqResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class TopshiriqFaylDTO {
-        private Long id;
+        private UUID id;
         private String faylNomi;
         private String faylUrl;
     }

@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -7,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SavolResponseDTO {
-    private Long id;
+    private UUID id;
     private String authorId;
     private String authorType;
     private String authorFio;

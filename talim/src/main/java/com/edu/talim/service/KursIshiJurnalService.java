@@ -72,7 +72,7 @@ public class KursIshiJurnalService {
 
     // Kurs ishi mavzusi/muddatini tahrirlash
     @Transactional
-    public void tahrirlash(Long kursIshiId, String mavzuNomi, LocalDate muddat) {
+    public void tahrirlash(UUID kursIshiId, String mavzuNomi, LocalDate muddat) {
         KursIshi kursIshi = kursIshiRepository.findById(kursIshiId)
                 .orElseThrow(() -> new NotFoundException("Kurs ishi topilmadi: " + kursIshiId));
 
@@ -86,7 +86,7 @@ public class KursIshiJurnalService {
 
     // Kurs ishini o'chirish (unga tegishli barcha baholar ham o'chadi)
     @Transactional
-    public void ochirish(Long kursIshiId) {
+    public void ochirish(UUID kursIshiId) {
         KursIshi kursIshi = kursIshiRepository.findById(kursIshiId)
                 .orElseThrow(() -> new NotFoundException("Kurs ishi topilmadi: " + kursIshiId));
         oquvYiliService.tahririshniTekshir(kursIshi.getOquvYili().getId());
@@ -96,7 +96,7 @@ public class KursIshiJurnalService {
     // ====================== Baholash ======================
 
     @Transactional
-    public void bahoQoyish(Long kursIshiBahoId, Integer baho) {
+    public void bahoQoyish(UUID kursIshiBahoId, Integer baho) {
         if (baho == null || baho < 2 || baho > 5) {
             throw new RuntimeException("Baho 2, 3, 4 yoki 5 bo'lishi kerak!");
         }

@@ -30,7 +30,7 @@ public class MustaqilTalimJurnalResponseDTO {
     @NoArgsConstructor @AllArgsConstructor
     @Builder
     public static class TopshiriqUstunDTO {
-        private Long topshiriqId;
+        private UUID topshiriqId;
         private LocalDateTime muddat;
         private Integer soat;
         private String nomi;

@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.SavolCreateDTO;
@@ -35,7 +37,7 @@ public class SavolService {
     }
 
     // Bitta savol — har ochilganda korishlarSoni +1 bo'ladi
-    public SavolResponseDTO getById(Long id) {
+    public SavolResponseDTO getById(UUID id) {
         Savol savol = findById(id);
         savol.setKorishlarSoni(savol.getKorishlarSoni() + 1);
         savolRepository.save(savol);
@@ -57,7 +59,7 @@ public class SavolService {
     }
 
     // Savolga fayl yuklash — maksimum 5 MB
-    public SavolResponseDTO uploadFayl(Long id, MultipartFile fayl) {
+    public SavolResponseDTO uploadFayl(UUID id, MultipartFile fayl) {
         // Fayl hajmini tekshirish: 5 MB = 5 * 1024 * 1024 bayt
         if (fayl.getSize() > 5 * 1024 * 1024) {
             throw new RuntimeException("Fayl hajmi 5 MB dan oshmasligi kerak!");
@@ -76,7 +78,7 @@ public class SavolService {
     }
 
     // Savolni o'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Savol savol = findById(id);
         // Savol o'chirilganda fayli ham o'chiriladi
         if (savol.getFaylUrl() != null) {
@@ -102,7 +104,7 @@ public class SavolService {
 
     // ===== HELPER METODLAR =====
 
-    private Savol findById(Long id) {
+    private Savol findById(UUID id) {
         return savolRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Savol topilmadi: " + id));
     }
@@ -131,18 +133,18 @@ public class SavolService {
     // authorType ga qarab F.I.SH olish: USER=xodim, STUDENT=kursant
     private String getFio(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(java.util.UUID.fromString(id)).map(u -> u.getFio()).orElse("-");
+            return userRepository.findById(UUID.fromString(id)).map(u -> u.getFio()).orElse("-");
         } else {
-            return studentRepository.findById(java.util.UUID.fromString(id)).map(s -> s.getFio()).orElse("-");
+            return studentRepository.findById(UUID.fromString(id)).map(s -> s.getFio()).orElse("-");
         }
     }
 
     // authorType ga qarab rasm URL olish
     private String getPhoto(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(java.util.UUID.fromString(id)).map(u -> u.getPhotoUrl()).orElse(null);
+            return userRepository.findById(UUID.fromString(id)).map(u -> u.getPhotoUrl()).orElse(null);
         } else {
-            return studentRepository.findById(java.util.UUID.fromString(id)).map(s -> s.getPhotoUrl()).orElse(null);
+            return studentRepository.findById(UUID.fromString(id)).map(s -> s.getPhotoUrl()).orElse(null);
         }
     }
 }

@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "komplekslar")
@@ -15,8 +16,8 @@ import java.util.List;
 public class Kompleks {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // Qaysi fan/o'qituvchi taqsimotiga tegishli (kurs, guruh, fan shu orqali aniqlanadi)
     @ManyToOne(fetch = FetchType.LAZY)

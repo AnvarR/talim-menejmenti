@@ -2,13 +2,14 @@ package com.edu.talim.repository;
 
 import com.edu.talim.entity.Savol;
 import org.springframework.data.domain.Page;
+import java.util.UUID;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SavolRepository extends JpaRepository<Savol, Long> {
+public interface SavolRepository extends JpaRepository<Savol, UUID> {
 
     // Barcha savollar — eng yangi avval (sahifalash bilan)
     Page<Savol> findAllByOrderByCreatedAtDesc(Pageable pageable);

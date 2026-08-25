@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MustaqilTalimTopshiriqRepository extends JpaRepository<MustaqilTalimTopshiriq, Long> {
+public interface MustaqilTalimTopshiriqRepository extends JpaRepository<MustaqilTalimTopshiriq, UUID> {
 
     // Bitta mavzuga tegishli barcha topshiriqlar (Topshiriqlar ro'yxati sahifasi uchun)
     List<MustaqilTalimTopshiriq> findByDarsJurnaliIdOrderByYaratilganVaqtAsc(UUID darsJurnaliId);

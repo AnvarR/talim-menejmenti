@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface KursIshiRepository extends JpaRepository<KursIshi, Long> {
+public interface KursIshiRepository extends JpaRepository<KursIshi, UUID> {
 
     List<KursIshi> findByOqituvchiFanTaqsimlashIdAndOquvYiliIdAndSemestrOrderByMuddatAsc(
             UUID oqituvchiFanTaqsimlashId, UUID oquvYiliId, Semestr semestr);

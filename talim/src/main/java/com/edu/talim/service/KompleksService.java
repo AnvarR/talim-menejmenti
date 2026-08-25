@@ -54,7 +54,7 @@ public class KompleksService {
                 .collect(Collectors.toList());
     }
 
-    public KompleksResponseDTO getById(Long id) {
+    public KompleksResponseDTO getById(UUID id) {
         Kompleks kompleks = kompleksRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Kompleks topilmadi: " + id));
         return toDTO(kompleks);
@@ -88,7 +88,7 @@ public class KompleksService {
     }
 
     @Transactional
-    public KompleksResponseDTO update(Long id, String materialNomi, MaterialKategoriyasi kategoriya,
+    public KompleksResponseDTO update(UUID id, String materialNomi, MaterialKategoriyasi kategoriya,
                                       List<MultipartFile> yangiFayllar) throws IOException {
 
         Kompleks kompleks = kompleksRepository.findById(id)
@@ -106,7 +106,7 @@ public class KompleksService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         Kompleks kompleks = kompleksRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Kompleks topilmadi: " + id));
 
@@ -118,7 +118,7 @@ public class KompleksService {
     }
 
     @Transactional
-    public void faylniOchirish(Long kompleksId, Long faylId) {
+    public void faylniOchirish(UUID kompleksId, UUID faylId) {
         KompleksFayl fayl = kompleksFaylRepository.findById(faylId)
                 .orElseThrow(() -> new NotFoundException("Fayl topilmadi: " + faylId));
 

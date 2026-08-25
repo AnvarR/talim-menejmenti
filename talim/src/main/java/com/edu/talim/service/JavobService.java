@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.JavobCreateDTO;
@@ -26,7 +28,7 @@ public class JavobService {
     private final StudentRepository studentRepository;
 
     /** Bitta savolga tegishli barcha javoblar */
-    public List<JavobResponseDTO> getBySavolId(Long savolId) {
+    public List<JavobResponseDTO> getBySavolId(UUID savolId) {
         return javobRepository.findBySavolIdOrderByCreatedAtAsc(savolId)
                 .stream()
                 .map(this::toResponseDTO)
@@ -49,7 +51,7 @@ public class JavobService {
     }
 
     /** Javobni o'chirish */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         javobRepository.deleteById(id);
     }
 
@@ -73,17 +75,17 @@ public class JavobService {
 
     private String getFio(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(java.util.UUID.fromString(id)).map(u -> u.getFio()).orElse("-");
+            return userRepository.findById(UUID.fromString(id)).map(u -> u.getFio()).orElse("-");
         } else {
-            return studentRepository.findById(java.util.UUID.fromString(id)).map(s -> s.getFio()).orElse("-");
+            return studentRepository.findById(UUID.fromString(id)).map(s -> s.getFio()).orElse("-");
         }
     }
 
     private String getPhoto(String id, String type) {
         if ("USER".equals(type)) {
-            return userRepository.findById(java.util.UUID.fromString(id)).map(u -> u.getPhotoUrl()).orElse(null);
+            return userRepository.findById(UUID.fromString(id)).map(u -> u.getPhotoUrl()).orElse(null);
         } else {
-            return studentRepository.findById(java.util.UUID.fromString(id)).map(s -> s.getPhotoUrl()).orElse(null);
+            return studentRepository.findById(UUID.fromString(id)).map(s -> s.getPhotoUrl()).orElse(null);
         }
     }
 }

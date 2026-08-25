@@ -39,7 +39,7 @@ public class AmaliyotJurnalController {
     // Amaliyot tugash sanasini tahrirlash
     @PutMapping("/{amaliyotId}")
     public ResponseEntity<Void> tahrirlash(
-            @PathVariable Long amaliyotId,
+            @PathVariable UUID amaliyotId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tugashSanasi) {
         jurnalService.tahrirlash(amaliyotId, tugashSanasi);
         return ResponseEntity.ok().build();
@@ -47,7 +47,7 @@ public class AmaliyotJurnalController {
 
     // Amaliyotni o'chirish
     @DeleteMapping("/{amaliyotId}")
-    public ResponseEntity<Void> ochirish(@PathVariable Long amaliyotId) {
+    public ResponseEntity<Void> ochirish(@PathVariable UUID amaliyotId) {
         jurnalService.ochirish(amaliyotId);
         return ResponseEntity.noContent().build();
     }
@@ -55,7 +55,7 @@ public class AmaliyotJurnalController {
     // Baho qo'yish (2 olsa qayta topshirish avtomatik ishlaydi)
     @PutMapping("/baho/{amaliyotBahoId}")
     public ResponseEntity<Void> bahoQoyish(
-            @PathVariable Long amaliyotBahoId,
+            @PathVariable UUID amaliyotBahoId,
             @RequestParam Integer baho) {
         jurnalService.bahoQoyish(amaliyotBahoId, baho);
         return ResponseEntity.ok().build();
