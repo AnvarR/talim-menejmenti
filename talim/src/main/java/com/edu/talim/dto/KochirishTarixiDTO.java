@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import com.edu.talim.entity.enums.KochirishTuri;
 import lombok.*;
 
@@ -9,7 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor @AllArgsConstructor
 @Builder
 public class KochirishTarixiDTO {
-    private Long id;
+    private UUID id;
     private KochirishTuri turi;
     private String eskiKursNomi;
     private String yangiKursNomi;   // CHETLATISH/ARXIVLASH bo'lsa - null

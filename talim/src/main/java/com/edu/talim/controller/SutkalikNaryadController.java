@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.SutkalikNaryadCreateDTO;
 import com.edu.talim.dto.SutkalikNaryadResponseDTO;
 import com.edu.talim.service.SutkalikNaryadService;
@@ -35,7 +37,7 @@ public class SutkalikNaryadController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SutkalikNaryadResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<SutkalikNaryadResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(naryadService.getById(id));
     }
 
@@ -46,14 +48,14 @@ public class SutkalikNaryadController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SutkalikNaryadResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody SutkalikNaryadCreateDTO dto
     ) {
         return ResponseEntity.ok(naryadService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         naryadService.delete(id);
         return ResponseEntity.noContent().build();
     }

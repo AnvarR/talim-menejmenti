@@ -1,5 +1,7 @@
 package com.edu.talim.dto;
 
+import java.util.UUID;
+
 import lombok.*;
 
 @Data
@@ -7,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class XabarResponseDTO {
-    private Long id;
+    private UUID id;
     private String senderId;
     private String senderType;
     private String senderFio;     // yuboruvchining F.I.SH

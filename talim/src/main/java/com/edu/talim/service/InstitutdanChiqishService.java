@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.InstitutdanChiqishCreateDTO;
@@ -50,7 +52,7 @@ public class InstitutdanChiqishService {
                 .map(this::toResponseDTO);
     }
 
-    public InstitutdanChiqishResponseDTO getById(Long id) {
+    public InstitutdanChiqishResponseDTO getById(UUID id) {
         return toResponseDTO(findById(id));
     }
 
@@ -72,7 +74,7 @@ public class InstitutdanChiqishService {
         return toResponseDTO(chiqishRepository.save(chiqish));
     }
 
-    public InstitutdanChiqishResponseDTO update(Long id, InstitutdanChiqishCreateDTO dto) {
+    public InstitutdanChiqishResponseDTO update(UUID id, InstitutdanChiqishCreateDTO dto) {
         InstitutdanChiqish chiqish = findById(id);
 
         chiqish.setChiqishSababi(ChiqishSababi.valueOf(dto.getChiqishSababi()));
@@ -86,13 +88,13 @@ public class InstitutdanChiqishService {
         return toResponseDTO(chiqishRepository.save(chiqish));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         chiqishRepository.delete(findById(id));
     }
 
     // ===== HELPER =====
 
-    private InstitutdanChiqish findById(Long id) {
+    private InstitutdanChiqish findById(UUID id) {
         return chiqishRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Chiqish topilmadi: " + id));
     }

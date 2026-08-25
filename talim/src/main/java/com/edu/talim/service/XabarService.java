@@ -64,7 +64,7 @@ public class XabarService {
     }
 
     /** Xabarni o'qilgan deb belgilash */
-    public void markAsRead(Long id) {
+    public void markAsRead(UUID id) {
         Xabar xabar = xabarRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Xabar topilmadi: " + id));
         xabar.setOqilgan(true);
@@ -78,7 +78,7 @@ public class XabarService {
     }
 
     /** Xabarni o'chirish */
-    public void delete(Long id) {
+    public void delete(UUID id) {
         xabarRepository.deleteById(id);
     }
 

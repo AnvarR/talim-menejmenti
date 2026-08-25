@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class DarsJadvaliResponseDTO {
 
-    private Long id;
+    private UUID id;
     private UUID kursId;
     private String kursNomi;
     private UUID oquvYiliId;

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface KasalRepository extends JpaRepository<Kasal, Long> {
+public interface KasalRepository extends JpaRepository<Kasal, UUID> {
 
     @Query("""
         SELECT k FROM Kasal k

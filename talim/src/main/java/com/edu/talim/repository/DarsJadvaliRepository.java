@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface DarsJadvaliRepository extends JpaRepository<DarsJadvali, Long> {
+public interface DarsJadvaliRepository extends JpaRepository<DarsJadvali, UUID> {
 
     List<DarsJadvali> findByKursIdAndOquvYiliId(UUID kursId, UUID oquvYiliId);
 

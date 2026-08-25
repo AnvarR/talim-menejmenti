@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class DavomatResponseDTO {
 
-    private Long id;
+    private UUID id;
     private UUID studentId;
     private String studentFio;
     private DavomatHolati holat;

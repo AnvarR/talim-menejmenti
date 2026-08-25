@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InstitutdanChiqishRepository extends JpaRepository<InstitutdanChiqish, Long> {
+public interface InstitutdanChiqishRepository extends JpaRepository<InstitutdanChiqish, UUID> {
 
     // chiqganSana bo'yicha filter
     @Query("""

@@ -357,7 +357,7 @@ public class ElektronJurnalService {
 
     // Davomat/baho yangilash
     @Transactional
-    public AmaliyDavomatResponseDTO davomatYangilash(Long davomatId,
+    public AmaliyDavomatResponseDTO davomatYangilash(UUID davomatId,
                                                      DavomatHolati holat,
                                                      Integer baho) {
         AmaliyDavomat davomat = amaliyDavomatRepository.findById(davomatId)

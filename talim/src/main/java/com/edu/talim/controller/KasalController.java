@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.KasalCreateDTO;
 import com.edu.talim.dto.KasalResponseDTO;
 import com.edu.talim.service.KasalService;
@@ -34,7 +36,7 @@ public class KasalController {
 
     // Bitta kasal
     @GetMapping("/{id}")
-    public ResponseEntity<KasalResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<KasalResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(kasalService.getById(id));
     }
 
@@ -47,7 +49,7 @@ public class KasalController {
     // Tahrirlash
     @PutMapping("/{id}")
     public ResponseEntity<KasalResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody KasalCreateDTO dto
     ) {
         return ResponseEntity.ok(kasalService.update(id, dto));
@@ -55,7 +57,7 @@ public class KasalController {
 
     // O'chirish
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         kasalService.delete(id);
         return ResponseEntity.noContent().build();
     }

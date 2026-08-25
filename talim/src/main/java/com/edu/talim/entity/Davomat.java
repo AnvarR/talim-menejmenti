@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "davomatlar")
@@ -14,8 +15,8 @@ import java.time.LocalDate;
 public class Davomat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     // Qaysi darsga tegishli
     @ManyToOne(fetch = FetchType.LAZY)

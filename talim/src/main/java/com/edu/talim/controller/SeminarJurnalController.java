@@ -66,7 +66,7 @@ public class SeminarJurnalController {
     // Davomat va baho yangilash
     @PutMapping("/davomat/{davomatId}")
     public ResponseEntity<AmaliyDavomatResponseDTO> davomatYangilash(
-            @PathVariable Long davomatId,
+            @PathVariable UUID davomatId,
             @RequestParam(required = false) DavomatHolati holat,
             @RequestParam(required = false) Integer baho) {
         return ResponseEntity.ok(

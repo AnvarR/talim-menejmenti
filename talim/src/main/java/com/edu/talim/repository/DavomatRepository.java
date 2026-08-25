@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DavomatRepository extends JpaRepository<Davomat, Long> {
+public interface DavomatRepository extends JpaRepository<Davomat, UUID> {
 
     // Bitta dars uchun barcha davomatlar
     List<Davomat> findByDarsJurnaliId(UUID darsJurnaliId);

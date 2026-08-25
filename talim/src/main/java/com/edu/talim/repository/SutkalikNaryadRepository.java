@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface SutkalikNaryadRepository extends JpaRepository<SutkalikNaryad, Long> {
+public interface SutkalikNaryadRepository extends JpaRepository<SutkalikNaryad, UUID> {
 
     // Kursantga tegishli naryad yozuvi bormi tekshirish (o'chirishdan oldin)
     boolean existsByStudentId(UUID studentId);

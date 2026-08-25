@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InstitutdanChiqishResponseDTO {
-    private Long id;
+    private UUID id;
     private UUID studentId;
     private String fio;
     private String kurs;

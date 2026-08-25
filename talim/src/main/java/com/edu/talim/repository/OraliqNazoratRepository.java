@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, Long> {
+public interface OraliqNazoratRepository extends JpaRepository<OraliqNazorat, UUID> {
 
     // Kursantning shu fan, semestr va aniq oraliq (1 yoki 2) uchun nazorati
     Optional<OraliqNazorat> findByOqituvchiFanTaqsimlashIdAndStudentIdAndOquvYiliIdAndSemestrAndOraliqRaqami(

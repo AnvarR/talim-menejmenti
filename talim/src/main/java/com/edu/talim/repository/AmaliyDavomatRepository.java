@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, Long> {
+public interface AmaliyDavomatRepository extends JpaRepository<AmaliyDavomat, UUID> {
 
     // Bitta dars uchun barcha davomatlar
     List<AmaliyDavomat> findByDarsJurnaliIdOrderByStudentFioAsc(UUID darsJurnaliId);

@@ -3,6 +3,7 @@ package com.edu.talim.entity;
 import com.edu.talim.entity.enums.HaftaKuni;
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "dars_jadvali")
@@ -12,8 +13,8 @@ import lombok.*;
 public class DarsJadvali {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kurs_id", nullable = false)

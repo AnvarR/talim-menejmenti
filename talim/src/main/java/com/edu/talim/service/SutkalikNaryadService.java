@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.NotFoundException;
 
 import com.edu.talim.dto.SutkalikNaryadCreateDTO;
@@ -52,7 +54,7 @@ public class SutkalikNaryadService {
                 .map(this::toResponseDTO);
     }
 
-    public SutkalikNaryadResponseDTO getById(Long id) {
+    public SutkalikNaryadResponseDTO getById(UUID id) {
         return toResponseDTO(findById(id));
     }
 
@@ -71,7 +73,7 @@ public class SutkalikNaryadService {
         return toResponseDTO(naryadRepository.save(naryad));
     }
 
-    public SutkalikNaryadResponseDTO update(Long id, SutkalikNaryadCreateDTO dto) {
+    public SutkalikNaryadResponseDTO update(UUID id, SutkalikNaryadCreateDTO dto) {
         SutkalikNaryad naryad = findById(id);
 
         naryad.setXizmatOtashJoyi(XizmatOtashJoyi.valueOf(dto.getXizmatOtashJoyi()));
@@ -82,13 +84,13 @@ public class SutkalikNaryadService {
         return toResponseDTO(naryadRepository.save(naryad));
     }
 
-    public void delete(Long id) {
+    public void delete(UUID id) {
         naryadRepository.delete(findById(id));
     }
 
     // ===== HELPER =====
 
-    private SutkalikNaryad findById(Long id) {
+    private SutkalikNaryad findById(UUID id) {
         return naryadRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Naryad topilmadi: " + id));
     }

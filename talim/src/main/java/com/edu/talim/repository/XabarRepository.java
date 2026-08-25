@@ -9,9 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface XabarRepository extends JpaRepository<Xabar, Long> {
+public interface XabarRepository extends JpaRepository<Xabar, UUID> {
 
     /**
      * Ikki foydalanuvchi o'rtasidagi xabarlarni qaytaradi.

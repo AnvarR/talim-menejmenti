@@ -44,13 +44,13 @@ public class DarsJadvaliController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         darsJadvaliService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/fayl")
-    public ResponseEntity<Resource> getFayl(@PathVariable Long id) throws IOException {
+    public ResponseEntity<Resource> getFayl(@PathVariable UUID id) throws IOException {
         Path faylYoli = darsJadvaliService.getFaylYoli(id);
         Resource resource = new UrlResource(faylYoli.toUri());
 

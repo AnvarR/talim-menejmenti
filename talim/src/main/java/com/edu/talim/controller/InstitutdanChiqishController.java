@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.InstitutdanChiqishCreateDTO;
 import com.edu.talim.dto.InstitutdanChiqishResponseDTO;
 import com.edu.talim.service.InstitutdanChiqishService;
@@ -33,7 +35,7 @@ public class InstitutdanChiqishController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InstitutdanChiqishResponseDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<InstitutdanChiqishResponseDTO> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(chiqishService.getById(id));
     }
 
@@ -44,14 +46,14 @@ public class InstitutdanChiqishController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InstitutdanChiqishResponseDTO> update(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody InstitutdanChiqishCreateDTO dto
     ) {
         return ResponseEntity.ok(chiqishService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         chiqishService.delete(id);
         return ResponseEntity.noContent().build();
     }

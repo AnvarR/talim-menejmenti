@@ -101,7 +101,7 @@ public class DarsJurnaliController {
     // Davomat holatini yangilash (S, Y, N_T, K_T, S_T, Y_T)
     @PutMapping("/davomat/{davomatId}")
     public ResponseEntity<DavomatResponseDTO> davomatYangilash(
-            @PathVariable Long davomatId,
+            @PathVariable UUID davomatId,
             @RequestParam DavomatHolati holat) {
         return ResponseEntity.ok(darsJurnaliService.davomatYangilash(davomatId, holat));
     }

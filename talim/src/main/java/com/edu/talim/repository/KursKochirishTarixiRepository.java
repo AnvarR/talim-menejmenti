@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface KursKochirishTarixiRepository extends JpaRepository<KursKochirishTarixi, Long> {
+public interface KursKochirishTarixiRepository extends JpaRepository<KursKochirishTarixi, UUID> {
 
     // Shu kursant shu o'quv yilida allaqachon shu turdagi hodisani boshidan kechirganmi?
     // (masalan: bir xil o'quv yilida ikki marta "keyingi kursga ko'chirilmasin" uchun)

@@ -1,5 +1,7 @@
 package com.edu.talim.controller;
 
+import java.util.UUID;
+
 import com.edu.talim.dto.XabarCreateDTO;
 import com.edu.talim.dto.XabarResponseDTO;
 import com.edu.talim.service.XabarService;
@@ -47,7 +49,7 @@ public class XabarController {
 
     /** Xabarni o'qilgan deb belgilash */
     @PutMapping("/{id}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
+    public ResponseEntity<Void> markAsRead(@PathVariable UUID id) {
         xabarService.markAsRead(id);
         return ResponseEntity.ok().build();
     }
@@ -63,7 +65,7 @@ public class XabarController {
 
     /** Xabarni o'chirish */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         xabarService.delete(id);
         return ResponseEntity.noContent().build();
     }

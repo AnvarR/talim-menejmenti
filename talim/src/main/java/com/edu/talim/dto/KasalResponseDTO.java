@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Builder
 public class KasalResponseDTO {
-    private Long id;
+    private UUID id;
 
     // Kursant ma'lumotlari
     private UUID studentId;

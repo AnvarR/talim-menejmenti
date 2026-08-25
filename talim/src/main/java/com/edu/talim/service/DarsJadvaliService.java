@@ -95,7 +95,7 @@ public class DarsJadvaliService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         DarsJadvali jadval = darsJadvaliRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Jadval topilmadi: " + id));
 
@@ -109,7 +109,7 @@ public class DarsJadvaliService {
         darsJadvaliRepository.deleteById(id);
     }
 
-    public Path getFaylYoli(Long id) {
+    public Path getFaylYoli(UUID id) {
         DarsJadvali jadval = darsJadvaliRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Jadval topilmadi: " + id));
         return Paths.get(uploadDir, jadval.getFaylYoli());

@@ -1,5 +1,7 @@
 package com.edu.talim.service;
 
+import java.util.UUID;
+
 import com.edu.talim.exception.ConflictException;
 
 import com.edu.talim.exception.NotFoundException;
@@ -46,7 +48,7 @@ public class KasalService {
     }
 
     // Bitta kasal
-    public KasalResponseDTO getById(Long id) {
+    public KasalResponseDTO getById(UUID id) {
         return toResponseDTO(findById(id));
     }
 
@@ -75,7 +77,7 @@ public class KasalService {
     }
 
     // Tahrirlash
-    public KasalResponseDTO update(Long id, KasalCreateDTO dto) {
+    public KasalResponseDTO update(UUID id, KasalCreateDTO dto) {
         Kasal kasal = findById(id);
 
         kasal.setKasallikSababi(dto.getKasallikSababi());
@@ -90,13 +92,13 @@ public class KasalService {
     }
 
     // O'chirish
-    public void delete(Long id) {
+    public void delete(UUID id) {
         kasalRepository.delete(findById(id));
     }
 
     // ===== HELPER METODLAR =====
 
-    private Kasal findById(Long id) {
+    private Kasal findById(UUID id) {
         return kasalRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Kasal topilmadi: " + id));
     }

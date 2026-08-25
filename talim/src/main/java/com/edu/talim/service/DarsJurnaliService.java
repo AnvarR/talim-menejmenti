@@ -194,7 +194,7 @@ public class DarsJurnaliService {
 
     // Davomat holatini yangilash (S, Y, N_T, K_T, S_T, Y_T)
     @Transactional
-    public DavomatResponseDTO davomatYangilash(Long davomatId, DavomatHolati holat) {
+    public DavomatResponseDTO davomatYangilash(UUID davomatId, DavomatHolati holat) {
         Davomat davomat = davomatRepository.findById(davomatId)
                 .orElseThrow(() -> new NotFoundException("Davomat topilmadi: " + davomatId));
 
